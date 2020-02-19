@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from scipy import constants
 import matplotlib.pyplot as plt
@@ -49,4 +50,6 @@ if True:
     fullax.set_zlabel('$\epsilon/\gamma_0$')
     fullax.set_title('Brillouin Zone of Graphene')
 
+    dirname=os.path.dirname(os.path.dirname(__file__))
+    plt.savefig(os.path.join('notebooks','Graphene','images','overview.png'))
     plt.show()
