@@ -2,16 +2,9 @@
 
 This Python code models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks.
 
-## Directories
+**Install** with `pip install graphenemodeling`
 
-### `code`
+**Test** your installation with
 
-Contains all back-end code intended to be imported as a package.
-  
-### `Graphene`
+> graphenemodeling overview
 
-Contains Jupyter notebooks providing a tutorial on the physics of graphene and how the code models the physics.
-
-### `Boron-Nitride`
-
-Contains Jupyter notebooks providing a tutorial on the physics of hexagonal boron nitride (hBN) and how the code models the physics.
