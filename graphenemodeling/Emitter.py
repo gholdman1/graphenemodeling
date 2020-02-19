@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 
-import fundamental_constants as fc
+from graphenemodeling import fundamental_constants as fc
 
 class Dipole:
 	'''

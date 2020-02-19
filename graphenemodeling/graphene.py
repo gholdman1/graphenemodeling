@@ -3,12 +3,13 @@ import numpy as np
 from scipy import integrate
 from scipy import optimize
 from scipy import special
+from scipy import constants
 import warnings
 
-import fundamental_constants as fc
-import statistical_distributions as sd
+from graphenemodeling import fundamental_constants as fc
+from graphenemodeling import statistical_distributions as sd
 
-import Emitter
+from graphenemodeling import Emitter
 
 eVtoJ = fc.e_proton
 e0 = fc.epsilon_0

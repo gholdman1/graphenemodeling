@@ -1,5 +1,5 @@
 import numpy as np
-import fundamental_constants as fc
+from graphenemodeling import fundamental_constants as fc
 from scipy.constants import speed_of_light,hbar, k
 
 kB = fc.kB
