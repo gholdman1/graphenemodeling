@@ -1,6 +1,6 @@
 # Graphene Modeling
 
-This is python code I wrote during my research on graphene photonics. View the code and accompanying Jupyter notebooks to view this code.
+This Python code models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks.
 
 ## Directories
 
