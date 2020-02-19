@@ -16,8 +16,9 @@ def main():
         print(greeting)
     if len(sys.argv)==2:
         files=os.listdir(os.path.dirname(__file__))
-        if sys.argv[1]+'.py' in files:
-            print('Found it!')
+        if sys.argv[1]=='overview':
+            from graphenemodeling import overview
+            overview
         else:
             print('Unknown command: %s' % (sys.argv[1]))
         
