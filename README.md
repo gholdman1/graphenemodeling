@@ -4,7 +4,6 @@ This Python code models the electronic and optical properties of graphene and is
 
 **Install** with `pip install graphenemodeling`
 
-**Test** your installation with
+**Test** your installation with the command `> graphenemodeling overview`. You should see the following image:
 
-> graphenemodeling overview
-
+![](notebooks\Graphene\images\overview.png)
