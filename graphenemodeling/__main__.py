@@ -1,6 +1,6 @@
 #__main__.py
 
-import sys
+import os, sys
 
 from graphenemodeling import __version__
 
@@ -12,6 +12,14 @@ def main():
     or submit an issue or pull request at github.
     ''' % (__version__)
 
-    print(greeting)
+    if len(sys.argv)==1:
+        print(greeting)
+    if len(sys.argv)==2:
+        files=os.listdir(os.path.dirname(__file__))
+        if sys.argv[1]+'.py' in files:
+            print('Found it!')
+        else:
+            print('Unknown command: %s' % (sys.argv[1]))
+        
 if __name__=="__main__":
     main()
