@@ -7,7 +7,8 @@ HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
 
-README = os.path.join(HERE,"README.md").read_text()
+with open(os.path.join(HERE,"README.md")) as file:
+    README = file.read()
 
 setup(
         name="graphenemodeling",
@@ -16,7 +17,7 @@ setup(
         long_description=README,
         long_description_content_type="text/markdown",
         url="https://github.com/gholdman1/graphenemodeling.git",
-        author="Gregory Holdman",
+        author="gholdman",
         author_email="gholdman@protonmail.com",
         packages=["graphenemodeling"],
         include_package_data=True,
