@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: graphenemodeling
+Version: 1.0.1
+Summary: Code for modeling graphene
+Home-page: https://github.com/gholdman1/graphenemodeling.git
+Author: gholdman
+Author-email: gholdman@protonmail.com
+License: UNKNOWN
+Description: # Graphene Modeling
+        
+        This Python code models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks.
+        
+        **Install** with `pip install graphenemodeling`
+        
+        **Test** your installation with the command `> graphenemodeling overview`. You should see the following image:
+        
+        ![](https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/Graphene/images/overview.png)
+Platform: UNKNOWN
+Description-Content-Type: text/markdown
