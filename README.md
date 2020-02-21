@@ -14,8 +14,6 @@ This Python package models the electronic and optical properties of graphene and
 
 You should see the greeting
 
-​	
-
 ```
 	Welcome to graphenemodeling version #.#.#!
 
@@ -27,3 +25,4 @@ You should see the greeting
 
 ```
 
+**Learn** how to use this package by following along with the Jupyter notebooks in the `notebooks` directory. You can obtain these by cloning the git repository.
