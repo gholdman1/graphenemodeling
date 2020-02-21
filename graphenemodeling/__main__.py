@@ -8,8 +8,8 @@ def main():
     greeting='''
     Welcome to graphenemodeling version %s!
 
-    For quick overview of graphene, run
-    > graphenemodeling overview
+    For a quick overview of this package's capabilities, run
+    > python -m graphenemodeling overview
 
     For issues, contact Gregory Holdman at gholdman@protonmail.com
     or submit an issue or pull request on github.
