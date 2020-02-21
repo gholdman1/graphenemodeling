@@ -1,6 +1,6 @@
 # Graphene Modeling
 
-![](https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/Graphene/images/overview.png)
+![](https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/images/overview.png)
 
 This Python package models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks.
 
