@@ -10,7 +10,7 @@ This Python package **models the electronic and optical properties of graphene**
 > pip install graphenemodeling
 ```
 
-Alternatively, if you are comfortable building from source, first select the latest stable version under `Branch: **master** -> Tags -> v#.#.#` and download or clone the repository.
+Alternatively, if you are comfortable building from source, first select the latest stable version under `Branch: master -> Tags -> v#.#.#` and download or clone the repository.
 
 **Test** your installation with the command
 
