@@ -4,7 +4,7 @@
 
 This Python package models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks. The intent is to reproduce results found in the literature so that researchers need not write their own code which wastes time and may contain bugs that alter results. To boost confidence in the code in this repository, every piece of code should be accompanied by a figure that reproduces a result from a published paper.
 
-**Install** the latest version with `pip install graphenemodeling`  or by downloading and building from source.
+**Install** the latest version with `pip install graphenemodeling`. Alternatively, build from source by first selecting the latest stable version under `Branch: **master** -> Tags -> v#.#.#`.
 
 **Test** your installation with the command
 
