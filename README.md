@@ -1,6 +1,6 @@
-# Graphene Modeling
+<h1><center>Graphene Modeling</center></h1>
 
-<img src='https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/images/overview.png' width=400px />
+<center><img src='https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/images/overview.png' width=400px /></center>
 
 This Python package models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks. The intent is to reproduce results found in the literature so that researchers need not write their own code which wastes time and may contain bugs that alter results. To boost confidence in the code in this repository, every piece of code should be accompanied by a figure that reproduces a result from a published paper.
 
