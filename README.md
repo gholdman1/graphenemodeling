@@ -1,10 +1,16 @@
 # Graphene Modeling
 
-![](https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/images/overview.png)
+<img src='https://github.com/gholdman1/graphenemodeling/blob/master/notebooks/images/overview.png' width=400px />
 
 This Python package models the electronic and optical properties of graphene and is accompanied by Jupyter notebooks. The intent is to reproduce results found in the literature so that researchers need not write their own code which wastes time and may contain bugs that alter results. To boost confidence in the code in this repository, every piece of code should be accompanied by a figure that reproduces a result from a published paper.
 
-**Install** the latest version with `pip install graphenemodeling`. Alternatively, build from source by first selecting the latest stable version under `Branch: **master** -> Tags -> v#.#.#`.
+**Install** the latest version with
+
+```
+> pip install graphenemodeling
+```
+
+Alternatively, if you are comfortable building from source, first select the latest stable version under `Branch: **master** -> Tags -> v#.#.#` and download or clone the repository.
 
 **Test** your installation with the command
 
