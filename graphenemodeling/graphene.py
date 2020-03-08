@@ -114,7 +114,16 @@ class Monolayer(BaseGraphene):
         ----------
 
         [1] 
+
+        Examples
+        --------
+
+        >>> from graphene modeling import graphene
+        >>> mlg = graphene.Monolayer()
+        >>> mlg.DiracFermionDispersion(0.5e8,'LowEnergy')
+        4.7776888319999995e-21
         '''
+
 
         if model == 'LowEnergy':
 
@@ -1835,3 +1844,7 @@ class Rectangle(Nanostructure):
 
     def __init__(self,radius,layers):
         Nanostructure.__init__(self,layers)
+
+if __name__=="__main__":
+    import doctest
+    doctest.testmod()
