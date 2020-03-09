@@ -7,9 +7,9 @@ from scipy import constants as sc
 import warnings
 
 #from graphenemodeling import fundamental_constants as fc
-#from graphenemodeling import statistical_distributions as sd
+from graphenemodeling import statistical_distributions as sd
 
-# from graphenemodeling import Emitter
+from graphenemodeling import Emitter
 
 
 eVtoJ = sc.elementary_charge
@@ -20,30 +20,30 @@ sigma_0 = sc.elementary_charge**2 / (4 * sc.hbar)
 kB = sc.Boltzmann
 
 
-def FermiDirac(E, T):
-    """
-    The Fermi-Dirac distribution.
+# def FermiDirac(E, T):
+#     """
+#     The Fermi-Dirac distribution.
 
-    Parameters
-    ----------
-    E:          array-like,
-                Energy (J)
+#     Parameters
+#     ----------
+#     E:          array-like,
+#                 Energy (J)
 
-    T:          scalar,
-                Temperature (K)
+#     T:          scalar,
+#                 Temperature (K)
 
-    Returns
-    ----------
-    FD:         array-like,
-                Fermi-Dirac probability of occupation of state at energy E.
+#     Returns
+#     ----------
+#     FD:         array-like,
+#                 Fermi-Dirac probability of occupation of state at energy E.
 
-    """
+#     """
 
-    # Using logaddexp reduces chance of underflow error
-    # Adds a tiny offset to temperature to avoid division by zero.
-    FD = np.exp( -np.logaddexp(E/(kB*(T+0.000000000001)),0) )
+#     # Using logaddexp reduces chance of underflow error
+#     # Adds a tiny offset to temperature to avoid division by zero.
+#     FD = np.exp( -np.logaddexp(E/(kB*(T+0.000000000001)),0) )
 
-    return FD
+#     return FD
 
 def Lorentz(p,x):
     '''
@@ -276,8 +276,8 @@ class Monolayer(BaseGraphene):
         n = np.empty_like(muC)
 
         for i, m in np.ndenumerate(muC):
-            p_electron = lambda e: self.DensityOfStates(e,model) * FermiDirac(e-m,T)
-            p_hole = lambda e: self.DensityOfStates(e,model) * (1 - FermiDirac(e-m,T))
+            p_electron = lambda e: self.DensityOfStates(e,model) * sd.FermiDirac(e-m,T)
+            p_hole = lambda e: self.DensityOfStates(e,model) * (1 - sd.FermiDirac(e-m,T))
             n[i] = ( integrate.quad(p_electron,0,3*self.g0,points=(self.g0,m))[0] -
                      integrate.quad(p_hole,-3*self.g0,0,points=(-self.g0,-m))[0]   )
         return n
@@ -497,7 +497,7 @@ class Monolayer(BaseGraphene):
 
                 ### Interband Contribution ###
 
-                H = lambda energy: FermiDirac(-energy-eFermi,T) - FermiDirac(energy-eFermi,T)
+                H = lambda energy: sd.FermiDirac(-energy-eFermi,T) - sd.FermiDirac(energy-eFermi,T)
 
                 integrand = lambda energy,w: ( H(energy) - H(sc.hbar*w/2) ) / (sc.hbar**2 * (w + 1j*gamma)**2 - 4 * energy**2)
 
@@ -1469,7 +1469,7 @@ class Bilayer(BaseGraphene):
         KE = self.Dispersion(ks, -2*q*vminus,1,approx)
 
         # Evaluate Fermi-Dirac
-        FD = (FermiDirac(KE-q*vplus,T)-FermiDirac(KE+q*vplus,T))
+        FD = (sd.FermiDirac(KE-q*vplus,T)-sd.FermiDirac(KE+q*vplus,T))
 
         # Define integrand
         integrand = ( 2 / np.pi ) * ks * FD
@@ -1500,7 +1500,7 @@ class Bilayer(BaseGraphene):
 
         # Evaluate Fermi-Dirac
         # Minus sign comes from...
-        FD = (FermiDirac(KE-q*abs(vplus),T))#-Temperature.FermiDirac(-KE-q*vplus,T)
+        FD = (sd.FermiDirac(KE-q*abs(vplus),T))#-Temperature.FermiDirac(-KE-q*vplus,T)
 
         # Define integrand
         integrand =  ( 2 /np.pi ) * ks * self.Pdiff(ks,vminus,approx='LowEnergy') * FD
