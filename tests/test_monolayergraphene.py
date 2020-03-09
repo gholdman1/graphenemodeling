@@ -16,7 +16,7 @@ class TestMonolayerGraphene:
 		eF = 0.4 * sc.elementary_charge
 		kF = mlg.kFermi(eF,model='LowEnergy')
 
-		assert np.isclose(kF,670690811.5358821)
+		assert np.isclose(kF,670690811.5358821,rtol=1e-05)
 
 	def test_CarrierDispersion_LowEnergy(self):
 		mlg = Monolayer()
@@ -29,7 +29,7 @@ class TestMonolayerGraphene:
 		mlg = Monolayer()
 		E = 1 * mlg.g0
 		DOS = mlg.DensityOfStates(E,model='LowEnergy')
-		assert np.isclose(DOS,3.127898579800643e+37)
+		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
 
 	def test_Hamiltonian_LowEnergy(self):
 		mlg = Monolayer()
@@ -42,4 +42,4 @@ class TestMonolayerGraphene:
 		# np.linalg.eigh required as H is Hermitian
 		energy = np.max(np.linalg.eigh(H)[0])
 
-		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'))
+		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'),rtol=1e-05)
