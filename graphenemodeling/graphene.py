@@ -172,6 +172,30 @@ class Monolayer(BaseGraphene):
         >>> kF = mlg.kFermi(eF, model='LowEnergy')
         >>> mlg.DiracFermionDispersion(kF,model='LowEnergy')/eV
         0.4
+
+        Plot the Fermion dispersion relation.
+
+        >>> from graphenemodeling import graphene
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>> mlg = graphene.Monolayer()
+        >>> from scipy.constants import elementary_charge as eV
+        >>> eF = 0.4*eV
+        >>> kF = mlg.kFermi(eF,model='LowEnergy')
+        >>> k = np.linspace(-2*kF,2*kF,num=100)
+        >>> conduction_band = mlg.DiracFermionDispersion(k,model='LowEnergy')
+        >>> valence_band = -conduction_band
+        >>> fig, ax = plt.subplots(figsize=(5,6))
+        >>> ax.plot(k/kF,conduction_band/eF,'k')
+        [...
+        >>> ax.plot(k/kF,valence_band/eF, 'k')
+        [...
+        >>> ax.plot(k/kF,np.zeros_like(k),color='gray')
+        [...
+        >>> ax.axvline(x=0,ymin=0,ymax=1,color='gray')
+        <...
+        >>> ax.set_axis_off()
+        >>> plt.show()
         '''
 
 
@@ -1897,4 +1921,4 @@ class Rectangle(Nanostructure):
 
 if __name__=="__main__":
     import doctest
-    doctest.testmod()
+    doctest.testmod(verbose=False,optionflags=doctest.ELLIPSIS)
