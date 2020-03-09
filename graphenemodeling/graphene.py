@@ -1406,8 +1406,6 @@ class Bilayer(BaseGraphene):
     ### Screening ###
     #################
 
-
-
     def screened_vminus2(self,nplus,vminus):
         """
         The screened value of vminus given the total charge nplus
