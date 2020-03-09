@@ -859,16 +859,12 @@ class Monolayer(BaseGraphene):
 
         eps1,eps2:  scalar, the relative permittivity of each dielectric
 
-        model:      'intra':    intraband dispersion
-                    'local':    uses the intraband + interband constributions
-                                to the conductivity.
-                    'nonlocal': Uses fully nonlocal conductivity to get dispersion
+        model:      'intra' for intraband dispersion, 'local' uses the intraband + interband constributions to the conductivity. 'nonlocal' Uses fully nonlocal conductivity to get dispersion.
 
         Returns
         ----------
 
         omega:      array-like, the frequency of the plasmon with wavenumber q
-
 
         '''
 
@@ -1463,7 +1459,7 @@ class Bilayer(BaseGraphene):
 
         n:      Scalar; the charge area density in m^-2
 
-        vplus:  Scalar; the potential of the BLG. Related to fermi level by vplus = eF/|e|
+        vplus:  Scalar; the potential of the BLG. Related to fermi level by vplus = eF / elementary_charge
 
         vminus: Scalar; half the potential difference between the layers.
 
