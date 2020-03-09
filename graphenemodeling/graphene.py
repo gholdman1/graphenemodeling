@@ -43,7 +43,6 @@ class BaseGraphene:
         self.sigma1 = 0.017 #  V, width of phonon peak
         self.kappa_inelastic = 2.2*10**-10 # m^-1, inverse decay length of inelastic wavefunctions
 
-
 class Monolayer(BaseGraphene):
 
     def __init__(self,mobility=None,thickness=0.34e-9):
@@ -259,7 +258,14 @@ class Monolayer(BaseGraphene):
         Parameters
         ----------
 
+        E:          Energy at which to evaluate DOS.
+
         model:      'LowEnergy': DOS derived from linear approximation of dispersion.
+
+        Returns
+        -------
+
+        DOS:        Density of states, units states J^-1 m^-2
 
         References
         ----------
@@ -294,7 +300,9 @@ class Monolayer(BaseGraphene):
 
             E = np.abs(E)
 
-            return 2 * E / (sc.pi*(sc.hbar*self.vF)**2)
+            DOS = 2 * E / (sc.pi*(sc.hbar*self.vF)**2)
+
+            return DOS
 
         elif model=='FullTightBinding':
             '''
@@ -330,7 +338,9 @@ class Monolayer(BaseGraphene):
                 ellip = special.ellipk(np.sqrt(Z1/Z0))
 
                 dos[j] = (1/np.sqrt(Z0)) * ellip
-            return prefactor * dos /self.A
+            DOS = prefactor * dos /self.A
+
+            return DOS
         else:
             print('The model %s is not available' % (model))
 
@@ -352,6 +362,11 @@ class Monolayer(BaseGraphene):
     def FermiLevel(self,n,T=0):
         '''
         Returns the Fermi level given the carrier density.
+
+        Parameters
+        ----------
+
+        n:  array-like, carrier density in units m^-2.
         '''
 
         if T==0:
@@ -1093,7 +1108,6 @@ class Monolayer(BaseGraphene):
 
         return dipole.DecayRate(omega,d) + (1/sc.hbar) * integral
 
-
 class Bilayer(BaseGraphene):
     """
     Bilayer graphene class which inherits the parameters of the
@@ -1301,7 +1315,7 @@ class Bilayer(BaseGraphene):
         
         return np.sqrt( propk2 ) / (2*hbar*self.vF)
 
-    def eFermi(self,n,u):
+    def FermiLevel(self,n,u):
         '''
         Returns the Fermi level (Joules) given density n and interlayer potential energy difference u
         Positive n returns a positive Fermi level, meaning positive carrier densities are electrons by convention.
