@@ -22,7 +22,7 @@ class BaseGraphene:
     """
     Base class for all types of graphene.
     Includes constants common to all types of graphene.
-    Can be used to develop classes with more any number of layers.
+    Can be used to develop classes with any number of layers.
     """
 
     def __init__(self):
@@ -64,9 +64,9 @@ class Monolayer(BaseGraphene):
         self.thickness = thickness
 
         
-    ##########
-    # Basics #
-    ##########
+    ##################
+    # Band Structure #
+    ##################
 
     def Hamiltonian(self,k):
         '''
@@ -792,9 +792,9 @@ class Monolayer(BaseGraphene):
 
         return prop[restype] * bound
 
-    ###########
-    # Phonons #
-    ###########
+    #####################
+    # Phonon Properties #
+    #####################
 
     def PhononSelfEnergy(self):
         pass
@@ -1027,45 +1027,45 @@ class Monolayer(BaseGraphene):
 
         pass
 
-    # def DipoleDecayRate(self,z,omega,gamma,eFermi,T,eps1,eps2):
-    #     '''
-    #     Decay rate of a dipole emitter placed near graphene.
-    #     Right now, the dipole only points perpendicular.
+    def DipoleDecayRate(self,z,omega,gamma,eFermi,T,eps1,eps2):
+        '''
+        Decay rate of a dipole emitter placed near graphene.
+        Right now, the dipole only points perpendicular.
 
-    #     This should be moved to the Emitter.Dipole object
+        This should be moved to the Emitter.Dipole object
 
-    #     Eqn 5 in the SM of Ref 1.
+        Eqn 5 in the SM of Ref 1.
 
-    #     References
-    #     ----------
+        References
+        ----------
 
-    #     [1] Koppens et al. 2011
-    #         URL: https://doi.org/10.1021/nl201771h
-    #     '''
-    #     warnings.warn('Monolayer.DipoleDecayRate: Ignoring dipole components in xy-plane')
+        [1] Koppens et al. 2011
+            URL: https://doi.org/10.1021/nl201771h
+        '''
+        warnings.warn('Monolayer.DipoleDecayRate: Ignoring dipole components in xy-plane')
 
-    #     dipole = Emitter.Dipole()
+        dipole = Emitter.Dipole()
 
-    #     d = np.array([0,0,1])
+        d = np.array([0,0,1])
 
-    #     integral = np.empty_like(omega)
+        integral = np.empty_like(omega)
 
-    #     for i, w in np.ndenumerate(omega):
+        for i, w in np.ndenumerate(omega):
 
-    #         kperp   = lambda kpar: np.sqrt(eps1*(w/sc.speed_of_light)**2 - kpar**2)
-    #         rp      = lambda kpar: self.FresnelReflection(kpar,w,gamma,eFermi,T,eps1,eps2,'p')
-    #         perpterm = lambda kpar: 2*np.abs(d[2])**2 * kpar**2 * rp(kpar)
+            kperp   = lambda kpar: np.sqrt(eps1*(w/sc.speed_of_light)**2 - kpar**2)
+            rp      = lambda kpar: self.FresnelReflection(kpar,w,gamma,eFermi,T,eps1,eps2,'p')
+            perpterm = lambda kpar: 2*np.abs(d[2])**2 * kpar**2 * rp(kpar)
 
-    #         integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
+            integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
 
-    #         b = np.abs(self.K) # Increasing this bound does not lead to more convergence
-    #         kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
-    #         k_plasmon=self.InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
+            b = np.abs(self.K) # Increasing this bound does not lead to more convergence
+            kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
+            k_plasmon=self.InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
 
-    #         integral[i] = integrate.quad(integrand,1e-3,b,
-    #                                     points=(kpar_pol,k_plasmon),limit=100)[0]
+            integral[i] = integrate.quad(integrand,1e-3,b,
+                                        points=(kpar_pol,k_plasmon),limit=100)[0]
 
-    #     return dipole.DecayRate(omega,d) + (1/sc.hbar) * integral
+        return dipole.DecayRate(omega,d) + (1/sc.hbar) * integral
 
 
 class Bilayer(BaseGraphene):
