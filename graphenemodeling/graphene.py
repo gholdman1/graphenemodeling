@@ -163,16 +163,6 @@ class Monolayer(BaseGraphene):
 
         Examples
         --------
-        Confirm energy of Fermi wavevector is equal to Fermi level.
-
-        >>> from graphenemodeling import graphene
-        >>> from scipy.constants import elementary_charge as eV
-        >>> mlg = graphene.Monolayer()
-        >>> eF = 0.4 * eV # Fermi level is 0.4 eV
-        >>> kF = mlg.kFermi(eF, model='LowEnergy')
-        >>> mlg.DiracFermionDispersion(kF,model='LowEnergy')/eV
-        0.4
-
         Plot the Fermion dispersion relation.
 
         >>> from graphenemodeling import graphene
@@ -254,6 +244,18 @@ class Monolayer(BaseGraphene):
         eFermi:      array-like, Fermi level
 
         model:       'LowEnergy': Value gets derived from linear approximation of dispersion.
+ 
+        Examples
+        --------
+        Confirm energy of Fermi wavevector is equal to Fermi level.
+
+        >>> from graphenemodeling import graphene
+        >>> from scipy.constants import elementary_charge as eV
+        >>> mlg = graphene.Monolayer()
+        >>> eF = 0.4 * eV # Fermi level is 0.4 eV
+        >>> kF = mlg.kFermi(eF, model='LowEnergy')
+        >>> mlg.DiracFermionDispersion(kF,model='LowEnergy')/eV
+        0.4
         '''
 
         if model == 'LowEnergy':
@@ -269,7 +271,7 @@ class Monolayer(BaseGraphene):
 
     def DensityOfStates(self,E,model):
         '''
-        The density of states per unit cell in graphene at energy E
+        The density of states per unit cell in graphene at energy E.
 
         Parameters
         ----------
@@ -282,6 +284,27 @@ class Monolayer(BaseGraphene):
         [1]     Castro Neto et al. Reviews of Modern Physics 81, 2009.
                 URL:
 
+        Examples
+        --------
+        Plot the density of states in the `LowEnergy` approximation and `FullTightBinding` model.
+
+        >>> from graphenemodeling import graphene
+        >>> import matplotlib.pyplot as plt
+        >>> mlg = graphene.Monolayer()
+        >>> E = np.linspace(-3,3,num=200) * mlg.g0
+        >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
+        >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
+        >>> plt.plot(E/mlg.g0,DOS_full/np.max(DOS_full),label='FullTightBinding')
+        [<...
+        >>> plt.plot(E/mlg.g0,DOS_low/np.max(DOS_full),label='LowEnergy')
+        [<...
+        >>> plt.xlabel('$E/g_0$')
+        Text...
+        >>> plt.ylabel('DOS (a.u.)')
+        Text...
+        >>> plt.legend()
+        <...
+        >>> plt.show()
         '''
 
         if model=='LowEnergy':
