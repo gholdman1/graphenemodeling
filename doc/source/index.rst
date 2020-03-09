@@ -1,16 +1,23 @@
-.. graphenemodeling documentation master file, created by
-   sphinx-quickstart on Mon Mar  9 12:17:30 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+GrapheneModeling
+================
 
-Welcome to graphenemodeling's documentation!
-============================================
+The singular goal of `graphenemodeling` is to compile the 
+most important literature on graphene into one Python package.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+Documentation
+-------------
 
+Follow the links below to see the documentation on 
+`graphenemodeling`.
+
+.. toctree::
+   :maxdepth: 1
+
+   graphene
 
 Indices and tables
 ==================
