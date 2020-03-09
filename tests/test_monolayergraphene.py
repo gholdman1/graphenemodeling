@@ -30,3 +30,16 @@ class TestMonolayerGraphene:
 		E = 1 * mlg.g0
 		DOS = mlg.DensityOfStates(E,model='LowEnergy')
 		assert np.isclose(DOS,3.127898579800643e+37)
+
+	def test_Hamiltonian_LowEnergy(self):
+		mlg = Monolayer()
+
+		eF = 0.4 * sc.elementary_charge
+		kF = mlg.kFermi(eF,model='LowEnergy')
+
+		H = mlg.Hamiltonian(kF,model='LowEnergy')
+
+		# np.linalg.eigh required as H is Hermitian
+		energy = np.max(np.linalg.eigh(H)[0])
+
+		assert np.isclose(energy,mlg.DiracFermionDispersion(kF,'LowEnergy'))

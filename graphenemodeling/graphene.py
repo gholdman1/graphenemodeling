@@ -10,7 +10,6 @@ from graphenemodeling import statistical_distributions as sd
 
 from graphenemodeling import Emitter
 
-
 eVtoJ = sc.elementary_charge
 e0 = sc.epsilon_0
 hbar = sc.hbar
@@ -22,7 +21,7 @@ class BaseGraphene:
     """
     Base class for all types of graphene.
     Includes constants common to all types of graphene.
-    Can be used to develop classes with any number of layers.
+    Can be used to develop classes with any number of layers or any shape
     """
 
     def __init__(self):
@@ -54,6 +53,12 @@ class Monolayer(BaseGraphene):
 
         mobility:   tuple, [mobility, Tmeas] of mobility (m^2/V-s)
                             and temperature at which it was taken
+
+        thickness:  float, the thickness of graphene.
+
+        References
+        ----------
+
         '''
         BaseGraphene.__init__(self)
 
@@ -68,7 +73,7 @@ class Monolayer(BaseGraphene):
     # Band Structure #
     ##################
 
-    def Hamiltonian(self,k):
+    def Hamiltonian(self,k,model='LowEnergy'):
         '''
         Tight-binding Hamiltonian in k-space.
 
@@ -85,12 +90,31 @@ class Monolayer(BaseGraphene):
         References
         ----------
 
-        [1]     Castro Neto et al. Reviews of Modern Physics 81, 2009.
-                URL:
+        [1] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284.
+  
 
         '''
 
-        pass
+        if model == 'LowEnergy':
+            H11 = 0
+            H12 = sc.hbar * self.vF * k
+            H21 = np.conj(H12)
+            H22 = 0
+
+        if model == 'FullTightBinding':
+            kx = np.real(k)
+            ky = np.imag(k)
+
+            H11 = 0
+            H12 = self.g0 * (   np.exp(1j*kx*self.a/2)
+                                + 2*np.exp(-1j*kx*self.a/2)*np.cos(ky*self.a*np.sqrt(3)/2) )
+            H21 = np.conj(H12)
+            H22 = 0
+
+        H = np.array( [[H11, H12],
+                        [H12, H22] ])
+
+        return H
 
     def DiracFermionDispersion(self,k,model,eh=1):
         '''
@@ -105,6 +129,8 @@ class Monolayer(BaseGraphene):
 
         model:      'LowEnergy': Linear approximation of dispersion.
                     'FullTightBinding': Eigenvalues of tight-binding approximation. 
+                                        We use a closed form rather than finding eigenvalues
+                                        of Hamiltonian to save time and avoid broadcasting issues.
 
         eh:         1 or -1, return electrons or holes respectively
 
@@ -1083,6 +1109,10 @@ class Bilayer(BaseGraphene):
         approx_choices = ['None', 'Common', 'LowEnergy']
         C = e0 / d
 
+    ######################
+    ### Band Structure ###
+    ######################
+
     def Hamiltonian(self,k,u):
         '''
         Returns the full tight-binding Hamiltonian of BLG.
@@ -1128,10 +1158,6 @@ class Bilayer(BaseGraphene):
                         [H31, H32, H33, H34],
                         [H41, H42, H43,H44]]).squeeze()
         return H
-
-    ######################
-    ### Band Structure ###
-    ######################
 
     def Dispersion(self,k,u,band,approx='Common'):
         '''
