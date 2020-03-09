@@ -3,7 +3,7 @@ import numpy as np
 from scipy import integrate
 from scipy import optimize
 from scipy import special
-from scipy import constants
+from scipy import constants as sc
 import warnings
 
 from graphenemodeling import fundamental_constants as fc
@@ -11,9 +11,13 @@ from graphenemodeling import statistical_distributions as sd
 
 from graphenemodeling import Emitter
 
-eVtoJ = fc.e_proton
-e0 = fc.epsilon_0
-hbar = fc.hbar
+
+eVtoJ = sc.elementary_charge
+e0 = sc.epsilon_0
+hbar = sc.hbar
+Z0 = sc.physical_constants['characteristic impedance of vacuum']
+sigma_0 = sc.elementary_charge**2 / (4 * sc.hbar)
+kB = sc.Boltzmann
 
 class BaseGraphene:
     """
@@ -28,11 +32,11 @@ class BaseGraphene:
         self.A = 3*np.sqrt(3)*(self.a**2) / 2      # (m^2), area of unit cell of graphene
         self.g0 = 2.8*eVtoJ                         # (J), Interatom hopping potential
         self.g0prime = 0 * self.g0                 # particle hole asymmetry           
-        self.vF = 3*self.a*self.g0/(2*fc.hbar)         # Fermi velocity
+        self.vF = 3*self.a*self.g0/(2*sc.hbar)         # Fermi velocity
 
         self.W = 4.6 * eVtoJ                        # Work function of graphene. See 10.1038/nphys1022
 
-        self.K = (2*fc.pi/(3*self.a)) + 1j*(2*fc.pi/(3*np.sqrt(3)*self.a)) # The magnitude of the K point vector
+        self.K = (2*sc.pi/(3*self.a)) + 1j*(2*sc.pi/(3*np.sqrt(3)*self.a)) # The magnitude of the K point vector
         # Tunneling parameters
         self.kappa_elastic = 3.9*10**-10            # m^-1, inverse decay length
 
@@ -127,7 +131,7 @@ class Monolayer(BaseGraphene):
 
         if model == 'LowEnergy':
 
-            return eh*fc.hbar*self.vF*np.abs(k)
+            return eh*sc.hbar*self.vF*np.abs(k)
 
         if model == 'FullTightBinding':
 
@@ -151,7 +155,7 @@ class Monolayer(BaseGraphene):
         '''
 
         if model == 'LowEnergy':
-            return np.abs(eFermi) / (fc.hbar*self.vF)
+            return np.abs(eFermi) / (sc.hbar*self.vF)
 
         if model == 'FullTightBinding':
             '''
@@ -180,14 +184,14 @@ class Monolayer(BaseGraphene):
 
             E = np.abs(E)
 
-            return 2 * E / (fc.pi*(fc.hbar*self.vF)**2)
+            return 2 * E / (sc.pi*(sc.hbar*self.vF)**2)
 
         elif model=='FullTightBinding':
             '''
             Equation 14 of Ref 1
             '''
 
-            prefactor = 4*np.abs(E) / (fc.pi*self.g0)**2
+            prefactor = 4*np.abs(E) / (sc.pi*self.g0)**2
 
             def fZ0(E):
                 if np.abs(E)<np.abs(self.g0):
@@ -241,7 +245,7 @@ class Monolayer(BaseGraphene):
         '''
 
         if T==0:
-            return fc.hbar*self.vF*np.sqrt(fc.pi*n)
+            return sc.hbar*self.vF*np.sqrt(sc.pi*n)
 
         else:
             warnings.warn('Monolayer.FermiLevel: not available')
@@ -293,7 +297,7 @@ class Monolayer(BaseGraphene):
         '''
 
         # Scattering time
-        tau = mobility*eFermi / (fc.e_proton*self.vF**2)
+        tau = mobility*eFermi / (sc.elementary_charge*self.vF**2)
 
         rate = 1/tau
         return rate
@@ -344,14 +348,14 @@ class Monolayer(BaseGraphene):
             kF = self.kFermi(eFermi, model='LowEnergy')
 
             x = q / (2*kF)
-            zbar = fc.hbar*omega / (2*eFermi)
+            zbar = sc.hbar*omega / (2*eFermi)
 
             f = lambda x,zbar: (np.arcsin( (1-zbar)/x) + np.arcsin( (1+zbar)/x )
                             - ((zbar-1)/x)*np.sqrt(1 - ((zbar-1)/x)**2 )
                             + ((zbar+1)/x)*np.sqrt(1 - ((zbar+1)/x)**2 ) )
 
 
-            dd = 1 + (x**2 / (4*np.sqrt(x**2 - (zbar+1e-9*1j)**2 ))) * (fc.pi - f(x,zbar+1e-9*1j))
+            dd = 1 + (x**2 / (4*np.sqrt(x**2 - (zbar+1e-9*1j)**2 ))) * (sc.pi - f(x,zbar+1e-9*1j))
 
             return prefactor * dd
 
@@ -439,20 +443,20 @@ class Monolayer(BaseGraphene):
         if np.all(q) == 0:
 
             if T!=0:
-                intra_pre = 4 * fc.sigma_0 * (2*1j*fc.kB*T) / (fc.pi*fc.hbar)
-                inter_pre = fc.sigma_0
+                intra_pre = 4 * sigma_0 * (2*1j*kB*T) / (sc.pi*sc.hbar)
+                inter_pre = sigma_0
 
                 ### Intraband Contribution ###
 
                 # Using np.logaddexp() avoids the large cosh in ln( cosh(1/T) )
-                x = eFermi / (2*fc.kB*T)
+                x = eFermi / (2*kB*T)
                 intra = lambda w: intra_pre * ( 1 / (w + 1j*gamma) ) * np.logaddexp(x,-x)
 
                 ### Interband Contribution ###
 
                 H = lambda energy: sd.FermiDirac(-energy-eFermi,T) - sd.FermiDirac(energy-eFermi,T)
 
-                integrand = lambda energy,w: ( H(energy) - H(fc.hbar*w/2) ) / (fc.hbar**2 * (w + 1j*gamma)**2 - 4 * energy**2)
+                integrand = lambda energy,w: ( H(energy) - H(sc.hbar*w/2) ) / (sc.hbar**2 * (w + 1j*gamma)**2 - 4 * energy**2)
 
                 def integral(w):
                     result = np.empty_like(w,dtype=complex)
@@ -461,28 +465,28 @@ class Monolayer(BaseGraphene):
                         integrand_re = lambda e: np.real(integrand(e,frequency))
                         integrand_im = lambda e: np.imag(integrand(e,frequency))
 
-                        result[i] =(     integrate.quad(integrand_re,0,10*eFermi,points=(eFermi/fc.hbar,2*eFermi/fc.hbar))[0]
-                                    + 1j*integrate.quad(integrand_im,0,10*eFermi,points=(eFermi/fc.hbar,2*eFermi/fc.hbar))[0] )
+                        result[i] =(     integrate.quad(integrand_re,0,10*eFermi,points=(eFermi/sc.hbar,2*eFermi/sc.hbar))[0]
+                                    + 1j*integrate.quad(integrand_im,0,10*eFermi,points=(eFermi/sc.hbar,2*eFermi/sc.hbar))[0] )
 
                     return result
 
-                inter = lambda w: inter_pre * ( H(fc.hbar * w / 2) +
-                                                (4*1j/fc.pi) * fc.hbar*(w + 1j*gamma)*integral(w) )
+                inter = lambda w: inter_pre * ( H(sc.hbar * w / 2) +
+                                                (4*1j/sc.pi) * sc.hbar*(w + 1j*gamma)*integral(w) )
 
                 conductivity= intra(omega) + inter(omega)
 
             if T==0:
-                intra = lambda w: 1j*fc.sigma_0 * 4*eFermi / (fc.pi*fc.hbar* (w + 1j*gamma))
+                intra = lambda w: 1j*sigma_0 * 4*eFermi / (sc.pi*sc.hbar* (w + 1j*gamma))
 
-                inter = lambda w: fc.sigma_0 * ( np.heaviside(fc.hbar*w - 2*eFermi,0.5) + 
-                                                (1j/fc.pi) * np.log(np.abs((2*eFermi-fc.hbar*w)/(2*eFermi+fc.hbar*w))))
+                inter = lambda w: sigma_0 * ( np.heaviside(sc.hbar*w - 2*eFermi,0.5) + 
+                                                (1j/sc.pi) * np.log(np.abs((2*eFermi-sc.hbar*w)/(2*eFermi+sc.hbar*w))))
 
                 conductivity = intra(omega) + inter(omega)
 
         # Nonlocal case
         else:
             if T==0:
-                conductivity = 1j*fc.e_proton**2 * (omega / q**2) * self.Polarizibility(q,omega,gamma,eFermi,T)
+                conductivity = 1j*sc.elementary_charge**2 * (omega / q**2) * self.Polarizibility(q,omega,gamma,eFermi,T)
 
             else:
                 pass
@@ -534,17 +538,17 @@ class Monolayer(BaseGraphene):
             '''
             Use eqn 10 of Ref 1
             '''
-            x1 = fc.e_proton
-            x2 = fc.hbar
+            x1 = sc.elementary_charge
+            x2 = sc.hbar
             x3 = eFermi
             x4 = self.vF
             x5 = self.Mobility(T,self.mu0,self.mu0T) # mobility at the new temperature
             x6 = epsR
 
             x7 = self.thickness # 3.4 angstroms by default
-            x8 = fc.epsilon_0
+            x8 = sc.epsilon_0
 
-            prefactor = x1**2*x3 / ( fc.pi * x2**2)
+            prefactor = x1**2*x3 / ( sc.pi * x2**2)
             denominator = omega**2 + ( x1*x4**2 / (x5*x3) )**2
 
             term1 = - prefactor*(omega*x8*x7)**(-1) * omega / denominator
@@ -555,7 +559,7 @@ class Monolayer(BaseGraphene):
             return eps
 
         else:
-            eps = 1 + 1j*self.OpticalConductivity(0,omega,gamma,eFermi,T)/(omega*fc.epsilon_0)
+            eps = 1 + 1j*self.OpticalConductivity(0,omega,gamma,eFermi,T)/(omega*sc.epsilon_0)
 
         return eps
 
@@ -583,17 +587,17 @@ class Monolayer(BaseGraphene):
         [1] Christensen Thesis 2017
         '''
 
-        kperp1, kperp2 = np.sqrt(eps1*(omega/fc.c0)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/fc.c0)**2 - kpar**2 + 1e-9*1j)
+        kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j)
 
         sigma = self.OpticalConductivity(kpar,omega,gamma,eFermi,T)
 
         if polarization=='p' or polarization=='TM':
-            numerator   = eps2*kperp1 - eps1*kperp2 + ( sigma*kperp1*kperp2 / (fc.epsilon_0*omega) )
-            denominator = eps2*kperp1 + eps1*kperp2 + ( sigma*kperp1*kperp2 / (fc.epsilon_0*omega) )
+            numerator   = eps2*kperp1 - eps1*kperp2 + ( sigma*kperp1*kperp2 / (sc.epsilon_0*omega) )
+            denominator = eps2*kperp1 + eps1*kperp2 + ( sigma*kperp1*kperp2 / (sc.epsilon_0*omega) )
 
         if polarization=='s' or polarization=='TE':
-            numerator = kperp1 - kperp2 - fc.mu0*omega*sigma
-            denominator = kperp1 + kperp2 + fc.mu0*omega*sigma
+            numerator = kperp1 - kperp2 - sc.mu_0*omega*sigma
+            denominator = kperp1 + kperp2 + sc.mu_0*omega*sigma
 
         return numerator / denominator
 
@@ -612,13 +616,13 @@ class Monolayer(BaseGraphene):
 
         '''
 
-        k0 = (omega/fc.c0)
-        ldos0 = k0**2 / (2*fc.pi**2*fc.c0) # Free space LDOS
+        k0 = (omega/sc.speed_of_light)
+        ldos0 = k0**2 / (2*sc.pi**2*sc.speed_of_light) # Free space LDOS
 
         integral = np.empty_like(d)
 
         for i, d0 in np.ndenumerate(d):
-            k0w = (omega/fc.c0)
+            k0w = (omega/sc.speed_of_light)
             Im_rp      = lambda kpar: np.imag( self.FresnelReflection(kpar,omega,gamma,eFermi,T,1,1,'p') )
 
             integrand = lambda kpar: (kpar**2/k0w**3)*Im_rp(kpar)*np.exp(-2*kpar*d0)
@@ -677,7 +681,7 @@ class Monolayer(BaseGraphene):
         '''
 
         if np.all(d):
-            k0 = omega/fc.c0
+            k0 = omega/sc.speed_of_light
             LDOSprop = 3 / (8 * (k0*d)**4)
 
         prop = dict({'material':1,
@@ -687,7 +691,7 @@ class Monolayer(BaseGraphene):
         if method == 'scalar':
             sigma = self.OpticalConductivity(0,omega,gamma,eFermi,T)
 
-            bound = fc.Z0 * np.abs(sigma)**2 / np.real(sigma)
+            bound = Z_0 * np.abs(sigma)**2 / np.real(sigma)
 
         elif method == 'svd':
             bound = np.empty_like(omega)
@@ -698,7 +702,7 @@ class Monolayer(BaseGraphene):
                 s_re_inv = np.linalg.inv(np.real(s))
                 prod = np.dot(s_dag,np.dot(s_re_inv,s))
                 two_norm= np.linalg.svd(prod)[1][0]
-                bound[i] = fc.Z0*two_norm
+                bound[i] = Z_0*two_norm
 
 
 
@@ -747,8 +751,8 @@ class Monolayer(BaseGraphene):
 
         # Analytical expression in intraband approximation
         if model=='intra':
-            radical = q * fc.e_proton**2 * eFermi / (2*fc.pi * fc.epsilon_0 * epsavg)
-            return (1/fc.hbar) * np.sqrt(radical)
+            radical = q * sc.elementary_charge**2 * eFermi / (2*sc.pi * sc.epsilon_0 * epsavg)
+            return (1/sc.hbar) * np.sqrt(radical)
 
         if model=='local':
             omega = np.empty_like(q)
@@ -756,7 +760,7 @@ class Monolayer(BaseGraphene):
             sigma = lambda w: self.OpticalConductivity(0,w,gamma,eFermi,T=0)
 
             for i,q0 in np.ndenumerate(q):
-                root_eqn = lambda w: 1 - np.imag(sigma(w))*q0 / (2*fc.epsilon_0*epsavg*w)
+                root_eqn = lambda w: 1 - np.imag(sigma(w))*q0 / (2*sc.epsilon_0*epsavg*w)
 
                 a, b = self.PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra'), 1e-8
                 omega[i] = optimize.brentq(root_eqn,a,b)
@@ -775,7 +779,7 @@ class Monolayer(BaseGraphene):
                 b = self.PlasmonDispersion(q0,gamma,eFermi,1,1,T,model='intra')
 
                 # Frequency is definitely above the minimum which should be <0
-                a = optimize.minimize_scalar(root_eqn,bounds=((eFermi/fc.hbar)*q0/kF,b),method='bounded').x
+                a = optimize.minimize_scalar(root_eqn,bounds=((eFermi/sc.hbar)*q0/kF,b),method='bounded').x
                 
                 if root_eqn(a) > 0:
                     #warnings.warn("Monolayer.PlasmonDispersion(model='nonlocal'): No root exists for q=%.5f" % (q0))
@@ -857,7 +861,7 @@ class Monolayer(BaseGraphene):
 
         epsavg = (eps1+eps2)/2
 
-        return 1 - np.imag(self.OpticalConductivity(q,omega,gamma,eFermi,T))*q / (2*fc.epsilon_0*epsavg*omega)
+        return 1 - np.imag(self.OpticalConductivity(q,omega,gamma,eFermi,T))*q / (2*sc.epsilon_0*epsavg*omega)
 
     def PlasmonDispersionRelation(self,q,omega,gamma,eFermi,eps1,eps2,T):
         '''
@@ -964,20 +968,20 @@ class Monolayer(BaseGraphene):
 
         for i, w in np.ndenumerate(omega):
 
-            kperp   = lambda kpar: np.sqrt(eps1*(w/fc.c0)**2 - kpar**2)
+            kperp   = lambda kpar: np.sqrt(eps1*(w/sc.speed_of_light)**2 - kpar**2)
             rp      = lambda kpar: self.FresnelReflection(kpar,w,gamma,eFermi,T,eps1,eps2,'p')
             perpterm = lambda kpar: 2*np.abs(d[2])**2 * kpar**2 * rp(kpar)
 
             integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
 
             b = np.abs(self.K) # Increasing this bound does not lead to more convergence
-            kpar_pol = np.sqrt(eps1) * (w/fc.c0)
+            kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
             k_plasmon=self.InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
 
             integral[i] = integrate.quad(integrand,1e-3,b,
                                         points=(kpar_pol,k_plasmon),limit=100)[0]
 
-        return dipole.DecayRate(omega,d) + (1/fc.hbar) * integral
+        return dipole.DecayRate(omega,d) + (1/sc.hbar) * integral
 
 
 class Bilayer(BaseGraphene):
@@ -1024,7 +1028,7 @@ class Bilayer(BaseGraphene):
         H33 = H44 =  u/2 * ones
 
         # Intralayer
-        H12 = H21 = H34 = H43 = fc.hbar * self.vF * k
+        H12 = H21 = H34 = H43 = sc.hbar * self.vF * k
 
         # Interlayer A1-B2
         H23 = H32 = self.g1 * ones
@@ -1052,7 +1056,7 @@ class Bilayer(BaseGraphene):
         Only approximation is g3=0.
         To get valence bands, simply result multiply by -1.
         '''
-        p = fc.hbar * self.vF * k
+        p = sc.hbar * self.vF * k
 
         if approx == 'Common':
             radical=(self.g1**4)/4 + (u**2 + self.g1**2)*(p**2)
@@ -1680,7 +1684,7 @@ class Nanostructure(BaseGraphene):
         '''
 
         # Equation 5.14b of Ref [1]
-        zeta = lambda w: 1j*fc.epsilon_0*1*w*(self.size) / self.OpticalConductivity(0,w,gamma,eFermi,T)
+        zeta = lambda w: 1j*sc.epsilon_0*1*w*(self.size) / self.OpticalConductivity(0,w,gamma,eFermi,T)
 
         alpha_term = lambda w, eigenmode: eigenmode[1] / (eigenmode[0] - zeta(w)) 
 
@@ -1724,12 +1728,12 @@ class Nanostructure(BaseGraphene):
 
         alpha = self.DipolePolarizibility(omega,gamma,eFermi,T)
 
-        kd = np.sqrt(eps_medium)*omega/fc.c0
+        kd = np.sqrt(eps_medium)*omega/sc.speed_of_light
 
         sigma_sca, sigma_abs = 0, 0
 
         if cstype == 'scattering' or cstype=='extinction':
-            sigma_sca = (6*fc.pi)**(-1)*(kd**4)*np.abs(alpha)**2
+            sigma_sca = (6*sc.pi)**(-1)*(kd**4)*np.abs(alpha)**2
 
         if cstype == 'absorption' or cstype=='extinction':
             sigma_abs = kd * np.imag(alpha)
