@@ -18,49 +18,6 @@ Z0 = sc.physical_constants['characteristic impedance of vacuum']
 sigma_0 = sc.elementary_charge**2 / (4 * sc.hbar)
 kB = sc.Boltzmann
 
-
-# def FermiDirac(E, T):
-#     """
-#     The Fermi-Dirac distribution.
-
-#     Parameters
-#     ----------
-#     E:          array-like,
-#                 Energy (J)
-
-#     T:          scalar,
-#                 Temperature (K)
-
-#     Returns
-#     ----------
-#     FD:         array-like,
-#                 Fermi-Dirac probability of occupation of state at energy E.
-
-#     """
-
-#     # Using logaddexp reduces chance of underflow error
-#     # Adds a tiny offset to temperature to avoid division by zero.
-#     FD = np.exp( -np.logaddexp(E/(kB*(T+0.000000000001)),0) )
-
-#     return FD
-
-def Lorentz(p,x):
-    '''
-    Lorentzian Response
-
-    Parameters
-    ----------
-
-    p:      length 3 array
-            p[0] = response location
-            p[1] = HWHM
-            p[2] = response strength
-
-    x:      array-like, points at which to evaluate Lorentzian
-    '''
-
-    return p[2] * ( (p[1]/2)/fc.pi)**2 / ( (p[0]-x)**2 + (p[1]/2)**2 )
-
 class BaseGraphene:
     """
     Base class for all types of graphene.
