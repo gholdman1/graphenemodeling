@@ -6,7 +6,6 @@ from scipy import special
 from scipy import constants as sc
 import warnings
 
-#from graphenemodeling import fundamental_constants as fc
 from graphenemodeling import statistical_distributions as sd
 
 from graphenemodeling import Emitter
@@ -164,11 +163,15 @@ class Monolayer(BaseGraphene):
 
         Examples
         --------
+        Confirm energy of Fermi wavevector is equal to Fermi level.
 
         >>> from graphenemodeling import graphene
+        >>> from scipy.constants import elementary_charge as eV
         >>> mlg = graphene.Monolayer()
-        >>> mlg.DiracFermionDispersion(0.5e8,'LowEnergy')
-        4.7776888319999995e-21
+        >>> eF = 0.4 * eV # Fermi level is 0.4 eV
+        >>> kF = mlg.kFermi(eF, model='LowEnergy')
+        >>> mlg.DiracFermionDispersion(kF,model='LowEnergy')/eV
+        0.4
         '''
 
 
