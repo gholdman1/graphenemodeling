@@ -931,7 +931,7 @@ class Monolayer(BaseGraphene):
         exp_res:    expected number of resonances
         '''
         q = np.atleast_1d(q)
-        ErrorFunc = lambda p,x,y: Lorentz(p,x) - y
+        ErrorFunc = lambda p,x,y: sd.Lorentz(p,x) - y
 
         pFit = np.empty((np.size(q),3))
 
