@@ -8,3 +8,6 @@ from scipy import constants as sc
 
 
 class TestMonolayerGraphene:
+
+	def test_constants(self):
+		pass
