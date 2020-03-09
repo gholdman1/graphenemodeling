@@ -18,12 +18,12 @@ class TestMonolayerGraphene:
 
 		assert np.isclose(kF,670690811.5358821)
 
-	def test_DiracFermionDispersion_LowEnergy(self):
+	def test_CarrierDispersion_LowEnergy(self):
 		mlg = Monolayer()
 
 		eF = 0.4 * sc.elementary_charge
 		kF = mlg.kFermi(eF,model='LowEnergy')
-		assert mlg.DiracFermionDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
+		assert mlg.CarrierDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
 
 	def test_DensityOfStates_LowEnergy(self):
 		mlg = Monolayer()
@@ -42,4 +42,4 @@ class TestMonolayerGraphene:
 		# np.linalg.eigh required as H is Hermitian
 		energy = np.max(np.linalg.eigh(H)[0])
 
-		assert np.isclose(energy,mlg.DiracFermionDispersion(kF,'LowEnergy'))
+		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'))

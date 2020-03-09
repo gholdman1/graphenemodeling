@@ -116,7 +116,7 @@ class Monolayer(BaseGraphene):
 
         return H
 
-    def DiracFermionDispersion(self,k,model,eh=1):
+    def CarrierDispersion(self,k,model,eh=1):
         '''
         Gives the dispersion of Dirac fermions in monolayer graphene.
 
@@ -156,7 +156,7 @@ class Monolayer(BaseGraphene):
         >>> eF = 0.4*eV
         >>> kF = mlg.kFermi(eF,model='LowEnergy')
         >>> k = np.linspace(-2*kF,2*kF,num=100)
-        >>> conduction_band = mlg.DiracFermionDispersion(k,model='LowEnergy')
+        >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
         >>> valence_band = -conduction_band
         >>> fig, ax = plt.subplots(figsize=(5,6))
         >>> ax.plot(k/kF,conduction_band/eF,'k')
@@ -178,12 +178,12 @@ class Monolayer(BaseGraphene):
         >>> from mpl_toolkits import mplot3d # 3D plotting
         >>> mlg = graphene.Monolayer()
         >>> kmax = np.abs(mlg.K)
-        >>> emax = mlg.DiracFermionDispersion(0,model='FullTightBinding')
+        >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding')
         >>> kx = np.linspace(-kmax,kmax,num=100)
         >>> ky = np.copy(kx)
         >>> k = (kx + 1j*ky[:,np.newaxis]) + mlg.K # k is relative to K. Add K to move to center of Brillouin zone
-        >>> conduction_band = mlg.DiracFermionDispersion(k,model='FullTightBinding',eh=1)
-        >>> valence_band = mlg.DiracFermionDispersion(k,model='FullTightBinding',eh=-1)
+        >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1)
+        >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1)
         >>> fig = plt.figure(figsize=(8,8))
         >>> fullax = plt.axes(projection='3d')
         >>> fullax.view_init(20,35)
@@ -237,7 +237,7 @@ class Monolayer(BaseGraphene):
         >>> mlg = graphene.Monolayer()
         >>> eF = 0.4 * eV # Fermi level is 0.4 eV
         >>> kF = mlg.kFermi(eF, model='LowEnergy')
-        >>> mlg.DiracFermionDispersion(kF,model='LowEnergy')/eV
+        >>> mlg.CarrierDispersion(kF,model='LowEnergy')/eV
         0.4
         '''
 
@@ -246,7 +246,7 @@ class Monolayer(BaseGraphene):
 
         if model == 'FullTightBinding':
             '''
-            Code to numerically invert DiracFermionDispersion(kF,model='FullTightBinding')
+            Code to numerically invert CarrierDispersion(kF,model='FullTightBinding')
 
             Likely would use a root-finding procedure
             '''
