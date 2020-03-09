@@ -4,3 +4,6 @@
 # Documentation generated files
 doc/source/generated
 doc/build
+
+# Development files
+graphenemodeling.egg-info
