@@ -1,3 +1,22 @@
+"""
+Graphene (:mod:`graphene`)
+==========================
+
+The `graphene` module attempts to implement all types of graphene from nanostructured to planar with any number of layers.
+
+Monolayer
+---------
+
+.. autoclass:: Monolayer
+   :members:
+
+Bilayer
+-------
+.. autoclass:: Bilayer
+   :members:
+"""
+
+
 import os
 import numpy as np
 from scipy import integrate
@@ -408,7 +427,7 @@ class Monolayer(BaseGraphene):
         '''
         Estimated DC scattering rate from mobility.
 
-        Paremeters
+        Parameters
         ----------
 
         mobility:   scalar, mobility (m^2/V-s)
