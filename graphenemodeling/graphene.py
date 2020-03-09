@@ -1159,7 +1159,7 @@ class Bilayer(BaseGraphene):
                         [H41, H42, H43,H44]]).squeeze()
         return H
 
-    def Dispersion(self,k,u,band,approx='Common'):
+    def CarrierDispersion(self,k,u,band,approx='Common'):
         '''
         Returns the energy (J) of an electron with wavevector k (rad/m)
         in first (band=1) or second (band=2) conduction band.
@@ -1217,7 +1217,7 @@ class Bilayer(BaseGraphene):
         emin2 = (u/2)**2 * (self.g1**2 / ( self.g1**2 + u**2 ) )
         return np.sqrt(emin2)
 
-    def DOS(self, e, u):
+    def DensityOfStates(self, e, u):
         '''
         Returns the density of states per unit area (1/m^2) as 
         a function of energy given the gap u
