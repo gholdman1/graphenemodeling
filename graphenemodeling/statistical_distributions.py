@@ -33,13 +33,16 @@ def FermiDirac(E, T):
 
     Parameters
     ----------
-    E:    		array-like, Energy (J)
+    E:  array-like
+        Energy (J)
 
-    T:      	scalar, Temperature (K)
+    T:  scalar
+        Temperature (K)
 
     Returns
     -------
-    FD:         array-like, Fermi-Dirac probability of occupation of state at energy E.
+    array-like
+        Fermi-Dirac probability of occupation of state at energy E.
 
     Examples
     --------
@@ -56,8 +59,7 @@ def FermiDirac(E, T):
     return FD
 
 def BoseEinstein(E,T):
-    """
-    The Bose-Einstein distribution.
+    """The Bose-Einstein distribution.
 
     .. math::
 
@@ -67,13 +69,16 @@ def BoseEinstein(E,T):
 
     Parameters
     ----------
-    E:          array-like, Energy (J)
+    E:  array-like
+        Energy (J)
 
-    T:          scalar, Temperature (K)
+    T:  scalar
+        Temperature (K)
 
     Returns
     ----------
-    BE:         array-like, Bose-Einstein probability of occupation of state at energy E.
+    array-like
+        Bose-Einstein probability of occupation of state at energy E.
 
     """
 
@@ -84,8 +89,7 @@ def BoseEinstein(E,T):
     return BE
 
 def Boltzmann(E,T):
-    """
-    The Boltzmann distribution.
+    """The Boltzmann distribution.
 
     .. math::
 
@@ -93,13 +97,16 @@ def Boltzmann(E,T):
 
     Parameters
     ----------
-    E:          array-like, Energy of state (J)
+    E:  array-like
+        Energy of state (J)
 
-    T:          scalar, Temperature (K)
+    T:  scalar
+        Temperature (K)
 
     Returns
     ----------
-    boltz:      array-like, probability of occupation of state at energy E.
+    array-like
+        Probability of occupation of state at energy E.
 
     """
 
@@ -120,23 +127,26 @@ def Lorentz(p,x):
 
         A \\frac{(\\gamma/2\\pi)^2}{(x-x_0)^2 + (\\gamma/2)^2}
 
+    where :math:`A` is amplitude, :math:`x_0` is the center of the response, and :math:`\\gamma` is damping rate.
+
     Parameters
     ----------
 
-    p:      length 3 array
-            p[0] = response location
-            p[1] = HWHM
-            p[2] = response strength
+    p:  list
+        length 3 array
+        p[0] = response location
+        p[1] = HWHM
+        p[2] = response strength
 
-    x:      array-like, points at which to evaluate Lorentzian
+    x:  array-like
+        Points at which to evaluate Lorentzian
 
     '''
 
     return p[2] * ( (p[1]/2)/fc.pi)**2 / ( (p[0]-x)**2 + (p[1]/2)**2 )
 
 def Planck(x,T,int_var='omega'):
-    """
-    The Planck distribution.
+    """The Planck distribution.
 
     In terms of angular frequency :math:`\\omega`
 
@@ -150,6 +160,26 @@ def Planck(x,T,int_var='omega'):
     .. math::
 
         \\frac{2hc^2}{\\lambda^5}\\frac{1}{e^{hc/\\lambda k_B T} - 1}
+
+    
+    Parameters
+    ----------
+
+    x:  array-like
+        Points at which to evaluate Planck distribution.
+
+    T:  scalar
+        Temperature (K)
+
+    int_var: string
+        Integration variable.
+        'omega' returns distribution with respect to angular frequency.
+        'lambda' returns distribution with respect to wavelength.
+
+    Returns
+    -------
+    array-like
+        Planck distribution.
 
     """
 
