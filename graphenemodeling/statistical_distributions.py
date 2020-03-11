@@ -23,8 +23,13 @@ from scipy.constants import speed_of_light,hbar, k
 kB = fc.kB
 
 def FermiDirac(E, T):
-    """
-    The Fermi-Dirac distribution.
+    """The Fermi-Dirac distribution.
+
+    .. math::
+
+        \\frac{1}{e^{E/k_B T} + 1}
+
+    Note that we do not include a Fermi Level :math:`E_F` as this is easily implemented by exchanging :math:`E` for :math:`E-E_F`.
 
     Parameters
     ----------
@@ -54,6 +59,12 @@ def BoseEinstein(E,T):
     """
     The Bose-Einstein distribution.
 
+    .. math::
+
+        \\frac{1}{e^{E/k_B T} - 1}
+
+    Note we do not include a chemical potential :math:`\\mu` as this is easily implemented by substituing :math:`E\\to E-\\mu`.
+
     Parameters
     ----------
     E:          array-like, Energy (J)
@@ -76,6 +87,10 @@ def Boltzmann(E,T):
     """
     The Boltzmann distribution.
 
+    .. math::
+
+        e^{-E/k_B T}
+
     Parameters
     ----------
     E:          array-like, Energy of state (J)
@@ -97,8 +112,13 @@ def Boltzmann(E,T):
     return boltz
 
 def Lorentz(p,x):
-    '''
-    Lorentzian Response
+    '''Lorentzian Response
+
+    Not a true statistical distribution, but included here.
+    
+    .. math::
+
+        A \\frac{(\\gamma/2\\pi)^2}{(x-x_0)^2 + (\\gamma/2)^2}
 
     Parameters
     ----------
@@ -109,6 +129,7 @@ def Lorentz(p,x):
             p[2] = response strength
 
     x:      array-like, points at which to evaluate Lorentzian
+
     '''
 
     return p[2] * ( (p[1]/2)/fc.pi)**2 / ( (p[0]-x)**2 + (p[1]/2)**2 )
@@ -117,6 +138,18 @@ def Planck(x,T,int_var='omega'):
     """
     The Planck distribution.
 
+    In terms of angular frequency :math:`\\omega`
+
+    .. math::
+
+        \\frac{\\hbar\\omega^3}{c^2 \\pi}\\frac{1}{e^{\\hbar\\omega/ k_B T} - 1}
+
+
+    or wavelength :math:`\\lambda`
+
+    .. math::
+
+        \\frac{2hc^2}{\\lambda^5}\\frac{1}{e^{hc/\\lambda k_B T} - 1}
 
     """
 
