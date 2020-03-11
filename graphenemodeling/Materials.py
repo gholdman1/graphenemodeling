@@ -2,7 +2,7 @@ import os
 import numpy as np
 import warnings
 
-import fundamental_constants as fc
+import scipy.constants as sc
 import optical_models as om
 
 
@@ -134,12 +134,12 @@ class HexagonalBoronNitride(Dielectric):
 			self.s_z	= [0.61]
 
 			# Frequency
-			self.w_xy	= [0.1701*fc.e_proton /fc.hbar]
-			self.w_z	= [0.0925*fc.e_proton /fc.hbar]
+			self.w_xy	= [0.1701*sc.elementary_charge /sc.hbar]
+			self.w_z	= [0.0925*sc.elementary_charge /sc.hbar]
 
 			# Loss
-			self.g_xy	= [0.00087*fc.e_proton/fc.hbar]
-			self.g_z	= [0.00025*fc.e_proton/fc.hbar]
+			self.g_xy	= [0.00087*sc.elementary_charge/sc.hbar]
+			self.g_z	= [0.00025*sc.elementary_charge/sc.hbar]
 
 	def PermittivityInPlane(self,omega):
 
