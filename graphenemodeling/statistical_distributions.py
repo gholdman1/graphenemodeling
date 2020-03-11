@@ -13,14 +13,13 @@ These statistical distributions are not found in ``scipy.stats`` and are therefo
     Lorentz
     Planck
 
-
 """
 
 import numpy as np
 from graphenemodeling import fundamental_constants as fc
 from scipy.constants import speed_of_light,hbar, k
 
-kB = fc.kB
+kB = k
 
 def FermiDirac(E, T):
     """The Fermi-Dirac distribution.
@@ -80,6 +79,11 @@ def BoseEinstein(E,T):
     array-like
         Bose-Einstein probability of occupation of state at energy E.
 
+    Examples
+    --------
+
+    >>> from graphenemodeling.graphene import BoseEinstein
+    
     """
 
     # Using logaddexp reduces chance of underflow error
@@ -107,6 +111,11 @@ def Boltzmann(E,T):
     ----------
     array-like
         Probability of occupation of state at energy E.
+
+    Examples
+    --------
+
+    >>> from graphenemodeling.statistical_distributions import Boltzmann
 
     """
 
@@ -140,6 +149,11 @@ def Lorentz(p,x):
 
     x:  array-like
         Points at which to evaluate Lorentzian
+
+    Examples
+    --------
+
+    >>> from graphenemodeling.statistical_distributions import Lorentz
 
     '''
 
@@ -180,6 +194,11 @@ def Planck(x,T,int_var='omega'):
     -------
     array-like
         Planck distribution.
+
+    Examples
+    --------
+
+    >>> from graphenemodeling.graphene import Planck
 
     """
 
