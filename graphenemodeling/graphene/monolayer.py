@@ -4,6 +4,50 @@ import scipy.constants as sc
 from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
 
+def Hamiltonian(k,model='LowEnergy'):
+    '''
+    Tight-binding Hamiltonian in k-space.
+
+    Parameters
+    ----------
+
+    k:      array-like, wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
+
+    Returns
+    ----------
+
+    H:      2x2 array, Tight-binding Hamiltonian evaluated at k.
+
+    References
+    ----------
+
+    [1] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284.
+
+
+    '''
+
+    if model == 'LowEnergy':
+        H11 = 0
+        H12 = sc.hbar * _c.vF * k
+        H21 = np.conj(H12)
+        H22 = 0
+
+    if model == 'FullTightBinding':
+        kx = np.real(k)
+        ky = np.imag(k)
+
+        H11 = 0
+        H12 = _c.g0 * (   np.exp(1j*kx*_c.A/2)
+                            + 2*np.exp(-1j*kx*_c.A/2)*np.cos(ky*_c.A*np.sqrt(3)/2) )
+        H21 = np.conj(H12)
+        H22 = 0
+
+    H = np.array( [[H11, H12],
+                    [H12, H22] ])
+
+    return H
+
+
 class Monolayer:
 
     def __init__(self):
@@ -14,48 +58,6 @@ class Monolayer:
     # Band Structure #
     ##################
 
-    def Hamiltonian(self,k,model='LowEnergy'):
-        '''
-        Tight-binding Hamiltonian in k-space.
-
-        Parameters
-        ----------
-
-        k:      array-like, wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
-
-        Returns
-        ----------
-
-        H:      2x2 array, Tight-binding Hamiltonian evaluated at k.
-
-        References
-        ----------
-
-        [1] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284.
-  
-
-        '''
-
-        if model == 'LowEnergy':
-            H11 = 0
-            H12 = sc.hbar * _c.vF * k
-            H21 = np.conj(H12)
-            H22 = 0
-
-        if model == 'FullTightBinding':
-            kx = np.real(k)
-            ky = np.imag(k)
-
-            H11 = 0
-            H12 = _c.g0 * (   np.exp(1j*kx*_c.A/2)
-                                + 2*np.exp(-1j*kx*_c.A/2)*np.cos(ky*_c.A*np.sqrt(3)/2) )
-            H21 = np.conj(H12)
-            H22 = 0
-
-        H = np.array( [[H11, H12],
-                        [H12, H22] ])
-
-        return H
 
     def CarrierDispersion(self,k,model,eh=1):
         '''
