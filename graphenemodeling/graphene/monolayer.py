@@ -48,6 +48,144 @@ def Hamiltonian(k,model='LowEnergy'):
     return H
 
 
+def CarrierDispersion(k,model,eh=1):
+    '''
+    Gives the dispersion of Dirac fermions in monolayer graphene.
+
+    Parameters
+    ----------
+
+    k:          array-like, wavevector of Dirac fermion relative to K vector
+                            For 2D wavevectors, use comlex k= kx + i ky
+
+
+    model:      'LowEnergy': Linear approximation of dispersion.
+                'FullTightBinding': Eigenvalues of tight-binding approximation. 
+                                    We use a closed form rather than finding eigenvalues
+                                    of Hamiltonian to save time and avoid broadcasting issues.
+
+    eh:         1 or -1, return electrons or holes respectively
+
+    Returns
+    ----------
+
+    energy:     array-like, energy of Dirac fermion with wavenumber k.
+
+    References
+    ----------
+
+    [1] 
+
+    Examples
+    --------
+    Plot the Fermion dispersion relation.
+
+    >>> from graphenemodeling import graphene
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> mlg = graphene.Monolayer()
+    >>> from scipy.constants import elementary_charge as eV
+    >>> eF = 0.4*eV
+    >>> kF = mlg.kFermi(eF,model='LowEnergy')
+    >>> k = np.linspace(-2*kF,2*kF,num=100)
+    >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
+    >>> valence_band = -conduction_band
+    >>> fig, ax = plt.subplots(figsize=(5,6))
+    >>> ax.plot(k/kF,conduction_band/eF,'k')
+    [...
+    >>> ax.plot(k/kF,valence_band/eF, 'k')
+    [...
+    >>> ax.plot(k/kF,np.zeros_like(k),color='gray')
+    [...
+    >>> ax.axvline(x=0,ymin=0,ymax=1,color='gray')
+    <...
+    >>> ax.set_axis_off()
+    >>> plt.show()
+
+    Plot the full multi-dimensional dispersion relation.
+
+    >>> from graphenemodeling import graphene
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> from mpl_toolkits import mplot3d # 3D plotting
+    >>> mlg = graphene.Monolayer()
+    >>> kmax = np.abs(mlg.K)
+    >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding')
+    >>> kx = np.linspace(-kmax,kmax,num=100)
+    >>> ky = np.copy(kx)
+    >>> k = (kx + 1j*ky[:,np.newaxis]) + mlg.K # k is relative to K. Add K to move to center of Brillouin zone
+    >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1)
+    >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1)
+    >>> fig = plt.figure(figsize=(8,8))
+    >>> fullax = plt.axes(projection='3d')
+    >>> fullax.view_init(20,35)
+    >>> KX, KY = np.meshgrid(kx,ky)
+    >>> fullax.plot_surface(KX/kmax,KY/kmax,conduction_band/mlg.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
+    <...
+    >>> fullax.plot_surface(KX/kmax,KY/kmax,valence_band/mlg.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
+    <...
+    >>> fullax.set_xlabel('$k_x/|K|$')
+    Text...
+    >>> fullax.set_ylabel('$k_y/|K|$')
+    Text...
+    >>> fullax.set_zlabel('$\\epsilon/\\gamma_0$')
+    Text...
+    >>> fullax.set_title('Brillouin Zone of Graphene')
+    Text...
+    >>> plt.show()
+    '''
+
+
+    if model == 'LowEnergy':
+
+        return eh*sc.hbar*_c.vF*np.abs(k)
+
+    if model == 'FullTightBinding':
+
+        k = k - _c.K
+        f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*_c.A) 
+                        + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.A)*np.cos((3/2)*np.real(k)*_c.A) )
+
+        return eh*_c.g0*np.sqrt(3+ f(k)) - _c.g0prime*f(k)
+
+def kFermi(eFermi,model):
+    '''
+    The Fermi wavevector, i.e. the wavevector of the state at
+    the Fermi energy.
+
+    Parameters
+    ----------
+
+    eFermi:      array-like, Fermi level
+
+    model:       'LowEnergy': Value gets derived from linear approximation of dispersion.
+
+    Examples
+    --------
+    Confirm energy of Fermi wavevector is equal to Fermi level.
+
+    >>> from graphenemodeling import graphene
+    >>> from scipy.constants import elementary_charge as eV
+    >>> mlg = graphene.Monolayer()
+    >>> eF = 0.4 * eV # Fermi level is 0.4 eV
+    >>> kF = mlg.kFermi(eF, model='LowEnergy')
+    >>> mlg.CarrierDispersion(kF,model='LowEnergy')/eV
+    0.4
+    '''
+
+    if model == 'LowEnergy':
+        return np.abs(eFermi) / (sc.hbar*_c.vF)
+
+    if model == 'FullTightBinding':
+        '''
+        Code to numerically invert CarrierDispersion(kF,model='FullTightBinding')
+
+        Likely would use a root-finding procedure
+        '''
+        pass
+
+
+
 class Monolayer:
 
     def __init__(self):
@@ -59,141 +197,6 @@ class Monolayer:
     ##################
 
 
-    def CarrierDispersion(self,k,model,eh=1):
-        '''
-        Gives the dispersion of Dirac fermions in monolayer graphene.
-
-        Parameters
-        ----------
-
-        k:          array-like, wavevector of Dirac fermion relative to K vector
-                                For 2D wavevectors, use comlex k= kx + i ky
-
-
-        model:      'LowEnergy': Linear approximation of dispersion.
-                    'FullTightBinding': Eigenvalues of tight-binding approximation. 
-                                        We use a closed form rather than finding eigenvalues
-                                        of Hamiltonian to save time and avoid broadcasting issues.
-
-        eh:         1 or -1, return electrons or holes respectively
-
-        Returns
-        ----------
-
-        energy:     array-like, energy of Dirac fermion with wavenumber k.
-
-        References
-        ----------
-
-        [1] 
-
-        Examples
-        --------
-        Plot the Fermion dispersion relation.
-
-        >>> from graphenemodeling import graphene
-        >>> import numpy as np
-        >>> import matplotlib.pyplot as plt
-        >>> mlg = graphene.Monolayer()
-        >>> from scipy.constants import elementary_charge as eV
-        >>> eF = 0.4*eV
-        >>> kF = mlg.kFermi(eF,model='LowEnergy')
-        >>> k = np.linspace(-2*kF,2*kF,num=100)
-        >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
-        >>> valence_band = -conduction_band
-        >>> fig, ax = plt.subplots(figsize=(5,6))
-        >>> ax.plot(k/kF,conduction_band/eF,'k')
-        [...
-        >>> ax.plot(k/kF,valence_band/eF, 'k')
-        [...
-        >>> ax.plot(k/kF,np.zeros_like(k),color='gray')
-        [...
-        >>> ax.axvline(x=0,ymin=0,ymax=1,color='gray')
-        <...
-        >>> ax.set_axis_off()
-        >>> plt.show()
-
-        Plot the full multi-dimensional dispersion relation.
-
-        >>> from graphenemodeling import graphene
-        >>> import numpy as np
-        >>> import matplotlib.pyplot as plt
-        >>> from mpl_toolkits import mplot3d # 3D plotting
-        >>> mlg = graphene.Monolayer()
-        >>> kmax = np.abs(mlg.K)
-        >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding')
-        >>> kx = np.linspace(-kmax,kmax,num=100)
-        >>> ky = np.copy(kx)
-        >>> k = (kx + 1j*ky[:,np.newaxis]) + mlg.K # k is relative to K. Add K to move to center of Brillouin zone
-        >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1)
-        >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1)
-        >>> fig = plt.figure(figsize=(8,8))
-        >>> fullax = plt.axes(projection='3d')
-        >>> fullax.view_init(20,35)
-        >>> KX, KY = np.meshgrid(kx,ky)
-        >>> fullax.plot_surface(KX/kmax,KY/kmax,conduction_band/mlg.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
-        <...
-        >>> fullax.plot_surface(KX/kmax,KY/kmax,valence_band/mlg.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
-        <...
-        >>> fullax.set_xlabel('$k_x/|K|$')
-        Text...
-        >>> fullax.set_ylabel('$k_y/|K|$')
-        Text...
-        >>> fullax.set_zlabel('$\\epsilon/\\gamma_0$')
-        Text...
-        >>> fullax.set_title('Brillouin Zone of Graphene')
-        Text...
-        >>> plt.show()
-        '''
-
-
-        if model == 'LowEnergy':
-
-            return eh*sc.hbar*_c.vF*np.abs(k)
-
-        if model == 'FullTightBinding':
-
-            k = k - _c.K
-            f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*_c.A) 
-                            + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.A)*np.cos((3/2)*np.real(k)*_c.A) )
-
-            return eh*_c.g0*np.sqrt(3+ f(k)) - _c.g0prime*f(k)
-
-    def kFermi(self,eFermi,model):
-        '''
-        The Fermi wavevector, i.e. the wavevector of the state at
-        the Fermi energy.
-
-        Parameters
-        ----------
-
-        eFermi:      array-like, Fermi level
-
-        model:       'LowEnergy': Value gets derived from linear approximation of dispersion.
- 
-        Examples
-        --------
-        Confirm energy of Fermi wavevector is equal to Fermi level.
-
-        >>> from graphenemodeling import graphene
-        >>> from scipy.constants import elementary_charge as eV
-        >>> mlg = graphene.Monolayer()
-        >>> eF = 0.4 * eV # Fermi level is 0.4 eV
-        >>> kF = mlg.kFermi(eF, model='LowEnergy')
-        >>> mlg.CarrierDispersion(kF,model='LowEnergy')/eV
-        0.4
-        '''
-
-        if model == 'LowEnergy':
-            return np.abs(eFermi) / (sc.hbar*_c.vF)
-
-        if model == 'FullTightBinding':
-            '''
-            Code to numerically invert CarrierDispersion(kF,model='FullTightBinding')
-
-            Likely would use a root-finding procedure
-            '''
-            pass
 
     def DensityOfStates(self,E,model):
         '''
