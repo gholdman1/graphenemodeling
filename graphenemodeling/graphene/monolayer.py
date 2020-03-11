@@ -6,19 +6,7 @@ from graphenemodeling.graphene.base import BaseGraphene
 class Monolayer(BaseGraphene):
 
     def __init__(self,mobility=None,thickness=0.34e-9):
-        '''
-        Parameters
-        ----------
 
-        mobility:   tuple, [mobility, Tmeas] of mobility (m^2/V-s)
-                            and temperature at which it was taken
-
-        thickness:  float, the thickness of graphene.
-
-        References
-        ----------
-
-        '''
         BaseGraphene.__init__(self)
 
         if mobility != None:
