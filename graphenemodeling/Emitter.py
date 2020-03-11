@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 
-from graphenemodeling import fundamental_constants as fc
+import scipy.constants as sc 
 
 class Dipole:
 	'''
@@ -28,7 +28,7 @@ class Dipole:
 		'''
 		warnings.warn('Dipole.DecayRate has not been validated')
 
-		return (omega/fc.c0)**3 * np.linalg.norm(d,d)**2 / (3*np.pi*fc.epsilon_0*fc.hbar)
+		return (omega/sc.speed_of_light)**3 * np.linalg.norm(d,d)**2 / (3*np.pi*sc.epsilon_0*sc.hbar)
 
 	def FreeSpacePower(self,omega,d):
 		'''
@@ -37,4 +37,4 @@ class Dipole:
 		Equation 8.126 of Ref 1
 		'''
 
-		return self.FreeSpaceDecayRate*fc.hbar*omega
+		return self.FreeSpaceDecayRate*sc.hbar*omega
