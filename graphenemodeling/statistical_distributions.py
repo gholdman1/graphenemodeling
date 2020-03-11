@@ -16,7 +16,6 @@ These statistical distributions are not found in ``scipy.stats`` and are therefo
 """
 
 import numpy as np
-from graphenemodeling import fundamental_constants as fc
 from scipy.constants import speed_of_light,hbar, k
 
 kB = k
@@ -88,7 +87,7 @@ def BoseEinstein(E,T):
 
     # Using logaddexp reduces chance of underflow error
     # Adds a tiny offset to temperature to avoid division by zero.
-    BE = np.exp( -np.logaddexp(E/(kB*(T+0.000000000001)),1j*fc.pi) )
+    BE = np.exp( -np.logaddexp(E/(kB*(T+0.000000000001)),1j*np.pi) )
 
     return BE
 
@@ -121,7 +120,7 @@ def Boltzmann(E,T):
 
     Tp =T + 1e-9
 
-    #boltz = np.exp( -np.logaddexp(E/(kB*Tp),1j*fc.pi) )
+    #boltz = np.exp( -np.logaddexp(E/(kB*Tp),1j*np.pi) )
 
     boltz = ( np.exp(E/(kB*Tp)) - 1)**(-1)
 
@@ -157,7 +156,7 @@ def Lorentz(p,x):
 
     '''
 
-    return p[2] * ( (p[1]/2)/fc.pi)**2 / ( (p[0]-x)**2 + (p[1]/2)**2 )
+    return p[2] * ( (p[1]/2)/np.pi)**2 / ( (p[0]-x)**2 + (p[1]/2)**2 )
 
 def Planck(x,T,int_var='omega'):
     """The Planck distribution.
