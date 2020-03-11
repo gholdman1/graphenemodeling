@@ -2,16 +2,13 @@ import numpy as np
 import scipy.constants as sc
 
 from graphenemodeling.graphene.base import BaseGraphene
+from graphenemodeling.graphene._constants import *
 
 class Monolayer(BaseGraphene):
 
-    def __init__(self,mobility=None,thickness=0.34e-9):
+    def __init__(self,thickness=0.34e-9):
 
         BaseGraphene.__init__(self)
-
-        if mobility != None:
-            self.mu0 = mobility[0]
-            self.mu0T= mobility[1]
 
         self.thickness = thickness
 
@@ -566,7 +563,7 @@ class Monolayer(BaseGraphene):
 
         return conductivity
 
-    def OpticalConductivityMatrix(self,q,omega,gamma, eFermi,T):
+    def OpticalConductivityMatrix(self,q,omega,gamma, eFermi,T,mu0,mu0T):
         '''
         Returns the conductivity matrix of monolayer graphene.
 
@@ -615,7 +612,7 @@ class Monolayer(BaseGraphene):
             x2 = sc.hbar
             x3 = eFermi
             x4 = self.vF
-            x5 = self.Mobility(T,self.mu0,self.mu0T) # mobility at the new temperature
+            x5 = self.Mobility(T,mu0,mu0T) # mobility at the new temperature
             x6 = epsR
 
             x7 = self.thickness # 3.4 angstroms by default
