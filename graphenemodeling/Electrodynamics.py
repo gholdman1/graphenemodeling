@@ -5,7 +5,7 @@ import warnings
 from scipy import integrate
 from scipy import optimize
 
-import fundamental_constants as fc
+import scipy.constants as sc
 
 def constant_to_callable(eps):
 	'''
@@ -42,16 +42,16 @@ def ScalarGreenFunctionVacuum(r1,r2,omega):
 
 	'''
 
-	k0 = omega/fc.c0
+	k0 = omega/sc.speed_of_light
 	dr = r1-r2
 
 	if np.dot(dr,dr) == 0:
-		return 1j*k0 / (4*fc.pi)
+		return 1j*k0 / (4*np.pi)
 
 	absdr = np.sqrt(np.dot(dr,dr))
 
 	num = np.exp(1j*k0*absdr)
-	den = 4*fc.pi*absdr
+	den = 4*np.pi*absdr
 
 	G = num/den 
 
@@ -85,7 +85,7 @@ def DyadicGreenFunctionVacuum(r1,r2,omega):
 	RR = np.outer(dr/absdr,dr/absdr)
 	I = np.eye(3)
 
-	k0 = omega/fc.c0
+	k0 = omega/sc.speed_of_light
 
 	term1 = (3 / (k0*absdr)**2) - (3*1j / (k0*absdr) ) - 1
 	term2 = 1 + (1j / (k0*absdr)) - (1 / (k0*absdr)**2)
@@ -125,7 +125,7 @@ def ScalarGreenFunctionHalfSpace(r1,r2,omega,eps1,eps2):
 	absdr = np.sqrt(np.dot(dr,dr))
 	absdrim=np.sqrt(np.dot(drim,drim))
 
-	k = 1 / (4*fc.pi)
+	k = 1 / (4*np.pi)
 
 	# Source is in eps1
 	if r2[2] > 0:
@@ -261,7 +261,7 @@ def FresnelReflection(kpar,omega,eps1,eps2,pol,sigma):
 		del sigma
 		sigma = lambda kp,w: sigfloat
 
-	k0 = (omega/fc.c0)
+	k0 = (omega/sc.speed_of_light)
 
 	# Get perpendicular momenta
 	kperp1 = np.sqrt(eps1(kpar,omega)*k0**2 - kpar**2 + 1e-9*1j)
@@ -271,16 +271,16 @@ def FresnelReflection(kpar,omega,eps1,eps2,pol,sigma):
 
 		numerator = (eps2(kpar,omega)*kperp1
 					-eps1(kpar,omega)*kperp2
-					+ sigma(kpar,omega)*kperp1*kperp2/(fc.epsilon_0*omega) )
+					+ sigma(kpar,omega)*kperp1*kperp2/(sc.epsilon_0*omega) )
 		denominator= (eps2(kpar,omega)*kperp1
 					+eps1(kpar,omega)*kperp2
-					+ sigma(kpar,omega)*kperp1*kperp2/(fc.epsilon_0*omega) )
+					+ sigma(kpar,omega)*kperp1*kperp2/(sc.epsilon_0*omega) )
 
 		return numerator / denominator
 
 	if pol=='s' or pol=='TE':
-		numerator = kperp1-kperp2 - fc.mu0*omega*sigma(kpar,omega)
-		denominator=kperp1+kperp2 + fc.mu0*omega*sigma(kpar,omega)
+		numerator = kperp1-kperp2 - sc.mu_0*omega*sigma(kpar,omega)
+		denominator=kperp1+kperp2 + sc.mu_0*omega*sigma(kpar,omega)
 
 		return numerator/denominator
 
@@ -338,7 +338,7 @@ def FresnelTransmission(kpar,omega,eps1,eps2,pol,sigma=0):
 		del sigma
 		sigma = lambda kp,w: sigfloat
 
-	k0 = (omega/fc.c0)
+	k0 = (omega/sc.speed_of_light)
 	# Get perpendicular momenta
 	kperp1 = np.sqrt(eps1(kpar,omega)*k0**2 - kpar**2 + 1j*1e-9)
 	kperp2 = np.sqrt(eps2(kpar,omega)*k0**2 - kpar**2 + 1j*1e-9)
@@ -348,14 +348,14 @@ def FresnelTransmission(kpar,omega,eps1,eps2,pol,sigma=0):
 		numerator = 2 * eps2(kpar,omega)*kperp1
 		denominator= ( eps2(kpar,omega)*kperp1 + 
 					   eps1(kpar,omega)*kperp2 +
-					   sigma(kpar,omega)*kperp1*kperp2 / (fc.epsilon_0*omega) )
+					   sigma(kpar,omega)*kperp1*kperp2 / (sc.epsilon_0*omega) )
 
 		return (numerator / denominator) * np.sqrt(eps1(kpar,omega)/eps2(kpar,omega))
 
 	if pol=='s' or pol=='TE':
 
 		numerator=2*kperp1
-		denominator=kperp1 + kperp2 + fc.mu0*omega*sigma(kpar,omega)
+		denominator=kperp1 + kperp2 + sc.mu_0*omega*sigma(kpar,omega)
 
 		return numerator/denominator
 
@@ -427,7 +427,7 @@ def PropagationMatrix(z,kpar,omega,eps):
 
 	'''
 
-	k0 = omega / fc.c0
+	k0 = omega / sc.speed_of_light
 
 	# Define constant permittivities as callables
 	# for generality.
@@ -560,12 +560,12 @@ def PlasmonDispersionRelation(kpar,eps1,eps2,sigma=0,
 		sigma = lambda kp,w: sigfloat
 
 	# Get perpendicular momenta
-	kperp1 = lambda kp,w: np.sqrt( (kp*fc.c0/w)**2 - eps1(kp,w) - 1e-9*1j)
-	kperp2 = lambda kp,w: np.sqrt( (kp*fc.c0/w)**2 - eps2(kp,w) - 1e-9*1j)
+	kperp1 = lambda kp,w: np.sqrt( (kp*sc.speed_of_light/w)**2 - eps1(kp,w) - 1e-9*1j)
+	kperp2 = lambda kp,w: np.sqrt( (kp*sc.speed_of_light/w)**2 - eps2(kp,w) - 1e-9*1j)
 
 	term1 = lambda kp,w: eps1(kp,w) / kperp1(kp,w)
 	term2 = lambda kp,w: eps2(kp,w) / kperp2(kp,w)
-	term3 = lambda kp,w: sigma(kp,w) / (1j*fc.epsilon_0*fc.c0)
+	term3 = lambda kp,w: sigma(kp,w) / (1j*sc.epsilon_0*sc.speed_of_light)
 
 	# Initialize as [[-1,-1],...]
 	# [-1,-1] is a signal of invalid solution
@@ -650,7 +650,7 @@ def InversePlasmonDispersionRelation(omega,eps1,eps2,sigma=0,
 	return qreturn
 
 def LDOSVacuum(omega):
-    return omega**2 / (fc.pi**2*fc.c0**3)
+    return omega**2 / (np.pi**2*sc.speed_of_light**3)
 
 
 def RadiativeLDOSHalfspace(z,omega,eps1,eps2,sigma,field,starts=None,verbose=False):
@@ -694,7 +694,7 @@ def RadiativeLDOSHalfspace(z,omega,eps1,eps2,sigma,field,starts=None,verbose=Fal
 
 	for i in range(np.size(omega)):
 		w = omega[i]
-		k0 = w/fc.c0
+		k0 = w/sc.speed_of_light
 
 		rp = lambda kp: FresnelReflection(kp*k0,w,eps1,eps2,pol='p')
 		rs = lambda kp: FresnelReflection(kp*k0,w,eps1,eps2,pol='s')
@@ -771,7 +771,7 @@ def EvanescentLDOSHalfspace(z,omega,eps1,eps2,sigma,field,starts=None,kcutoff=1e
 	for i in range(np.size(omega)):
 		w = omega[i]
 
-		k0 = w / fc.c0
+		k0 = w / sc.speed_of_light
 		# Define Fresnel coefficients in terms of normalized in-plane wavenumber
 		rp = lambda kp: FresnelReflection(kp*k0,w,eps1,eps2,pol='p')
 		rs = lambda kp: FresnelReflection(kp*k0,w,eps1,eps2,pol='s')
@@ -837,7 +837,7 @@ def LDOSHalfspace(z,omega,eps1,eps2,sigma=0,starts=None,kcutoff=1e10):
 		https://doi.org/10.1103/PhysRevB.87.085421.
 	'''
 
-	k0 = omega/fc.c0
+	k0 = omega/sc.speed_of_light
 	rp = lambda kp: FresnelReflection(kp*k0,omega,eps1,eps2,pol='p')
 	rs = lambda kp: FresnelReflection(kp*k0,omega,eps1,eps2,pol='s')
 
@@ -904,7 +904,7 @@ def LDOS(r,omega,GE,GH):
 	
 	'''
 
-	prefactor = omega/ (fc.pi*fc.c0**2)
+	prefactor = omega/ (np.pi*sc.speed_of_light**2)
 
 	tr = GE.Trace(r,r,omega) + GH.Trace(r,r,omega)
 

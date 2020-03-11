@@ -2,7 +2,6 @@ import os
 import numpy as np
 import warnings
 
-import fundamental_constants as fc
 import statistical_distributions as sd
 import Electrodynamics as em
 
