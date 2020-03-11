@@ -1,3 +1,21 @@
+"""
+=============================================================================
+Statistical Distributions (:mod:`graphenemodeling.statistical_distributions`)
+=============================================================================
+
+These statistical distributions are not found in ``scipy.stats`` and are therefore offered here.
+
+.. autosummary::
+
+    FermiDirac
+    BoseEinstein
+    Boltzmann
+    Lorentz
+    Planck
+
+
+"""
+
 import numpy as np
 from graphenemodeling import fundamental_constants as fc
 from scipy.constants import speed_of_light,hbar, k
@@ -10,21 +28,24 @@ def FermiDirac(E, T):
 
     Parameters
     ----------
-    E:    		array-like,
-    			Energy (J)
+    E:    		array-like, Energy (J)
 
-    T:      	scalar,
-    			Temperature (K)
+    T:      	scalar, Temperature (K)
 
     Returns
-    ----------
-    FD:         array-like,
-                Fermi-Dirac probability of occupation of state at energy E.
+    -------
+    FD:         array-like, Fermi-Dirac probability of occupation of state at energy E.
+
+    Examples
+    --------
+
+    >>> from graphenemodeling.statistical_distributions import FermiDirac
+    >>> import numpy as np
 
     """
 
-    # Using logaddexp reduces chance of underflow error
-    # Adds a tiny offset to temperature to avoid division by zero.
+    # np.logaddexp reduces chance of underflow error.
+    # Add a tiny offset to temperature to avoid division by zero.
     FD = np.exp( -np.logaddexp(E/(kB*(T+0.000000000001)),0) )
 
     return FD
@@ -35,11 +56,9 @@ def BoseEinstein(E,T):
 
     Parameters
     ----------
-    E:          array-like,
-                Energy (J)
+    E:          array-like, Energy (J)
 
-    T:          scalar,
-                Temperature (K)
+    T:          scalar, Temperature (K)
 
     Returns
     ----------
@@ -95,6 +114,11 @@ def Lorentz(p,x):
     return p[2] * ( (p[1]/2)/fc.pi)**2 / ( (p[0]-x)**2 + (p[1]/2)**2 )
 
 def Planck(x,T,int_var='omega'):
+    """
+    The Planck distribution.
+
+
+    """
 
     if int_var=='omega':
         
