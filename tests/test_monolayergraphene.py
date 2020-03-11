@@ -3,7 +3,7 @@ import pytest
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from graphenemodeling.graphene import Monolayer
+from graphenemodeling.graphene.monolayer import Monolayer
 from scipy import constants as sc
 import numpy as np
 

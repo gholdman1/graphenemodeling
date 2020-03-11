@@ -1,3 +1,8 @@
+import numpy as np
+import scipy.constants as sc
+
+from graphenemodeling.graphene.base import BaseGraphene
+
 class Monolayer(BaseGraphene):
 
     def __init__(self,mobility=None,thickness=0.34e-9):
