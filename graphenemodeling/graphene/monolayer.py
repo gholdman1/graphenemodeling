@@ -10,8 +10,6 @@ class Monolayer(BaseGraphene):
 
         BaseGraphene.__init__(self)
 
-        self.thickness = _c.thickness
-
     ##################
     # Band Structure #
     ##################
@@ -40,7 +38,7 @@ class Monolayer(BaseGraphene):
 
         if model == 'LowEnergy':
             H11 = 0
-            H12 = sc.hbar * self.vF * k
+            H12 = sc.hbar * _c.vF * k
             H21 = np.conj(H12)
             H22 = 0
 
@@ -49,8 +47,8 @@ class Monolayer(BaseGraphene):
             ky = np.imag(k)
 
             H11 = 0
-            H12 = self.g0 * (   np.exp(1j*kx*self.a/2)
-                                + 2*np.exp(-1j*kx*self.a/2)*np.cos(ky*self.a*np.sqrt(3)/2) )
+            H12 = _c.g0 * (   np.exp(1j*kx*_c.A/2)
+                                + 2*np.exp(-1j*kx*_c.A/2)*np.cos(ky*_c.A*np.sqrt(3)/2) )
             H21 = np.conj(H12)
             H22 = 0
 
@@ -149,15 +147,15 @@ class Monolayer(BaseGraphene):
 
         if model == 'LowEnergy':
 
-            return eh*sc.hbar*self.vF*np.abs(k)
+            return eh*sc.hbar*_c.vF*np.abs(k)
 
         if model == 'FullTightBinding':
 
-            k = k - self.K
-            f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*self.a) 
-                            + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*self.a)*np.cos((3/2)*np.real(k)*self.a) )
+            k = k - _c.K
+            f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*_c.A) 
+                            + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.A)*np.cos((3/2)*np.real(k)*_c.A) )
 
-            return eh*self.g0*np.sqrt(3+ f(k)) - self.g0prime*f(k)
+            return eh*_c.g0*np.sqrt(3+ f(k)) - _c.g0prime*f(k)
 
     def kFermi(self,eFermi,model):
         '''
@@ -185,7 +183,7 @@ class Monolayer(BaseGraphene):
         '''
 
         if model == 'LowEnergy':
-            return np.abs(eFermi) / (sc.hbar*self.vF)
+            return np.abs(eFermi) / (sc.hbar*_c.vF)
 
         if model == 'FullTightBinding':
             '''
@@ -244,7 +242,7 @@ class Monolayer(BaseGraphene):
 
             E = np.abs(E)
 
-            DOS = 2 * E / (sc.pi*(sc.hbar*self.vF)**2)
+            DOS = 2 * E / (sc.pi*(sc.hbar*_c.vF)**2)
 
             return DOS
 
@@ -253,24 +251,24 @@ class Monolayer(BaseGraphene):
             Equation 14 of Ref 1
             '''
 
-            prefactor = 4*np.abs(E) / (sc.pi*self.g0)**2
+            prefactor = 4*np.abs(E) / (sc.pi*_c.g0)**2
 
             def fZ0(E):
-                if np.abs(E)<np.abs(self.g0):
-                    term1 = (1+np.abs(E/self.g0))**2
-                    term2 = -((E/self.g0)**2 - 1)**2 / 4
+                if np.abs(E)<np.abs(_c.g0):
+                    term1 = (1+np.abs(E/_c.g0))**2
+                    term2 = -((E/_c.g0)**2 - 1)**2 / 4
 
                     return term1 + term2
 
-                else: return 4*np.abs(E/self.g0)
+                else: return 4*np.abs(E/_c.g0)
 
             def fZ1(E):
-                if np.abs(E)<np.abs(self.g0):
-                    return 4*np.abs(E/self.g0)
+                if np.abs(E)<np.abs(_c.g0):
+                    return 4*np.abs(E/_c.g0)
 
                 else:
-                    term1 = (1+np.abs(E/self.g0))**2
-                    term2 = -((E/self.g0)**2 - 1)**2 / 4
+                    term1 = (1+np.abs(E/_c.g0))**2
+                    term2 = -((E/_c.g0)**2 - 1)**2 / 4
 
                     return term1 + term2
 
@@ -282,7 +280,7 @@ class Monolayer(BaseGraphene):
                 ellip = special.ellipk(np.sqrt(Z1/Z0))
 
                 dos[j] = (1/np.sqrt(Z0)) * ellip
-            DOS = prefactor * dos /self.A
+            DOS = prefactor * dos /_c.A
 
             return DOS
         else:
@@ -299,8 +297,8 @@ class Monolayer(BaseGraphene):
         for i, m in np.ndenumerate(muC):
             p_electron = lambda e: self.DensityOfStates(e,model) * sd.FermiDirac(e-m,T)
             p_hole = lambda e: self.DensityOfStates(e,model) * (1 - sd.FermiDirac(e-m,T))
-            n[i] = ( integrate.quad(p_electron,0,3*self.g0,points=(self.g0,m))[0] -
-                     integrate.quad(p_hole,-3*self.g0,0,points=(-self.g0,-m))[0]   )
+            n[i] = ( integrate.quad(p_electron,0,3*_c.g0,points=(_c.g0,m))[0] -
+                     integrate.quad(p_hole,-3*_c.g0,0,points=(-_c.g0,-m))[0]   )
         return n
 
     def FermiLevel(self,n,T=0):
@@ -314,7 +312,7 @@ class Monolayer(BaseGraphene):
         '''
 
         if T==0:
-            return sc.hbar*self.vF*np.sqrt(sc.pi*n)
+            return sc.hbar*_c.vF*np.sqrt(sc.pi*n)
 
         else:
             warnings.warn('Monolayer.FermiLevel: not available')
@@ -366,7 +364,7 @@ class Monolayer(BaseGraphene):
         '''
 
         # Scattering time
-        tau = mobility*eFermi / (sc.elementary_charge*self.vF**2)
+        tau = mobility*eFermi / (sc.elementary_charge*_c.vF**2)
 
         rate = 1/tau
         return rate
@@ -610,11 +608,11 @@ class Monolayer(BaseGraphene):
             x1 = sc.elementary_charge
             x2 = sc.hbar
             x3 = eFermi
-            x4 = self.vF
+            x4 = _c.vF
             x5 = self.Mobility(T,mu0,mu0T) # mobility at the new temperature
             x6 = epsR
 
-            x7 = self.thickness # 3.4 angstroms by default
+            x7 = _c.thickness # 3.4 angstroms by default
             x8 = sc.epsilon_0
 
             prefactor = x1**2*x3 / ( sc.pi * x2**2)
@@ -696,7 +694,7 @@ class Monolayer(BaseGraphene):
 
             integrand = lambda kpar: (kpar**2/k0w**3)*Im_rp(kpar)*np.exp(-2*kpar*d0)
 
-            a,b = 1e-3, np.abs(self.K) # Increasing this bound does not lead to more convergence
+            a,b = 1e-3, np.abs(_c.K) # Increasing this bound does not lead to more convergence
 
             k_plasmon=self.InversePlasmonDispersion(omega,gamma,eFermi,1,1,T,model='nonlocal')
 
@@ -874,10 +872,10 @@ class Monolayer(BaseGraphene):
         pFit = np.empty((np.size(q),3))
 
         for i,q0 in np.ndenumerate(q):
-            w1 = q0*self.vF
+            w1 = q0*_c.vF
             w2 = self.PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra')
             w0 = (w2+w1)/2
-            # omega=np.linspace(q0*self.vF,2*q0*self.vF,num=300)
+            # omega=np.linspace(q0*_c.vF,2*q0*_c.vF,num=300)
             omega=np.linspace(w1,w2,num=300)
 
             y = np.imag(self.FresnelReflection(q0,omega,gamma,eFermi,T,eps1,eps2,'TM'))
@@ -1039,7 +1037,7 @@ class Monolayer(BaseGraphene):
 
             integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
 
-            b = np.abs(self.K) # Increasing this bound does not lead to more convergence
+            b = np.abs(_c.K) # Increasing this bound does not lead to more convergence
             kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
             k_plasmon=self.InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
 
