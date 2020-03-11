@@ -24,5 +24,5 @@ class TestBoseEinstein:
 		E = kB*T
 
 
-		be = sd.BoseEinstein(E,T)
+		#be = sd.BoseEinstein(E,T)
 
