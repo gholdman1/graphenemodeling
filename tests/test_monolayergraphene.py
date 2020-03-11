@@ -4,7 +4,6 @@ import pytest
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 import graphenemodeling.graphene.monolayer as mlg
-from graphenemodeling.graphene.monolayer import Monolayer
 import graphenemodeling.graphene._constants as _c
 from scipy import constants as sc
 import numpy as np
@@ -31,7 +30,6 @@ class TestMonolayerGraphene:
 		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
 
 	def test_Hamiltonian_LowEnergy(self):
-		gr = mlg.Monolayer()
 
 		eF = 0.4 * sc.elementary_charge
 		kF = mlg.kFermi(eF,model='LowEnergy')
