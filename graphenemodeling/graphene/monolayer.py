@@ -4,11 +4,11 @@ import scipy.constants as sc
 from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
 
-class Monolayer(BaseGraphene):
+class Monolayer:
 
     def __init__(self):
 
-        BaseGraphene.__init__(self)
+        pass
 
     ##################
     # Band Structure #

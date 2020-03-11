@@ -4,6 +4,7 @@ import pytest
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from graphenemodeling.graphene.monolayer import Monolayer
+import graphenemodeling.graphene._constants as _c
 from scipy import constants as sc
 import numpy as np
 
@@ -27,7 +28,7 @@ class TestMonolayerGraphene:
 
 	def test_DensityOfStates_LowEnergy(self):
 		mlg = Monolayer()
-		E = 1 * mlg.g0
+		E = 1 * _c.g0
 		DOS = mlg.DensityOfStates(E,model='LowEnergy')
 		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
 
