@@ -1,21 +1,10 @@
 """
-Graphene (:mod:`graphene`)
+Structures (:mod:`structures`)
 ==========================
 
-The `graphene` module attempts to implement all types of graphene from nanostructured to planar with any number of layers.
+The `structures` module attempts to implement all types of graphene as objects from nanostructured to planar with any number of layers.
 
-Monolayer
----------
-
-.. autoclass:: Monolayer
-   :members:
-
-Bilayer
--------
-.. autoclass:: Bilayer
-   :members:
 """
-
 
 import os
 import numpy as np
@@ -35,9 +24,6 @@ hbar = sc.hbar
 Z0 = sc.physical_constants['characteristic impedance of vacuum']
 sigma_0 = sc.elementary_charge**2 / (4 * sc.hbar)
 kB = sc.Boltzmann
-
-
-
 
 class HalfPlane(BaseGraphene):
     '''
