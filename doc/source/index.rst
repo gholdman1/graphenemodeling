@@ -1,22 +1,29 @@
 GrapheneModeling
 ================
 
-A large amount of literature has been written on graphene. The singular 
-goal of GrapheneModeling is to compile the most important literature 
-as executable code into one Python package for the use of the community.
+GrapheneModeling makes modeling graphene easy!
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+A large amount of literature has been written on graphene. The singular 
+goal of GraphenemModeling is to compile the most important 
+literature as executable code into one Python package for the use of 
+the community.
+
+Are you a research group looking to explain your experiment with 
+theory?
+
+Are you an early graduate student getting up to speed on graphene 
+literature?
+
+Install GrapheneModeling!
 
 Documentation
 -------------
 
 Follow the links below to see the documentation on 
-`graphenemodeling`.
+GrapheneModeling.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    graphene
    statistical_distributions
