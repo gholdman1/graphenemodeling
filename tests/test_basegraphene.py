@@ -3,17 +3,14 @@ import pytest
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from graphenemodeling.graphene import BaseGraphene
+from graphenemodeling.graphene import base
 from scipy import constants as sc
 
 
 class TestBaseGraphene:
 
-	def test_initialize(self):
-		bg = BaseGraphene()
-
 	def test_constants(self):
-		bg = BaseGraphene()
+		bg = base.BaseGraphene()
 
 		assert bg.a == 1.42e-10
 		assert bg.A == 3*(3**(1/2))*(bg.a**2) / 2
