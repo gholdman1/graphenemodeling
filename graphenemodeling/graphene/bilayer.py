@@ -1,3 +1,10 @@
+import numpy as np
+import scipy.constants as sc
+
+from graphenemodeling.graphene.base import BaseGraphene
+eVtoJ = sc.elementary_charge
+e0 = sc.epsilon_0
+
 class Bilayer(BaseGraphene):
     """
     Bilayer graphene class which inherits the parameters of the
