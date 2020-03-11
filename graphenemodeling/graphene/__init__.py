@@ -18,4 +18,10 @@ Bilayer
 =======
 
 The ``bilayer`` module contains functions for a infinite sheet of Bernal-stacked bilayer graphene.
+
+Constants
+=========
+
+The above modules import the ``_constants`` module, which defines constants relevant to all types of graphene.
+
 """
