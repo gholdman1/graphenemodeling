@@ -8,6 +8,7 @@ from scipy import constants as sc
 eVtoJ = sc.elementary_charge
 hbar = sc.hbar
 
+thickness =0.34e-9				# (m), thickness of graphene
 a = 1.42*1e-10                         # (m), Interatom spacing
 A = 3*(3**(1/2))*(a**2) / 2      # (m^2), area of unit cell of graphene
 g0 = 2.8*eVtoJ                         # (J), Interatom hopping potential

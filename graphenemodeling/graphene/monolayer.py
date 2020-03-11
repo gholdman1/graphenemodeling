@@ -2,17 +2,16 @@ import numpy as np
 import scipy.constants as sc
 
 from graphenemodeling.graphene.base import BaseGraphene
-from graphenemodeling.graphene._constants import *
+import graphenemodeling.graphene._constants as _c
 
 class Monolayer(BaseGraphene):
 
-    def __init__(self,thickness=0.34e-9):
+    def __init__(self):
 
         BaseGraphene.__init__(self)
 
-        self.thickness = thickness
+        self.thickness = _c.thickness
 
-        
     ##################
     # Band Structure #
     ##################
