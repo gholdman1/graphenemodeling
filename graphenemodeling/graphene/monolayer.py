@@ -184,6 +184,98 @@ def kFermi(eFermi,model):
         '''
         pass
 
+def DensityOfStates(E,model):
+    '''
+    The density of states per unit cell in graphene at energy E.
+
+    Parameters
+    ----------
+
+    E:          Energy at which to evaluate DOS.
+
+    model:      'LowEnergy': DOS derived from linear approximation of dispersion.
+
+    Returns
+    -------
+
+    DOS:        Density of states, units states J^-1 m^-2
+
+    References
+    ----------
+
+    [1]     Castro Neto et al. Reviews of Modern Physics 81, 2009.
+            URL:
+
+    Examples
+    --------
+    Plot the density of states in the `LowEnergy` approximation and `FullTightBinding` model.
+
+    >>> from graphenemodeling import graphene
+    >>> import matplotlib.pyplot as plt
+    >>> mlg = graphene.Monolayer()
+    >>> E = np.linspace(-3,3,num=200) * mlg.g0
+    >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
+    >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
+    >>> plt.plot(E/mlg.g0,DOS_full/np.max(DOS_full),label='FullTightBinding')
+    [<...
+    >>> plt.plot(E/mlg.g0,DOS_low/np.max(DOS_full),label='LowEnergy')
+    [<...
+    >>> plt.xlabel('$E/g_0$')
+    Text...
+    >>> plt.ylabel('DOS (a.u.)')
+    Text...
+    >>> plt.legend()
+    <...
+    >>> plt.show()
+    '''
+
+    if model=='LowEnergy':
+
+        E = np.abs(E)
+
+        DOS = 2 * E / (sc.pi*(sc.hbar*_c.vF)**2)
+
+        return DOS
+
+    elif model=='FullTightBinding':
+        '''
+        Equation 14 of Ref 1
+        '''
+
+        prefactor = 4*np.abs(E) / (sc.pi*_c.g0)**2
+
+        def fZ0(E):
+            if np.abs(E)<np.abs(_c.g0):
+                term1 = (1+np.abs(E/_c.g0))**2
+                term2 = -((E/_c.g0)**2 - 1)**2 / 4
+
+                return term1 + term2
+
+            else: return 4*np.abs(E/_c.g0)
+
+        def fZ1(E):
+            if np.abs(E)<np.abs(_c.g0):
+                return 4*np.abs(E/_c.g0)
+
+            else:
+                term1 = (1+np.abs(E/_c.g0))**2
+                term2 = -((E/_c.g0)**2 - 1)**2 / 4
+
+                return term1 + term2
+
+        dos = np.empty_like(E)
+
+        for j, e in np.ndenumerate(E):
+            Z0 = fZ0(e)
+            Z1 = fZ1(e)
+            ellip = special.ellipk(np.sqrt(Z1/Z0))
+
+            dos[j] = (1/np.sqrt(Z0)) * ellip
+        DOS = prefactor * dos /_c.A
+
+        return DOS
+    else:
+        print('The model %s is not available' % (model))
 
 
 class Monolayer:
@@ -198,98 +290,6 @@ class Monolayer:
 
 
 
-    def DensityOfStates(self,E,model):
-        '''
-        The density of states per unit cell in graphene at energy E.
-
-        Parameters
-        ----------
-
-        E:          Energy at which to evaluate DOS.
-
-        model:      'LowEnergy': DOS derived from linear approximation of dispersion.
-
-        Returns
-        -------
-
-        DOS:        Density of states, units states J^-1 m^-2
-
-        References
-        ----------
-
-        [1]     Castro Neto et al. Reviews of Modern Physics 81, 2009.
-                URL:
-
-        Examples
-        --------
-        Plot the density of states in the `LowEnergy` approximation and `FullTightBinding` model.
-
-        >>> from graphenemodeling import graphene
-        >>> import matplotlib.pyplot as plt
-        >>> mlg = graphene.Monolayer()
-        >>> E = np.linspace(-3,3,num=200) * mlg.g0
-        >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
-        >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
-        >>> plt.plot(E/mlg.g0,DOS_full/np.max(DOS_full),label='FullTightBinding')
-        [<...
-        >>> plt.plot(E/mlg.g0,DOS_low/np.max(DOS_full),label='LowEnergy')
-        [<...
-        >>> plt.xlabel('$E/g_0$')
-        Text...
-        >>> plt.ylabel('DOS (a.u.)')
-        Text...
-        >>> plt.legend()
-        <...
-        >>> plt.show()
-        '''
-
-        if model=='LowEnergy':
-
-            E = np.abs(E)
-
-            DOS = 2 * E / (sc.pi*(sc.hbar*_c.vF)**2)
-
-            return DOS
-
-        elif model=='FullTightBinding':
-            '''
-            Equation 14 of Ref 1
-            '''
-
-            prefactor = 4*np.abs(E) / (sc.pi*_c.g0)**2
-
-            def fZ0(E):
-                if np.abs(E)<np.abs(_c.g0):
-                    term1 = (1+np.abs(E/_c.g0))**2
-                    term2 = -((E/_c.g0)**2 - 1)**2 / 4
-
-                    return term1 + term2
-
-                else: return 4*np.abs(E/_c.g0)
-
-            def fZ1(E):
-                if np.abs(E)<np.abs(_c.g0):
-                    return 4*np.abs(E/_c.g0)
-
-                else:
-                    term1 = (1+np.abs(E/_c.g0))**2
-                    term2 = -((E/_c.g0)**2 - 1)**2 / 4
-
-                    return term1 + term2
-
-            dos = np.empty_like(E)
-
-            for j, e in np.ndenumerate(E):
-                Z0 = fZ0(e)
-                Z1 = fZ1(e)
-                ellip = special.ellipk(np.sqrt(Z1/Z0))
-
-                dos[j] = (1/np.sqrt(Z0)) * ellip
-            DOS = prefactor * dos /_c.A
-
-            return DOS
-        else:
-            print('The model %s is not available' % (model))
 
     def CarrierDensity(self,muC,T,model):
         '''

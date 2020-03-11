@@ -26,9 +26,8 @@ class TestMonolayerGraphene:
 		assert mlg.CarrierDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
 
 	def test_DensityOfStates_LowEnergy(self):
-		gr = mlg.Monolayer()
 		E = 1 * _c.g0
-		DOS = gr.DensityOfStates(E,model='LowEnergy')
+		DOS = mlg.DensityOfStates(E,model='LowEnergy')
 		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
 
 	def test_Hamiltonian_LowEnergy(self):
