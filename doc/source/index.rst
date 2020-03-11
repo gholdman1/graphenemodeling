@@ -20,6 +20,13 @@ Follow the links below to see the documentation on
 
    graphene
    statistical_distributions
+
+Installation
+------------
+GrapheneModeling is available through ``pip``.
+
+``> pip install graphenemodeling``
+
 Help and Questions
 ------------------
 
