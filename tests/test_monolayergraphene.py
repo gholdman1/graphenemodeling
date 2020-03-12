@@ -10,7 +10,7 @@ import numpy as np
 
 
 class TestHamiltonian:
-	
+
 	def test_Hamiltonian_LowEnergy(self):
 
 		eF = 0.4 * sc.elementary_charge
@@ -22,6 +22,12 @@ class TestHamiltonian:
 		energy = np.max(np.linalg.eigh(H)[0])
 
 		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'),rtol=1e-05)
+
+class TestCarrierDispersion:
+
+	def test_eh_error(self):
+		with pytest.raises(ValueError):
+			mlg.CarrierDispersion(0,'LowEnergy',eh=2)
 
 
 class TestMonolayerGraphene:

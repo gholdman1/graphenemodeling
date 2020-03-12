@@ -20,14 +20,41 @@ import scipy.constants as sc
 from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
 
+############
+# Geometry #
+############
+
+def AtomicPosition(m,n):
+    '''Position of carbon atoms
+
+    Parameters
+    ----------
+
+    m, n:   Unit cell indices.
+
+    References
+    ----------
+
+    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009). The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162. https://link.aps.org/doi/10.1103/RevModPhys.81.109.
+
+    '''
+    a1 = np.array(_c.a1)
+    a2 = np.array(_c.a2)
+
+    pos = m*a1 + n*a2
+
+    return pos
+
+
 ##################
 # Band Structure #
 ##################
 
+
 def Hamiltonian(k,model='LowEnergy'):
     '''Tight-binding Hamiltonian in k-space.
 
-    The common ``LowEnergy`` approximation is
+    Let :math:`k=k_x+ik_y`. Then the common ``model=LowEnergy`` approximation is
 
     .. math::
 
@@ -37,16 +64,16 @@ def Hamiltonian(k,model='LowEnergy'):
 
                                     } \\right)
 
-    The full tight binding model 
+    while the ``model=FullTightBinding`` expression is given by 
 
     .. math::
 
         H = \\gamma_0 \\left(\\array{
-                                0 & f(\\vec k) \n
-                                f(\\vec k)^* & 0
+                                0 & f(k) \n
+                                f(k)^* & 0
                                         } \\right)
 
-    where :math:`f(\\vec k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
+    where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 
     Parameters
     ----------
@@ -61,7 +88,9 @@ def Hamiltonian(k,model='LowEnergy'):
     References
     ----------
 
-    [1] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284.
+    [1] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284. https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
+
+    [2] Christensen, T. (2017). From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing). http://link.springer.com/10.1007/978-3-319-48562-1.
 
 
     '''
@@ -88,16 +117,17 @@ def Hamiltonian(k,model='LowEnergy'):
     return H
 
 def CarrierDispersion(k,model,eh=1):
-    '''
-    Gives the dispersion of Dirac fermions in monolayer graphene.
+    '''The dispersion of Dirac fermions in monolayer graphene.
 
-    These are the eigenvalues of the Hamiltonian. However, in both the ``LowEnergy`` model and the ``FullTightBinding`` model, we use closed form solutions rather than solving for the eigenvalues directly.
+    These are the eigenvalues of the Hamiltonian.
+    However, in both the ``LowEnergy`` model and the ``FullTightBinding`` model, we use closed form solutions rather than solving for the eigenvalues directly.
+    This saves time and make broadcasting easier.
 
     When ``model='LowEnergy'``,
 
     .. math::
 
-        E = \\hbar v_F |k|
+        E =\\pm\\hbar v_F |k|
 
     When ``model=FullTightBinding``,
 
@@ -121,8 +151,9 @@ def CarrierDispersion(k,model,eh=1):
                                     of Hamiltonian to save time and avoid broadcasting issues.
 
     eh:         int
-                eh=1  returns conduction band
-                eh=-1 returns valence band
+                Band index: 
+                ``eh=1``  returns conduction band,
+                ``eh=-1`` returns valence band
 
     Returns
     ----------
@@ -193,6 +224,8 @@ def CarrierDispersion(k,model,eh=1):
     >>> plt.show()
     '''
 
+    if eh!=1 and eh!=-1:
+        raise ValueError('eh must be either 1 or -1')
 
     if model == 'LowEnergy':
 
