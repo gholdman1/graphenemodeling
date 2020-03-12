@@ -9,6 +9,21 @@ from scipy import constants as sc
 import numpy as np
 
 
+class TestHamiltonian:
+	
+	def test_Hamiltonian_LowEnergy(self):
+
+		eF = 0.4 * sc.elementary_charge
+		kF = mlg.kFermi(eF,model='LowEnergy')
+
+		H = mlg.Hamiltonian(kF,model='LowEnergy')
+
+		# np.linalg.eigh required as H is Hermitian
+		energy = np.max(np.linalg.eigh(H)[0])
+
+		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'),rtol=1e-05)
+
+
 class TestMonolayerGraphene:
 
 	def test_kFermi_LowEnergy(self):
@@ -29,14 +44,3 @@ class TestMonolayerGraphene:
 		DOS = mlg.DensityOfStates(E,model='LowEnergy')
 		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
 
-	def test_Hamiltonian_LowEnergy(self):
-
-		eF = 0.4 * sc.elementary_charge
-		kF = mlg.kFermi(eF,model='LowEnergy')
-
-		H = mlg.Hamiltonian(kF,model='LowEnergy')
-
-		# np.linalg.eigh required as H is Hermitian
-		energy = np.max(np.linalg.eigh(H)[0])
-
-		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'),rtol=1e-05)
