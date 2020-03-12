@@ -116,7 +116,7 @@ def Hamiltonian(k,model='LowEnergy'):
 
     return H
 
-def CarrierDispersion(k,model,eh=1):
+def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     '''The dispersion of Dirac fermions in monolayer graphene.
 
     These are the eigenvalues of the Hamiltonian.
@@ -237,7 +237,8 @@ def CarrierDispersion(k,model,eh=1):
         f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*_c.a) 
                         + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.a)*np.cos((3/2)*np.real(k)*_c.a) )
 
-        return eh*_c.g0*np.sqrt(3+ f(k)) - _c.g0prime*f(k)
+        # [sic] eh only applies to first term
+        return eh*_c.g0*np.sqrt(3+ f(k)) - g0prime*f(k)
 
 def kFermi(eFermi,model):
     '''
