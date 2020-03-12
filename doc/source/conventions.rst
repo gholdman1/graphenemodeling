@@ -12,6 +12,11 @@ This means, despite the utility of the electron-volts, units of energy of are in
 >>> E_eV = 0.4 # Energy in eV
 >>> E_J  = E_eV * eV # Energy in Joules
 
+Examples
+--------
+
+Every piece of code must demonstrate that it replicates a published work. This is done by providing an example in the function that reproduces a plot or number from that work.
+
 Code Structure
 --------------
 
