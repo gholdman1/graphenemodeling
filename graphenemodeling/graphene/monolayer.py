@@ -135,7 +135,9 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
         E = \\pm \\gamma_0 \\sqrt{3 + f(k)} - \\gamma_0'f(k)
 
-    where :math:`f(k)= 2 \\cos(\\sqrt{3}k_y a) + 4 \\cos(\\sqrt{3}k_y a/2)\\cos(3k_xa/2)`
+    where :math:`f(k)= 2 \\cos(\\sqrt{3}k_y a) + 4 \\cos(\\sqrt{3}k_y a/2)\\cos(3k_xa/2)`.
+
+    Both expressions are equivalent to diagonalizing the Hamiltonian of the corresponding ``model``.
 
     Parameters
     ----------
@@ -145,10 +147,9 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
                 For 2D wavevectors, use :math:`k= k_x + i k_y`.
 
     model:      string
-                'LowEnergy': Linear approximation of dispersion.
-                'FullTightBinding': Eigenvalues of tight-binding approximation. 
-                                    We use a closed form rather than finding eigenvalues
-                                    of Hamiltonian to save time and avoid broadcasting issues.
+                ``'LowEnergy'``: Linear approximation of dispersion.
+
+                ``'FullTightBinding'``: Eigenvalues of tight-binding approximation. We use a closed form rather than finding eigenvalues of Hamiltonian to save time and avoid broadcasting issues.
 
     eh:         int
                 Band index: 
@@ -163,7 +164,10 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     References
     ----------
 
-    [1] 
+    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+    The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162. 
+    https://link.aps.org/doi/10.1103/RevModPhys.81.109.
+
 
     Examples
     --------
@@ -178,7 +182,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     >>> kF = mlg.kFermi(eF,model='LowEnergy')
     >>> k = np.linspace(-2*kF,2*kF,num=100)
     >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
-    >>> valence_band = -conduction_band
+    >>> valence_band = mlg.CarrierDispersoin(k,model='LowEnergy',eh=-1)
     >>> fig, ax = plt.subplots(figsize=(5,6))
     >>> ax.plot(k/kF,conduction_band/eF,'k')
     [...
@@ -290,13 +294,15 @@ def DensityOfStates(E,model):
     Returns
     -------
 
-    DOS:        Density of states, units states J^-1 m^-2
+    DOS:        Density of states, units states / J m^2
 
     References
     ----------
 
-    [1]     Castro Neto et al. Reviews of Modern Physics 81, 2009.
-            URL:
+    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+    The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162.
+    https://link.aps.org/doi/10.1103/RevModPhys.81.109.
+
 
     Examples
     --------
