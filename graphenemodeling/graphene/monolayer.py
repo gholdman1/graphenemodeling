@@ -17,7 +17,7 @@ Band Structure
 
 import numpy as np
 import scipy.constants as sc
-from scipy import special
+from scipy import special, optimize
 
 from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
@@ -246,7 +246,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         # [sic] eh only applies to first term
         return eh*_c.g0*np.sqrt(3+ f(k)) - g0prime*f(k)
 
-def kFermi(eFermi,model):
+def kFermi(eFermi,model,g0prime=_c.g0prime):
     '''
     The Fermi wavevector, i.e. the wavevector of the state at
     the Fermi energy.
@@ -276,11 +276,19 @@ def kFermi(eFermi,model):
 
     if model == 'FullTightBinding':
         '''
-        Code to numerically invert CarrierDispersion(kF,model='FullTightBinding')
-
-        Likely would use a root-finding procedure
+        Need to finish off this code-finding procedure
         '''
-        pass
+        eh = np.sign(eFermi)
+
+        # f is zero when kf is correct value
+        f = lambda kf: eFermi - CarrierDispersion(kf, model='FullTightBinding',eh=eh,g0prime=g0prime)
+
+        # Choose LowEnergy answer for initial starting point
+        kf0 = kFermi(eFermi,model='LowEnergy',g0prime=g0prime)
+
+        result = optimize.root_scalar(f,x0=kf0,x1=kf0*.9,rtol=1e-10).root
+
+        return result
 
 def DensityOfStates(E,model):
     '''
