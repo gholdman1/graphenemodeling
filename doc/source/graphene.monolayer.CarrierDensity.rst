@@ -1,5 +1,5 @@
 ===============
-Carrier Density
+CarrierDensity
 ===============
 
 .. autofunction:: graphenemodeling.graphene.monolayer.CarrierDensity

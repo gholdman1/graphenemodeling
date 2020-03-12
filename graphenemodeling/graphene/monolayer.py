@@ -134,9 +134,11 @@ def Hamiltonian(k,model='LowEnergy'):
     References
     ----------
 
-    [1] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284. https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
+    [1] Slonczewski, J.C., and Weiss, P.R. (1958). Band Structure of Graphite. Phys. Rev. 109, 272–279. https://link.aps.org/doi/10.1103/PhysRev.109.272.
 
-    [2] Christensen, T. (2017). From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing). http://link.springer.com/10.1007/978-3-319-48562-1.
+    [2] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284. https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
+
+    [3] Christensen, T. (2017). From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing). http://link.springer.com/10.1007/978-3-319-48562-1.
 
 
     '''
@@ -334,26 +336,61 @@ def kFermi(eFermi,model,g0prime=_c.g0prime):
 
         return result
 
-def DensityOfStates(E,model):
+def DensityOfStates(E,model,g0prime=_c.g0prime):
     '''
-    The density of states per unit cell in graphene at energy E.
+    The density of states per square meter of graphene at energy E.
+
+    For ``model==LowEnergy``, the form is simply
+
+    .. math::
+
+        \\rho(E)=\\frac{2}{\\pi}\\frac{|E|}{\\hbar^2 v_F^2}
+
+    whereas the ``FullTightBinding`` model has a much more complicated form (eqn. 14 of [2])
+
+    .. math::
+
+        \\rho(E)=\\frac{4}{\\pi^2}\\frac{|E|}{\\gamma_0^2}\\frac{1}{\\sqrt{Z_0}}\\mathbf{F}\\left(\\frac{\\pi}{2},\\sqrt{\\frac{Z_1}{Z_0}}\\right)
+
+    where :math:`\\mathbf{F}(\\pi/2,x)` is the complete elliptic integral of the first kind (see `scipy.special.ellipk`_) and
+
+    .. _scipy.special.ellipk: https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.ellipk.html
+
+    .. math::
+
+        Z_0 = \\left\{\\array{    
+                    (1 + |E/\\gamma_0|)^2 - \\frac{[(E/\\gamma_0)^2-1]^2}{4}, & |E|\\leq \\gamma_0 \n
+                    4|E/\\gamma_0|, & -3\\gamma_0\\leq E \\leq -\\gamma_0,\\gamma_0\\leq E\\leq 3\\gamma_0
+                }\\right.
+
+        Z_1 = \\left\{\\array{
+                    4|E/\\gamma_0|, & |E|\\leq \\gamma_0 \n    
+                    (1 + |E/\\gamma_0|)^2 - \\frac{[(E/\\gamma_0)^2-1]^2}{4}, & -3\\gamma_0\\leq E \\leq -\\gamma_0,\\gamma_0\\leq E\\leq 3\\gamma_0
+                }\\right.
 
     Parameters
     ----------
 
-    E:          Energy at which to evaluate DOS.
+    E:  array-like
+        Energy at which to evaluate DOS.
 
-    model:      'LowEnergy': DOS derived from linear approximation of dispersion.
+    model:      string
+                ``'LowEnergy'``: Linear approximation of dispersion.
+
+                ``'FullTightBinding'``: Eigenvalues of tight-binding approximation. We use a closed form rather than finding eigenvalues of Hamiltonian to save time and avoid broadcasting issues.
 
     Returns
     -------
 
-    DOS:        Density of states, units of states / J m^2
+    array-like
+        Density of states, units are states per J-m^2
 
     References
     ----------
 
-    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+    [1] Hobson, J.P., and Nierenberg, W.A. (1953). The Statistics of a Two-Dimensional, Hexagonal Net. Phys. Rev. 89, 662–662. https://link.aps.org/doi/10.1103/PhysRev.89.662.
+
+    [2] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
     The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162.
     https://link.aps.org/doi/10.1103/RevModPhys.81.109.
 
@@ -389,9 +426,11 @@ def DensityOfStates(E,model):
         return DOS
 
     elif model=='FullTightBinding':
-        '''
-        Equation 14 of Ref 1
-        '''
+
+        if g0prime!=0:
+            raise Exception('Not supported for g0prime!=0.\nSetting g0prime=0')
+            g0prime=0
+
 
         prefactor = 4*np.abs(E) / (sc.pi*_c.g0)**2
 
