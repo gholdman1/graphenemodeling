@@ -35,8 +35,26 @@ class TestCarrierDispersion:
 		kF = mlg.kFermi(eF,model='LowEnergy')
 		assert mlg.CarrierDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
 
+class TestDensityOfStates:
 
-class TestMonolayerGraphene:
+	def test_DensityOfStates_LowEnergy(self):
+		E = 1 * _c.g0
+		DOS = mlg.DensityOfStates(E,model='LowEnergy')
+		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
+
+	def test_DensityOfStates_FullTightBinding(self):
+		E = 0.5 * _c.g0
+		DOS = mlg.DensityOfStates(E,model='FullTightBinding')
+
+		assert np.isclose(DOS,1.9120400733241723e+37)
+
+	def test_DensityOfStates_FullTightBinding_inf(self):
+		E = 1 * _c.g0
+		DOS = mlg.DensityOfStates(E,model='FullTightBinding')
+
+		assert DOS==np.inf
+
+class TestkFermi:
 
 	def test_kFermi_LowEnergy(self):
 
@@ -44,10 +62,3 @@ class TestMonolayerGraphene:
 		kF = mlg.kFermi(eF,model='LowEnergy')
 
 		assert np.isclose(kF,670690811.5358821,rtol=1e-05)
-
-
-	def test_DensityOfStates_LowEnergy(self):
-		E = 1 * _c.g0
-		DOS = mlg.DensityOfStates(E,model='LowEnergy')
-		assert np.isclose(DOS,3.127898579800643e+37,rtol=1e-05)
-

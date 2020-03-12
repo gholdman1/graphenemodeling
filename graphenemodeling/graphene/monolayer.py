@@ -11,11 +11,13 @@ Band Structure
 
     graphene.monolayer.Hamiltonian
     graphene.monolayer.CarrierDispersion
+    graphene.monolayer.DensityOfStates
 
 """
 
 import numpy as np
 import scipy.constants as sc
+from scipy import special
 
 from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
@@ -294,7 +296,7 @@ def DensityOfStates(E,model):
     Returns
     -------
 
-    DOS:        Density of states, units states / J m^2
+    DOS:        Density of states, units of states / J m^2
 
     References
     ----------
@@ -306,11 +308,10 @@ def DensityOfStates(E,model):
 
     Examples
     --------
-    Plot the density of states in the `LowEnergy` approximation and `FullTightBinding` model.
+    Plot the density of states for ``model=LowEnergy`` approximation and ``model=FullTightBinding`` model.
 
-    >>> from graphenemodeling import graphene
+    >>> from graphenemodeling.graphene import monolayer as mlg
     >>> import matplotlib.pyplot as plt
-    >>> mlg = graphene.Monolayer()
     >>> E = np.linspace(-3,3,num=200) * mlg.g0
     >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
     >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
