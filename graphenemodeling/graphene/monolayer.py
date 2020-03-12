@@ -3,8 +3,36 @@
 Monolayer (:mod:`graphenemodeling.graphene.monolayer`)
 ======================================================
 
-Band Structure
-==============
+Models
+======
+
+Different models for graphene are valid in different regimes.
+Many of the functions provided here have a ``model`` option allowing the use to choose which to use.
+
+Full Tight Binding (:mod:`model='FullTightBinding'`)
+----------------------------------------------------
+The tight binding model Hamiltonian is
+
+    .. math::
+
+        H = \\gamma_0 \\left(\\array{
+                                0 & f(k) \n
+                                f(k)^* & 0
+                                        } \\right)
+
+where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
+
+
+Low Energy (:mod:`model='LowEnergy'`)
+-------------------------------------
+An approximation to the Tight Binding model is what we are calling the Low Energy model.
+This valid for small momenta, i.e. :math:`\\hbar v_F k\\ll \\gamma_0`.
+
+Functions
+=========
+
+Band structure
+--------------
 
 .. toctree::
     :maxdepth: 1
@@ -13,6 +41,11 @@ Band Structure
     graphene.monolayer.CarrierDispersion
     graphene.monolayer.DensityOfStates
     graphene.monolayer.kFermi
+
+
+References
+==========
+
 """
 
 import numpy as np
@@ -54,7 +87,7 @@ def AtomicPosition(m,n):
 
 
 def Hamiltonian(k,model='LowEnergy'):
-    '''Tight-binding Hamiltonian in k-space.
+    '''Hamiltonian in momentum space.
 
     Let :math:`k=k_x+ik_y`. Then the common ``model=LowEnergy`` approximation is
 
@@ -384,19 +417,35 @@ def DensityOfStates(E,model):
     else:
         print('The model %s is not available' % (model))
 
-def CarrierDensity(muC,T,model):
+def CarrierDensity(mu,T,model):
     '''
     Computes the carrier density at nonzero temperature directly from the band structure.
+
+    Parameters
+    ----------
+
+    mu: array-like
+        Chemical potential
+
+    Returns
+    -------
+
+    array-like
     '''
 
     warnings.warn('Monolayer.CarrierDensity has not been verified')
-    n = np.empty_like(muC)
+    n = np.empty_like(mu)
 
-    for i, m in np.ndenumerate(muC):
-        p_electron = lambda e: self.DensityOfStates(e,model) * sd.FermiDirac(e-m,T)
-        p_hole = lambda e: self.DensityOfStates(e,model) * (1 - sd.FermiDirac(e-m,T))
-        n[i] = ( integrate.quad(p_electron,0,3*_c.g0,points=(_c.g0,m))[0] -
-                 integrate.quad(p_hole,-3*_c.g0,0,points=(-_c.g0,-m))[0]   )
+    if T<0:
+        raise ValueError('Temperature T must be nonnegative')
+    if T==0:
+        
+    if T>0:
+        for i, m in np.ndenumerate(mu):
+            p_electron = lambda e: self.DensityOfStates(e,model) * sd.FermiDirac(e-m,T)
+            p_hole = lambda e: self.DensityOfStates(e,model) * (1 - sd.FermiDirac(e-m,T))
+            n[i] = ( integrate.quad(p_electron,0,3*_c.g0,points=(_c.g0,m))[0] -
+                     integrate.quad(p_hole,-3*_c.g0,0,points=(-_c.g0,-m))[0]   )
     return n
 
 def FermiLevel(n,T=0):
