@@ -29,6 +29,12 @@ class TestCarrierDispersion:
 		with pytest.raises(ValueError):
 			mlg.CarrierDispersion(0,'LowEnergy',eh=2)
 
+	def test_CarrierDispersion_LowEnergy(self):
+
+		eF = 0.4 * sc.elementary_charge
+		kF = mlg.kFermi(eF,model='LowEnergy')
+		assert mlg.CarrierDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
+
 
 class TestMonolayerGraphene:
 
@@ -39,11 +45,6 @@ class TestMonolayerGraphene:
 
 		assert np.isclose(kF,670690811.5358821,rtol=1e-05)
 
-	def test_CarrierDispersion_LowEnergy(self):
-
-		eF = 0.4 * sc.elementary_charge
-		kF = mlg.kFermi(eF,model='LowEnergy')
-		assert mlg.CarrierDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
 
 	def test_DensityOfStates_LowEnergy(self):
 		E = 1 * _c.g0
