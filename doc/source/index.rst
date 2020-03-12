@@ -3,7 +3,7 @@ GrapheneModeling
 
 GrapheneModeling makes it easy to model graphene!
 
-Graphene research has exploded in the past two decades. As such, a large amount of literature has been written from theoretical descriptions of its properties and some experimental verification. The singular goal of GraphenemModeling is to compile the most important literature as executable code into one Python package for the use of 
+Graphene research has exploded in the past two decades. As such, a large amount of literature has been written from theoretical descriptions to some experimental verification. The singular goal of GrapheneModeling is to compile the most important literature as executable Python code into one package for the use of 
 the community.
 
 Are you a research group looking to explain your experiment with 
