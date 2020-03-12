@@ -27,6 +27,7 @@ GrapheneModeling.
 
    graphene
    statistical_distributions
+   photonics
    conventions
 
 Installation

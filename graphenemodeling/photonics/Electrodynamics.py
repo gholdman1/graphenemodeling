@@ -1,6 +1,15 @@
+"""
+===============
+Electrodynamics
+===============
+
+Text goes here.
+
+"""
 import os
 import numpy as np
 import warnings
+
 
 from scipy import integrate
 from scipy import optimize
