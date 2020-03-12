@@ -109,3 +109,20 @@ class TestCarrierDensity:
 		
 		assert np.isclose(mlg.CarrierDensity(eF,T=0,model='LowEnergy'),
 							mlg.CarrierDensity(eF,T=1e-3,model='LowEnergy'))
+
+class TestChemicalPotential:
+
+	def test_0_0(self):
+		assert mlg.ChemicalPotential(0,0)==0
+
+	def test_1e16_0(self):
+		assert np.isclose(mlg.ChemicalPotential(1e16,0),1.6936472639373315e-20)
+
+	def test_0_lowT(self):
+		assert mlg.ChemicalPotential(0,1e-3)==0
+
+	def test_1e16_lowT(self):
+		assert np.isclose(mlg.ChemicalPotential(1e16,1e-3),1.6936472639373315e-20)
+
+	def test_1e16_10K(self):
+		assert np.isclose(mlg.ChemicalPotential(1e16,10),1.693525703194968e-20)

@@ -493,8 +493,8 @@ def CarrierDensity(mu,T,model):
     if T==0 and model=='LowEnergy':
         eFermi=mu # chemical potential at T=0 is called Fermi level
         n = (eFermi / (sc.hbar*_c.vF))**2 / np.pi
-
         return n
+
     if T>0:
         n = np.empty_like(mu)
         for i, m in np.ndenumerate(mu):
@@ -504,9 +504,9 @@ def CarrierDensity(mu,T,model):
                      integrate.quad(p_hole,-3*_c.g0,0,points=(-_c.g0,-m))[0]   )
     return n
 
-def FermiLevel(n,T=0):
+def ChemicalPotential(n,T=0,model='LowEnergy'):
     '''
-    Returns the Fermi level given the carrier density.
+    Returns the chemical potential given the carrier density.
 
     Parameters
     ----------
@@ -518,7 +518,20 @@ def FermiLevel(n,T=0):
         return sc.hbar*_c.vF*np.sqrt(sc.pi*n)
 
     else:
-        warnings.warn('Monolayer.FermiLevel: not available')
+        ## Numerically solve
+
+        # f is zero when n is correct
+        f = lambda mu: n - CarrierDensity(mu,T,model=model)
+
+        # Use T=0 value to estimate start
+        mu0 = ChemicalPotential(n,T=0,model=model)
+
+        result = optimize.root_scalar(f,x0=mu0,x1=mu0*1.1+0.1*sc.elementary_charge,
+                                        rtol=1e-10).root
+
+        return result
+
+
 
 ########################
 # Electrical Transport #
