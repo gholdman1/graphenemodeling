@@ -12,7 +12,7 @@ Band Structure
     graphene.monolayer.Hamiltonian
     graphene.monolayer.CarrierDispersion
     graphene.monolayer.DensityOfStates
-
+    graphene.monolayer.kFermi
 """
 
 import numpy as np
