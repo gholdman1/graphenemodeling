@@ -26,7 +26,7 @@ where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 Low Energy (:mod:`model='LowEnergy'`)
 -------------------------------------
 An approximation to the Tight Binding model is what we are calling the Low Energy model.
-This valid for small momenta, i.e. :math:`\\hbar v_F k\\ll \\gamma_0`.
+This is valid for small momenta, i.e. :math:`\\hbar v_F k\\ll \\gamma_0`.
 
 Functions
 =========
@@ -40,7 +40,7 @@ Band structure
     graphene.monolayer.Hamiltonian
     graphene.monolayer.CarrierDispersion
     graphene.monolayer.DensityOfStates
-    graphene.monolayer.kFermi
+    graphene.monolayer.FermiWavenumber
     graphene.monolayer.CarrierDensity
 
 Optical Properties
@@ -227,7 +227,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     >>> mlg = graphene.Monolayer()
     >>> from scipy.constants import elementary_charge as eV
     >>> eF = 0.4*eV
-    >>> kF = mlg.kFermi(eF,model='LowEnergy')
+    >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
     >>> k = np.linspace(-2*kF,2*kF,num=100)
     >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
     >>> valence_band = mlg.CarrierDispersoin(k,model='LowEnergy',eh=-1)
@@ -292,9 +292,9 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         # [sic] eh only applies to first term
         return eh*_c.g0*np.sqrt(3+ f(k)) - g0prime*f(k)
 
-def kFermi(eFermi,model,g0prime=_c.g0prime):
+def FermiWavenumber(eFermi,model,g0prime=_c.g0prime):
     '''
-    The Fermi wavevector, i.e. the wavevector of the state at
+    The Fermi wavenumber, i.e. the wavenumber of the state at
     the Fermi energy.
 
     Parameters
@@ -312,7 +312,7 @@ def kFermi(eFermi,model,g0prime=_c.g0prime):
     >>> from scipy.constants import elementary_charge as eV
     >>> mlg = graphene.Monolayer()
     >>> eF = 0.4 * eV # Fermi level is 0.4 eV
-    >>> kF = mlg.kFermi(eF, model='LowEnergy')
+    >>> kF = mlg.FermiWavenumber(eF, model='LowEnergy')
     >>> mlg.CarrierDispersion(kF,model='LowEnergy')/eV
     0.4
     '''
@@ -330,7 +330,7 @@ def kFermi(eFermi,model,g0prime=_c.g0prime):
         f = lambda kf: eFermi - CarrierDispersion(kf, model='FullTightBinding',eh=eh,g0prime=g0prime)
 
         # Choose LowEnergy answer for initial starting point
-        kf0 = kFermi(eFermi,model='LowEnergy',g0prime=g0prime)
+        kf0 = FermiWavenumber(eFermi,model='LowEnergy',g0prime=g0prime)
 
         result = optimize.root_scalar(f,x0=kf0,x1=kf0*.9,rtol=1e-10).root
 
@@ -628,7 +628,7 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
 
         prefactor = -self.DensityOfStates(eFermi,model='LowEnergy')
 
-        kF = self.kFermi(eFermi, model='LowEnergy')
+        kF = self.FermiWavenumber(eFermi, model='LowEnergy')
 
         x = q / (2*kF)
         zbar = sc.hbar*omega / (2*eFermi)
@@ -1049,7 +1049,7 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
     if model=='nonlocal':
         omega = np.empty_like(q)
 
-        kF = self.kFermi(eFermi,model='LowEnergy')
+        kF = self.FermiWavenumber(eFermi,model='LowEnergy')
 
         for i, q0 in np.ndenumerate(q):
             root_eqn = lambda w: self.PlasmonDispersionRoot(q0,w,gamma,eFermi,eps1,eps2,T=0)
@@ -1114,7 +1114,7 @@ def InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model):
     Useful when determining the wavelength of a plasmon excited by light.
     '''
 
-    kF = self.kFermi(eFermi,model='LowEnergy')
+    kF = self.FermiWavenumber(eFermi,model='LowEnergy')
 
     cutoff = 4*kF
     q = np.empty_like(omega)
