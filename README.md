@@ -1,7 +1,7 @@
 <h1><center>Graphene Modeling</center></h1>
 
 
-This Python package **models the electronic and optical properties of graphene** and is accompanied by Jupyter notebooks. The intent is to reproduce results found in the literature so that researchers need not write their own code which wastes time and may contain bugs that alter results. To boost confidence in the code in this repository, every piece of code should be accompanied by a figure that reproduces a result from a published paper.
+This Python package **models the electronic and optical properties of graphene**. The intent is to reproduce results found in the literature so that researchers need not write their own code which wastes time and may contain bugs that alter results. To boost confidence in the code in this repository, every piece of code should be accompanied by a figure that reproduces a result from a published paper.
 
 **Install** the latest version with
 
