@@ -41,6 +41,15 @@ Band structure
     graphene.monolayer.CarrierDispersion
     graphene.monolayer.DensityOfStates
     graphene.monolayer.kFermi
+    graphene.monolayer.CarrierDensity
+
+Optical Properties
+------------------
+
+
+
+Plasmonics
+----------
 
 
 References
@@ -445,6 +454,8 @@ def CarrierDensity(mu,T,model):
     if T==0 and model=='LowEnergy':
         eFermi=mu # chemical potential at T=0 is called Fermi level
         n = (eFermi / (sc.hbar*_c.vF))**2 / np.pi
+
+        return n
     if T>0:
         n = np.empty_like(mu)
         for i, m in np.ndenumerate(mu):
