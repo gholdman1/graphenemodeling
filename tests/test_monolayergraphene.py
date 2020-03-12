@@ -77,5 +77,35 @@ class TestkFermi:
 
 		assert np.isclose(kF,3864007944.295662,rtol=1e-10)
 
+class TestCarrierDensity:
 
+	def test_LowEnergy_zero_zero(self):
+
+		assert mlg.CarrierDensity(0,0,model='LowEnergy') == 0
+
+	def test_LowEnergy_100_meV_0K(self):
+
+		eV = sc.elementary_charge
+		eF = 0.1 * eV
+
+		assert np.isclose(mlg.CarrierDensity(eF,T=0,model='LowEnergy'),8949007205084713.0)
+
+	def test_LowEnergy_zero_meV_lowT(self):
+
+		assert np.isclose(mlg.CarrierDensity(0,T=1e-3,model='LowEnergy'),0)
+
+	def test_LowEnergy_low_meV_lowT(self):
+
+		eV = sc.elementary_charge
+		eF = 0.01 * eV
 		
+		assert np.isclose(mlg.CarrierDensity(eF,T=0,model='LowEnergy'),
+							mlg.CarrierDensity(eF,T=1e-3,model='LowEnergy'))
+
+	def test_LowEnergy_100_meV_lowT(self):
+
+		eV = sc.elementary_charge
+		eF = 0.1 * eV
+		
+		assert np.isclose(mlg.CarrierDensity(eF,T=0,model='LowEnergy'),
+							mlg.CarrierDensity(eF,T=1e-3,model='LowEnergy'))

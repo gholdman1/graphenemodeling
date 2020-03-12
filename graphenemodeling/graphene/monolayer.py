@@ -50,10 +50,12 @@ References
 
 import numpy as np
 import scipy.constants as sc
-from scipy import special, optimize
+from scipy import special, optimize, integrate
 
 from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
+
+import graphenemodeling.statistical_distributions as sd
 
 ############
 # Geometry #
@@ -431,19 +433,23 @@ def CarrierDensity(mu,T,model):
     -------
 
     array-like
-    '''
 
-    warnings.warn('Monolayer.CarrierDensity has not been verified')
-    n = np.empty_like(mu)
+    References
+    ----------
+
+    [1] 
+    '''
 
     if T<0:
         raise ValueError('Temperature T must be nonnegative')
-    if T==0:
-        
+    if T==0 and model=='LowEnergy':
+        eFermi=mu # chemical potential at T=0 is called Fermi level
+        n = (eFermi / (sc.hbar*_c.vF))**2 / np.pi
     if T>0:
+        n = np.empty_like(mu)
         for i, m in np.ndenumerate(mu):
-            p_electron = lambda e: self.DensityOfStates(e,model) * sd.FermiDirac(e-m,T)
-            p_hole = lambda e: self.DensityOfStates(e,model) * (1 - sd.FermiDirac(e-m,T))
+            p_electron = lambda e: DensityOfStates(e,model) * sd.FermiDirac(e-m,T)
+            p_hole = lambda e: DensityOfStates(e,model) * (1 - sd.FermiDirac(e-m,T))
             n[i] = ( integrate.quad(p_electron,0,3*_c.g0,points=(_c.g0,m))[0] -
                      integrate.quad(p_hole,-3*_c.g0,0,points=(-_c.g0,-m))[0]   )
     return n
