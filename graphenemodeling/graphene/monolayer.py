@@ -93,7 +93,7 @@ def CarrierDispersion(k,model,eh=1):
 
     These are the eigenvalues of the Hamiltonian. However, in both the ``LowEnergy`` model and the ``FullTightBinding`` model, we use closed form solutions rather than solving for the eigenvalues directly.
 
-    When ``model='LowEnergy',
+    When ``model='LowEnergy'``,
 
     .. math::
 
@@ -110,21 +110,24 @@ def CarrierDispersion(k,model,eh=1):
     Parameters
     ----------
 
-    k:          array-like, wavevector of Dirac fermion relative to K vector
-                            For 2D wavevectors, use comlex k= kx + i ky
+    k:          array-like, complex
+                Wavevector of Dirac fermion relative to K vector.
+                For 2D wavevectors, use :math:`k= k_x + i k_y`.
 
-
-    model:      'LowEnergy': Linear approximation of dispersion.
+    model:      string
+                'LowEnergy': Linear approximation of dispersion.
                 'FullTightBinding': Eigenvalues of tight-binding approximation. 
                                     We use a closed form rather than finding eigenvalues
                                     of Hamiltonian to save time and avoid broadcasting issues.
 
-    eh:         1 or -1, return electrons or holes respectively
+    eh:         int
+                eh=1  returns conduction band
+                eh=-1 returns valence band
 
     Returns
     ----------
 
-    energy:     array-like, energy of Dirac fermion with wavenumber k.
+    array-like
 
     References
     ----------

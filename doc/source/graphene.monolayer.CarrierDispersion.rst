@@ -1,5 +1,5 @@
-=========================================================================
-CarrierDispersion (graphenemodeling.graphene.monolayer.CarrierDispersion)
-=========================================================================
+=================
+CarrierDispersion
+=================
 
 .. autofunction:: graphenemodeling.graphene.monolayer.CarrierDispersion

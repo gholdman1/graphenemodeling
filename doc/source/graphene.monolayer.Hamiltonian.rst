@@ -1,5 +1,5 @@
-=============================================================
-Hamiltonian (graphenemodeling.graphene.monolayer.Hamiltonian)
-=============================================================
+===========
+Hamiltonian
+===========
 
 .. autofunction:: graphenemodeling.graphene.monolayer.Hamiltonian
