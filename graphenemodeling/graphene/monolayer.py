@@ -1,3 +1,19 @@
+"""
+======================================================
+Monolayer (:mod:`graphenemodeling.graphene.monolayer`)
+======================================================
+
+Band Structure
+==============
+
+.. toctree::
+    :maxdepth: 1
+
+    graphene.monolayer.Hamiltonian
+    graphene.monolayer.CarrierDispersion
+
+"""
+
 import numpy as np
 import scipy.constants as sc
 
@@ -8,10 +24,29 @@ import graphenemodeling.graphene._constants as _c
 # Band Structure #
 ##################
 
-
 def Hamiltonian(k,model='LowEnergy'):
-    '''
-    Tight-binding Hamiltonian in k-space.
+    '''Tight-binding Hamiltonian in k-space.
+
+    The common ``LowEnergy`` approximation is
+
+    .. math::
+
+        H = \\hbar v_F\\left(\\array{
+                                    0 & k \n
+                                    k^* & 0
+
+                                    } \\right)
+
+    The full tight binding model 
+
+    .. math::
+
+        H = \\gamma_0 \\left(\\array{
+                                0 & f(\\vec k) \n
+                                f(\\vec k)^* & 0
+                                        } \\right)
+
+    where :math:`f(\\vec k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 
     Parameters
     ----------
@@ -42,8 +77,8 @@ def Hamiltonian(k,model='LowEnergy'):
         ky = np.imag(k)
 
         H11 = 0
-        H12 = _c.g0 * (   np.exp(1j*kx*_c.A/2)
-                            + 2*np.exp(-1j*kx*_c.A/2)*np.cos(ky*_c.A*np.sqrt(3)/2) )
+        H12 = _c.g0 * (   np.exp(1j*kx*_c.a/2)
+                            + 2*np.exp(-1j*kx*_c.a/2)*np.cos(ky*_c.a*np.sqrt(3)/2) )
         H21 = np.conj(H12)
         H22 = 0
 
@@ -55,6 +90,22 @@ def Hamiltonian(k,model='LowEnergy'):
 def CarrierDispersion(k,model,eh=1):
     '''
     Gives the dispersion of Dirac fermions in monolayer graphene.
+
+    These are the eigenvalues of the Hamiltonian. However, in both the ``LowEnergy`` model and the ``FullTightBinding`` model, we use closed form solutions rather than solving for the eigenvalues directly.
+
+    When ``model='LowEnergy',
+
+    .. math::
+
+        E = \\hbar v_F |k|
+
+    When ``model=FullTightBinding``,
+
+    .. math::
+
+        E = \\pm \\gamma_0 \\sqrt{3 + f(k)} - \\gamma_0'f(k)
+
+    where :math:`f(k)= 2 \\cos(\\sqrt{3}k_y a) + 4 \\cos(\\sqrt{3}k_y a/2)\\cos(3k_xa/2)`
 
     Parameters
     ----------
@@ -147,8 +198,8 @@ def CarrierDispersion(k,model,eh=1):
     if model == 'FullTightBinding':
 
         k = k - _c.K
-        f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*_c.A) 
-                        + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.A)*np.cos((3/2)*np.real(k)*_c.A) )
+        f = lambda k: (2*np.cos(np.sqrt(3)*np.imag(k)*_c.a) 
+                        + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.a)*np.cos((3/2)*np.real(k)*_c.a) )
 
         return eh*_c.g0*np.sqrt(3+ f(k)) - _c.g0prime*f(k)
 
