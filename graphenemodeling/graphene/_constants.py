@@ -2,11 +2,49 @@
 =======================================================
 Constants (:mod:`graphenemodeling.graphene._constants`)
 =======================================================
+
+Physical constants common to all forms of graphene.
+
+Carbon
+======
+
+=======	===================
+``m_C``	Mass of Carbon atom
+=======	===================
+
+Geometry
+========
+
+=============	=======================================
+``thickness``	Thickness of a single layer of graphene
+``a``			Interatom spacing on a graphene lattice
+``A``			Area of a unit cell of graphene lattice
+=============	=======================================
+
+Band Structure
+==============
+
+===========	===========================
+``g0``		Interatom hopping potential
+``g0prime``	Particle hole asymmetry
+``vF``		Fermi velocity
+===========	===========================
+
+Phonons
+=======
+
+
+
+
 """
 
 from scipy import constants as sc
+
+
 eVtoJ = sc.elementary_charge
 hbar = sc.hbar
+
+m_C = 12 * sc.physical_constants['atomic mass constant']
 
 thickness =0.34e-9				# (m), thickness of graphene
 a = 1.42*1e-10                         # (m), Interatom spacing
