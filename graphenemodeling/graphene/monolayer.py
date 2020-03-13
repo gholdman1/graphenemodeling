@@ -226,28 +226,38 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
     Examples
     --------
+    Test
+
+    .. plot::
+
+        >>> import matplotlib.pyplot as plt
+        >>> plt.plot(np.linspace(-1,1),np.linspace(-1,1))
+        <...
+        >>> plt.show()
+
     Plot the Fermion dispersion relation.
 
-    >>> from graphenemodeling import graphene
-    >>> import matplotlib.pyplot as plt
-    >>> mlg = graphene.Monolayer()
-    >>> from scipy.constants import elementary_charge as eV
-    >>> eF = 0.4*eV
-    >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
-    >>> k = np.linspace(-2*kF,2*kF,num=100)
-    >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
-    >>> valence_band = mlg.CarrierDispersoin(k,model='LowEnergy',eh=-1)
-    >>> fig, ax = plt.subplots(figsize=(5,6))
-    >>> ax.plot(k/kF,conduction_band/eF,'k')
-    [...
-    >>> ax.plot(k/kF,valence_band/eF, 'k')
-    [...
-    >>> ax.plot(k/kF,np.zeros_like(k),color='gray')
-    [...
-    >>> ax.axvline(x=0,ymin=0,ymax=1,color='gray')
-    <...
-    >>> ax.set_axis_off()
-    >>> plt.show()
+    .. plot::
+
+        >>> import matplotlib.pyplot as plt
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from scipy.constants import elementary_charge as eV
+        >>> eF = 0.4*eV
+        >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
+        >>> k = np.linspace(-2*kF,2*kF,num=100)
+        >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
+        >>> valence_band = mlg.CarrierDispersoin(k,model='LowEnergy',eh=-1)
+        >>> fig, ax = plt.subplots(figsize=(5,6))
+        >>> ax.plot(k/kF,conduction_band/eF,'k')
+        [...
+        >>> ax.plot(k/kF,valence_band/eF, 'k')
+        [...
+        >>> ax.plot(k/kF,np.zeros_like(k),color='gray')
+        [...
+        >>> ax.axvline(x=0,ymin=0,ymax=1,color='gray')
+        <...
+        >>> ax.set_axis_off()
+        >>> plt.show()
 
     Plot the full multi-dimensional dispersion relation.
 
