@@ -226,14 +226,6 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
     Examples
     --------
-    Test
-
-    .. plot::
-
-        >>> import matplotlib.pyplot as plt
-        >>> plt.plot(np.linspace(-1,1),np.linspace(-1,1))
-        <...
-        >>> plt.show()
 
     Plot the Fermion dispersion relation.
 
@@ -246,7 +238,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
         >>> k = np.linspace(-2*kF,2*kF,num=100)
         >>> conduction_band = mlg.CarrierDispersion(k,model='LowEnergy')
-        >>> valence_band = mlg.CarrierDispersoin(k,model='LowEnergy',eh=-1)
+        >>> valence_band = mlg.CarrierDispersion(k,model='LowEnergy',eh=-1)
         >>> fig, ax = plt.subplots(figsize=(5,6))
         >>> ax.plot(k/kF,conduction_band/eF,'k')
         [...

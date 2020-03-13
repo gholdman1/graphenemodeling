@@ -13,6 +13,5 @@ The ``photonics`` module allows one to calculate theoretical results on the inte
 	:maxdepth: 1
 
 	photonics.electrodynamics
-	
 
 """
