@@ -216,14 +216,6 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
     Both expressions are equivalent to diagonalizing the Hamiltonian of the corresponding ``model``.
 
-    References
-    ----------
-
-    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
-    The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162. 
-    https://link.aps.org/doi/10.1103/RevModPhys.81.109.
-
-
     Examples
     --------
 
@@ -251,7 +243,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         >>> ax.set_axis_off()
         >>> plt.show()
 
-    Plot the full multi-dimensional dispersion relation.
+    Plot the full multi-dimensional dispersion relation with a particle-hole asymmetry.
 
     .. plot::
 
@@ -260,12 +252,12 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         >>> import matplotlib.pyplot as plt
         >>> from mpl_toolkits import mplot3d # 3D plotting
         >>> kmax = np.abs(_c.K)
-        >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding')
+        >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding',g0prime=-0.2*_c.g0)
         >>> kx = np.linspace(-kmax,kmax,num=100)
         >>> ky = np.copy(kx)
         >>> k = (kx + 1j*ky[:,np.newaxis]) + _c.K # k is relative to K. Add K to move to center of Brillouin zone
-        >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1)
-        >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1)
+        >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1,g0prime=-0.2*_c.g0)
+        >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1,g0prime=-0.2*_c.g0)
         >>> fig = plt.figure(figsize=(8,8))
         >>> fullax = plt.axes(projection='3d')
         >>> fullax.view_init(20,35)
@@ -283,6 +275,16 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         >>> fullax.set_title('Brillouin Zone of Graphene')
         Text...
         >>> plt.show()
+
+    Replicates Figure 3 in Ref. [1].
+
+    References
+    ----------
+
+    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+    The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162. 
+    https://link.aps.org/doi/10.1103/RevModPhys.81.109.
+
 
     '''
 
