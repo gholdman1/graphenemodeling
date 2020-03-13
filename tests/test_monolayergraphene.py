@@ -35,6 +35,29 @@ class TestCarrierDispersion:
 		kF = mlg.FermiWavenumber(eF,model='LowEnergy')
 		assert mlg.CarrierDispersion(kF,'LowEnergy')/sc.elementary_charge == 0.4
 
+class TestFermiWavenumber:
+
+	def test_FermiWavenumber_LowEnergy(self):
+
+		eF = 0.4 * sc.elementary_charge
+		kF = mlg.FermiWavenumber(eF,model='LowEnergy')
+
+		assert np.isclose(kF,670690811.5358821,rtol=1e-05)
+
+	def test_FermiWavenumber_FullTightBinding(self):
+
+		eF = 0.4 * sc.elementary_charge
+		kF = mlg.FermiWavenumber(eF,model='FullTightBinding')
+
+		assert np.isclose(kF,671262440.2396309,rtol=1e-10)
+
+	def test_FermiWavenumber_FullTightBinding_high_energy(self):
+
+		eF = 0.8 * _c.g0
+		kF = mlg.FermiWavenumber(eF,model='FullTightBinding')
+
+		assert np.isclose(kF,3864007944.295662,rtol=1e-10)
+
 class TestDensityOfStates:
 
 	def test_DensityOfStates_LowEnergy(self):
@@ -53,29 +76,6 @@ class TestDensityOfStates:
 		DOS = mlg.DensityOfStates(E,model='FullTightBinding')
 
 		assert DOS==np.inf
-
-class TestkFermi:
-
-	def test_kFermi_LowEnergy(self):
-
-		eF = 0.4 * sc.elementary_charge
-		kF = mlg.FermiWavenumber(eF,model='LowEnergy')
-
-		assert np.isclose(kF,670690811.5358821,rtol=1e-05)
-
-	def test_kFermi_FullTightBinding(self):
-
-		eF = 0.4 * sc.elementary_charge
-		kF = mlg.FermiWavenumber(eF,model='FullTightBinding')
-
-		assert np.isclose(kF,671262440.2396309,rtol=1e-10)
-
-	def test_kFermi_FullTightBinding_high_energy(self):
-
-		eF = 0.8 * _c.g0
-		kF = mlg.FermiWavenumber(eF,model='FullTightBinding')
-
-		assert np.isclose(kF,3864007944.295662,rtol=1e-10)
 
 class TestCarrierDensity:
 
