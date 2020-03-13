@@ -695,12 +695,12 @@ def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
     '''
 
     if dvar == 'omega':
-        P = lambda w: np.real(self.Polarizibility(q,w,gamma,eFermi,T))
+        P = lambda w: np.real(Polarizibility(q,w,gamma,eFermi,T))
         wa, wb = omega*(1-diff), omega*(1+diff)
         return (P(wb)-P(wa))/(2*omega*diff)
 
     elif dvar == 'q':
-        P = lambda qv: np.real(self.Polarizibility(qv,omega,gamma,eFermi,T))
+        P = lambda qv: np.real(Polarizibility(qv,omega,gamma,eFermi,T))
         qa,qb = q*(1-diff), q*(1+diff)
         return (P(qb)-P(qa))/(2*q*diff)
 
@@ -787,7 +787,7 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
     # Nonlocal case
     else:
         if T==0:
-            conductivity = 1j*sc.elementary_charge**2 * (omega / q**2) * self.Polarizibility(q,omega,gamma,eFermi,T)
+            conductivity = 1j*sc.elementary_charge**2 * (omega / q**2) * Polarizibility(q,omega,gamma,eFermi,T)
 
         else:
             pass
@@ -811,8 +811,8 @@ def OpticalConductivityMatrix(q,omega,gamma, eFermi,T,mu0,mu0T):
     '''
 
 
-    conductivity_matrix = np.array([[self.OpticalConductivity(q,omega,gamma,eFermi,T),0],
-                                    [0,self.OpticalConductivity(q,omega,gamma,eFermi,T)]])
+    conductivity_matrix = np.array([[OpticalConductivity(q,omega,gamma,eFermi,T),0],
+                                    [0,OpticalConductivity(q,omega,gamma,eFermi,T)]])
 
     return conductivity_matrix
 
@@ -843,7 +843,7 @@ def Permittivity(omega,eFermi,T, gamma=None,epsR=None,model=None):
         x2 = sc.hbar
         x3 = eFermi
         x4 = _c.vF
-        x5 = self.Mobility(T,mu0,mu0T) # mobility at the new temperature
+        x5 = Mobility(T,mu0,mu0T) # mobility at the new temperature
         x6 = epsR
 
         x7 = _c.thickness # 3.4 angstroms by default
@@ -860,7 +860,7 @@ def Permittivity(omega,eFermi,T, gamma=None,epsR=None,model=None):
         return eps
 
     else:
-        eps = 1 + 1j*self.OpticalConductivity(0,omega,gamma,eFermi,T)/(omega*sc.epsilon_0)
+        eps = 1 + 1j*OpticalConductivity(0,omega,gamma,eFermi,T)/(omega*sc.epsilon_0)
 
     return eps
 
@@ -890,7 +890,7 @@ def FresnelReflection(kpar,omega,gamma,eFermi,T,eps1,eps2,polarization):
 
     kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j)
 
-    sigma = self.OpticalConductivity(kpar,omega,gamma,eFermi,T)
+    sigma = OpticalConductivity(kpar,omega,gamma,eFermi,T)
 
     if polarization=='p' or polarization=='TM':
         numerator   = eps2*kperp1 - eps1*kperp2 + ( sigma*kperp1*kperp2 / (sc.epsilon_0*omega) )
@@ -924,13 +924,13 @@ def LocalDensityOfStates(d,omega,gamma,eFermi,T):
 
     for i, d0 in np.ndenumerate(d):
         k0w = (omega/sc.speed_of_light)
-        Im_rp      = lambda kpar: np.imag( self.FresnelReflection(kpar,omega,gamma,eFermi,T,1,1,'p') )
+        Im_rp      = lambda kpar: np.imag( FresnelReflection(kpar,omega,gamma,eFermi,T,1,1,'p') )
 
         integrand = lambda kpar: (kpar**2/k0w**3)*Im_rp(kpar)*np.exp(-2*kpar*d0)
 
         a,b = 1e-3, np.abs(_c.K) # Increasing this bound does not lead to more convergence
 
-        k_plasmon=self.InversePlasmonDispersion(omega,gamma,eFermi,1,1,T,model='nonlocal')
+        k_plasmon=InversePlasmonDispersion(omega,gamma,eFermi,1,1,T,model='nonlocal')
 
         integral[i] = integrate.quad(integrand,a,b,
                                     points=(k_plasmon),limit=100)[0]
@@ -990,7 +990,7 @@ def OpticalResponseBound(omega,gamma,eFermi,T,d=None,method='svd',restype='mater
                 'LDOStot':1*LDOSprop,'LDOSnrad':1*LDOSprop,'LDOSrad':LDOSprop/4})
 
     if method == 'scalar':
-        sigma = self.OpticalConductivity(0,omega,gamma,eFermi,T)
+        sigma = OpticalConductivity(0,omega,gamma,eFermi,T)
 
         bound = Z_0 * np.abs(sigma)**2 / np.real(sigma)
 
@@ -998,7 +998,7 @@ def OpticalResponseBound(omega,gamma,eFermi,T,d=None,method='svd',restype='mater
         bound = np.empty_like(omega)
 
         for i, w in np.ndenumerate(omega):
-            s = self.OpticalConductivityMatrix(0,w,gamma,eFermi,T)
+            s = OpticalConductivityMatrix(0,w,gamma,eFermi,T)
             s_dag = np.conj(np.transpose(s))
             s_re_inv = np.linalg.inv(np.real(s))
             prod = np.dot(s_dag,np.dot(s_re_inv,s))
@@ -1054,12 +1054,12 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
     if model=='local':
         omega = np.empty_like(q)
 
-        sigma = lambda w: self.OpticalConductivity(0,w,gamma,eFermi,T=0)
+        sigma = lambda w: OpticalConductivity(0,w,gamma,eFermi,T=0)
 
         for i,q0 in np.ndenumerate(q):
             root_eqn = lambda w: 1 - np.imag(sigma(w))*q0 / (2*sc.epsilon_0*epsavg*w)
 
-            a, b = self.PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra'), 1e-8
+            a, b = PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra'), 1e-8
             omega[i] = optimize.brentq(root_eqn,a,b)
 
         return omega
@@ -1067,13 +1067,13 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
     if model=='nonlocal':
         omega = np.empty_like(q)
 
-        kF = self.FermiWavenumber(eFermi,model='LowEnergy')
+        kF = FermiWavenumber(eFermi,model='LowEnergy')
 
         for i, q0 in np.ndenumerate(q):
-            root_eqn = lambda w: self.PlasmonDispersionRoot(q0,w,gamma,eFermi,eps1,eps2,T=0)
+            root_eqn = lambda w: PlasmonDispersionRoot(q0,w,gamma,eFermi,eps1,eps2,T=0)
             
             # Frequency is definitely below 1,1 intraband dispersion
-            b = self.PlasmonDispersion(q0,gamma,eFermi,1,1,T,model='intra')
+            b = PlasmonDispersion(q0,gamma,eFermi,1,1,T,model='intra')
 
             # Frequency is definitely above the minimum which should be <0
             a = optimize.minimize_scalar(root_eqn,bounds=((eFermi/sc.hbar)*q0/kF,b),method='bounded').x
@@ -1107,12 +1107,12 @@ def PlasmonDispersionRes(q,gamma,eFermi,eps1,eps2,T,exp_res=1):
 
     for i,q0 in np.ndenumerate(q):
         w1 = q0*_c.vF
-        w2 = self.PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra')
+        w2 = PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra')
         w0 = (w2+w1)/2
         # omega=np.linspace(q0*_c.vF,2*q0*_c.vF,num=300)
         omega=np.linspace(w1,w2,num=300)
 
-        y = np.imag(self.FresnelReflection(q0,omega,gamma,eFermi,T,eps1,eps2,'TM'))
+        y = np.imag(FresnelReflection(q0,omega,gamma,eFermi,T,eps1,eps2,'TM'))
 
         p0=[w0,0.1*w0,10]
 
@@ -1132,13 +1132,13 @@ def InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model):
     Useful when determining the wavelength of a plasmon excited by light.
     '''
 
-    kF = self.FermiWavenumber(eFermi,model='LowEnergy')
+    kF = FermiWavenumber(eFermi,model='LowEnergy')
 
     cutoff = 4*kF
     q = np.empty_like(omega)
 
     for i, omega in np.ndenumerate(omega):
-        root_eqn = lambda q: np.abs( omega - self.PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model) )
+        root_eqn = lambda q: np.abs( omega - PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model) )
 
         reps = 1
         while reps < 5:
@@ -1158,7 +1158,7 @@ def PlasmonDispersionRoot(q,omega,gamma,eFermi, eps1,eps2 ,T):
 
     epsavg = (eps1+eps2)/2
 
-    return 1 - np.imag(self.OpticalConductivity(q,omega,gamma,eFermi,T))*q / (2*sc.epsilon_0*epsavg*omega)
+    return 1 - np.imag(OpticalConductivity(q,omega,gamma,eFermi,T))*q / (2*sc.epsilon_0*epsavg*omega)
 
 def PlasmonDispersionRelation(q,omega,gamma,eFermi,eps1,eps2,T):
     '''
@@ -1187,13 +1187,13 @@ def PlasmonDispersionLoss(omega,gamma,eFermi,eps1,eps2,T,model):
     '''
     
     if model == 'nonlocal':
-        q1 = self.InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model)
+        q1 = InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model)
 
-        pol = self.Polarizibility(q1,omega,gamma,eFermi,T=0)
-        pol0= self.Polarizibility(q1,1e-9,gamma,eFermi,T=0)
+        pol = Polarizibility(q1,omega,gamma,eFermi,T=0)
+        pol0= Polarizibility(q1,1e-9,gamma,eFermi,T=0)
 
-        dpolq = self.dPolarizibility(q1,omega,gamma,eFermi,T,dvar='q')
-        dpolw = self.dPolarizibility(q1,omega,gamma,eFermi,T,dvar='omega')
+        dpolq = dPolarizibility(q1,omega,gamma,eFermi,T,dvar='q')
+        dpolw = dPolarizibility(q1,omega,gamma,eFermi,T,dvar='omega')
 
         numerator = np.imag(-pol) + gamma * (-1)*dpolw + (gamma/omega) * np.real(-pol * (1- (pol/pol0)))
         denominator = (1/q1) * np.real(-pol) - (-1)*dpolq
@@ -1229,7 +1229,7 @@ def dPlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model,dvar=None,diff=1e-7):
     if dvar == 'eFermi':
         result = np.empty_like(q)
         for i, q0 in np.ndenumerate(q):
-            w = lambda eF: self.PlasmonDispersion(q0,gamma,eF,eps1,eps2,T,model)
+            w = lambda eF: PlasmonDispersion(q0,gamma,eF,eps1,eps2,T,model)
             e1, e2 = eFermi*(1-diff), eFermi*(1+diff)
             result[i] = (w(e2)-w(e1))/(2*eFermi*diff)
 
@@ -1266,14 +1266,14 @@ def DipoleDecayRate(z,omega,gamma,eFermi,T,eps1,eps2):
     for i, w in np.ndenumerate(omega):
 
         kperp   = lambda kpar: np.sqrt(eps1*(w/sc.speed_of_light)**2 - kpar**2)
-        rp      = lambda kpar: self.FresnelReflection(kpar,w,gamma,eFermi,T,eps1,eps2,'p')
+        rp      = lambda kpar: FresnelReflection(kpar,w,gamma,eFermi,T,eps1,eps2,'p')
         perpterm = lambda kpar: 2*np.abs(d[2])**2 * kpar**2 * rp(kpar)
 
         integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
 
         b = np.abs(_c.K) # Increasing this bound does not lead to more convergence
         kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
-        k_plasmon=self.InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
+        k_plasmon=InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
 
         integral[i] = integrate.quad(integrand,1e-3,b,
                                     points=(kpar_pol,k_plasmon),limit=100)[0]
