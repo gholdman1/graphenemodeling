@@ -229,7 +229,6 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     Plot the Fermion dispersion relation.
 
     >>> from graphenemodeling import graphene
-    >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> mlg = graphene.Monolayer()
     >>> from scipy.constants import elementary_charge as eV
@@ -253,7 +252,6 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     Plot the full multi-dimensional dispersion relation.
 
     >>> from graphenemodeling import graphene
-    >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> from mpl_toolkits import mplot3d # 3D plotting
     >>> mlg = graphene.Monolayer()
