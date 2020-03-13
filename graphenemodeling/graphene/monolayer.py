@@ -100,6 +100,19 @@ def AtomicPosition(m,n):
 def Hamiltonian(k,model='LowEnergy'):
     '''Hamiltonian in momentum space.
 
+    Parameters
+    ----------
+
+    k:      array-like, wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
+
+    Returns
+    ----------
+
+    H:      2x2 array, Tight-binding Hamiltonian evaluated at k.
+
+    Notes
+    -----
+
     Let :math:`k=k_x+ik_y`. Then the common ``model=LowEnergy`` approximation is
 
     .. math::
@@ -121,16 +134,6 @@ def Hamiltonian(k,model='LowEnergy'):
 
     where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 
-    Parameters
-    ----------
-
-    k:      array-like, wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
-
-    Returns
-    ----------
-
-    H:      2x2 array, Tight-binding Hamiltonian evaluated at k.
-
     References
     ----------
 
@@ -139,6 +142,7 @@ def Hamiltonian(k,model='LowEnergy'):
     [2] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284. https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
 
     [3] Christensen, T. (2017). From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing). http://link.springer.com/10.1007/978-3-319-48562-1.
+
 
 
     '''
@@ -171,22 +175,6 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     However, in both the ``LowEnergy`` model and the ``FullTightBinding`` model, we use closed form solutions rather than solving for the eigenvalues directly.
     This saves time and make broadcasting easier.
 
-    When ``model='LowEnergy'``,
-
-    .. math::
-
-        E =\\pm\\hbar v_F |k|
-
-    When ``model=FullTightBinding``,
-
-    .. math::
-
-        E = \\pm \\gamma_0 \\sqrt{3 + f(k)} - \\gamma_0'f(k)
-
-    where :math:`f(k)= 2 \\cos(\\sqrt{3}k_y a) + 4 \\cos(\\sqrt{3}k_y a/2)\\cos(3k_xa/2)`.
-
-    Both expressions are equivalent to diagonalizing the Hamiltonian of the corresponding ``model``.
-
     Parameters
     ----------
 
@@ -208,6 +196,25 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     ----------
 
     array-like
+
+    Notes
+    -----
+
+    When ``model='LowEnergy'``,
+
+    .. math::
+
+        E =\\pm\\hbar v_F |k|
+
+    When ``model=FullTightBinding``,
+
+    .. math::
+
+        E = \\pm \\gamma_0 \\sqrt{3 + f(k)} - \\gamma_0'f(k)
+
+    where :math:`f(k)= 2 \\cos(\\sqrt{3}k_y a) + 4 \\cos(\\sqrt{3}k_y a/2)\\cos(3k_xa/2)`.
+
+    Both expressions are equivalent to diagonalizing the Hamiltonian of the corresponding ``model``.
 
     References
     ----------
@@ -340,6 +347,26 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
     '''
     The density of states per square meter of graphene at energy E.
 
+    Parameters
+    ----------
+
+    E:  array-like
+        Energy at which to evaluate DOS.
+
+    model:      string
+                ``'LowEnergy'``: Linear approximation of dispersion.
+
+                ``'FullTightBinding'``: Eigenvalues of tight-binding approximation. We use a closed form rather than finding eigenvalues of Hamiltonian to save time and avoid broadcasting issues.
+
+    Returns
+    -------
+
+    array-like
+        Density of states, units are states per J-m^2
+
+    Notes
+    -----
+
     For ``model==LowEnergy``, the form is simply
 
     .. math::
@@ -367,23 +394,6 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
                     4|E/\\gamma_0|, & |E|\\leq \\gamma_0 \n    
                     (1 + |E/\\gamma_0|)^2 - \\frac{[(E/\\gamma_0)^2-1]^2}{4}, & -3\\gamma_0\\leq E \\leq -\\gamma_0,\\gamma_0\\leq E\\leq 3\\gamma_0
                 }\\right.
-
-    Parameters
-    ----------
-
-    E:  array-like
-        Energy at which to evaluate DOS.
-
-    model:      string
-                ``'LowEnergy'``: Linear approximation of dispersion.
-
-                ``'FullTightBinding'``: Eigenvalues of tight-binding approximation. We use a closed form rather than finding eigenvalues of Hamiltonian to save time and avoid broadcasting issues.
-
-    Returns
-    -------
-
-    array-like
-        Density of states, units are states per J-m^2
 
     References
     ----------
@@ -469,23 +479,37 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
 
 def CarrierDensity(mu,T,model):
     '''
-    Computes the carrier density at nonzero temperature directly from the band structure.
+    Computes the carrier density directly from the band structure.
 
     Parameters
     ----------
 
     mu: array-like
-        Chemical potential
+        Chemical potential :math:`\\mu`
+
+    T:  scalar
+        Temperature :math:`T`
 
     Returns
     -------
 
     array-like
 
-    References
-    ----------
+    Notes
+    -----
 
-    [1] 
+    When ``T>0``, we use the standard formula of integrating the Fermi-Dirac distribution over the density of states :math:`\\rho`  .
+
+    .. math::
+
+        n = \\int_{-\\infty}^{\\infty} \\frac{1}{e^{(\\epsilon-\\mu)/k_BT}+1}\\rho(\\epsilon) d\\epsilon
+
+    For graphene at ``T=0``, this reduces to
+
+    .. math::
+
+        n = \\frac{\\mu}{\\pi\\hbar^2 v_F^2}
+
     '''
 
     if T<0:
@@ -509,14 +533,6 @@ def ChemicalPotential(n,T=0,model='LowEnergy'):
 
     Essentially the inverse of Carrier Density.
 
-    When ``T=0`` and ``model='LowEnergy'`` simultaneously, a closed form expression is used.
-
-    .. math::
-
-        E_F = \\hbar v_F\\sqrt{\\pi n}
-    
-    For ``T>0``, we use a numerical routine regargless of model.
-
     Parameters
     ----------
 
@@ -531,6 +547,16 @@ def ChemicalPotential(n,T=0,model='LowEnergy'):
 
     array-like
 
+    Notes
+    -----
+
+    When ``T=0`` and ``model='LowEnergy'`` simultaneously, a closed form expression is used.
+
+    .. math::
+
+        E_F = \\hbar v_F\\sqrt{\\pi n}
+    
+    For ``T>0``, we use a numerical routine regardless of model.
 
     '''
 
