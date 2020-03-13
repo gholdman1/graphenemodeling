@@ -22,6 +22,10 @@ Band structure
 Optical Properties
 ------------------
 
+.. toctree::
+    :maxdepth: 1
+
+    graphene.monolayer.OpticalConductivity
 
 
 Plasmonics
@@ -350,13 +354,13 @@ def FermiWavenumber(eFermi,model,g0prime=_c.g0prime):
 
 def DensityOfStates(E,model,g0prime=_c.g0prime):
     '''
-    The density of states per square meter of graphene at energy E.
+    The density of states per square meter of graphene at energy :math:`E`.
 
     Parameters
     ----------
 
     E:  array-like
-        Energy at which to evaluate DOS.
+        Energy :math:`E` at which to evaluate density of states.
 
     model:      string
                 ``'LowEnergy'``: Linear approximation of dispersion.
@@ -745,32 +749,38 @@ def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
 ######################
 
 def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
-    '''
-    Return the diagonal conductivity of graphene sigma_xx.
+    '''The diagonal conductivity of graphene sigma_xx.
 
     Parameters
     ----------
 
-    q:          array-like, wavenumbers at which to evaluate the nonlocal conductivity.
-                            Choose q=0 for the LOCAL conductivity.
+    q:          array-like
+                wavenumbers at which to evaluate the nonlocal conductivity.
+                Choose q=0 for the LOCAL conductivity.
 
-    omega:      array-like, frequency
+    omega:      array-like
+                angular frequency
 
-    eFermi:     scalar, the Fermi energy (J)
+    eFermi:     scalar
+                the Fermi energy (J)
 
-    gamma:      scalar, scattering rate
+    gamma:      scalar
+                scattering rate
 
-    T:          scalar, Temperature
+    T:          scalar
+                Temperature
 
-    model:      Typically 'None', but for a specific model, specify it.
+    model:      string
+                Typically 'None', but for a specific model, specify it.
 
 
     Returns
-    ----------
+    -------
 
-    conductivity:   array-like, conductivity at every value of omega
+    array-like
+    conductivity at every value of omega
 
-    References:
+    References
     ----------
 
 
