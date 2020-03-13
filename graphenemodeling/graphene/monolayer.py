@@ -253,34 +253,37 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
     Plot the full multi-dimensional dispersion relation.
 
-    >>> from graphenemodeling import graphene
-    >>> import matplotlib.pyplot as plt
-    >>> from mpl_toolkits import mplot3d # 3D plotting
-    >>> mlg = graphene.Monolayer()
-    >>> kmax = np.abs(mlg.K)
-    >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding')
-    >>> kx = np.linspace(-kmax,kmax,num=100)
-    >>> ky = np.copy(kx)
-    >>> k = (kx + 1j*ky[:,np.newaxis]) + mlg.K # k is relative to K. Add K to move to center of Brillouin zone
-    >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1)
-    >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1)
-    >>> fig = plt.figure(figsize=(8,8))
-    >>> fullax = plt.axes(projection='3d')
-    >>> fullax.view_init(20,35)
-    >>> KX, KY = np.meshgrid(kx,ky)
-    >>> fullax.plot_surface(KX/kmax,KY/kmax,conduction_band/mlg.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
-    <...
-    >>> fullax.plot_surface(KX/kmax,KY/kmax,valence_band/mlg.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
-    <...
-    >>> fullax.set_xlabel('$k_x/|K|$')
-    Text...
-    >>> fullax.set_ylabel('$k_y/|K|$')
-    Text...
-    >>> fullax.set_zlabel('$\\epsilon/\\gamma_0$')
-    Text...
-    >>> fullax.set_title('Brillouin Zone of Graphene')
-    Text...
-    >>> plt.show()
+    .. plot::
+
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from graphenemodeling.graphene import _constants as _c
+        >>> import matplotlib.pyplot as plt
+        >>> from mpl_toolkits import mplot3d # 3D plotting
+        >>> kmax = np.abs(_c.K)
+        >>> emax = mlg.CarrierDispersion(0,model='FullTightBinding')
+        >>> kx = np.linspace(-kmax,kmax,num=100)
+        >>> ky = np.copy(kx)
+        >>> k = (kx + 1j*ky[:,np.newaxis]) + _c.K # k is relative to K. Add K to move to center of Brillouin zone
+        >>> conduction_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=1)
+        >>> valence_band = mlg.CarrierDispersion(k,model='FullTightBinding',eh=-1)
+        >>> fig = plt.figure(figsize=(8,8))
+        >>> fullax = plt.axes(projection='3d')
+        >>> fullax.view_init(20,35)
+        >>> KX, KY = np.meshgrid(kx,ky)
+        >>> fullax.plot_surface(KX/kmax,KY/kmax,conduction_band/_c.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
+        <...
+        >>> fullax.plot_surface(KX/kmax,KY/kmax,valence_band/_c.g0,rstride=1,cstride=1,cmap='viridis',edgecolor='none')
+        <...
+        >>> fullax.set_xlabel('$k_x/|K|$')
+        Text...
+        >>> fullax.set_ylabel('$k_y/|K|$')
+        Text...
+        >>> fullax.set_zlabel('$\\epsilon/\\gamma_0$')
+        Text...
+        >>> fullax.set_title('Brillouin Zone of Graphene')
+        Text...
+        >>> plt.show()
+
     '''
 
     if eh!=1 and eh!=-1:
@@ -395,6 +398,30 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
                     (1 + |E/\\gamma_0|)^2 - \\frac{[(E/\\gamma_0)^2-1]^2}{4}, & -3\\gamma_0\\leq E \\leq -\\gamma_0,\\gamma_0\\leq E\\leq 3\\gamma_0
                 }\\right.
 
+    Examples
+    --------
+    Plot the density of states for ``model=LowEnergy`` approximation and ``model=FullTightBinding`` model.
+
+    .. plot::
+
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from graphenemodeling.graphene import _constants as _c
+        >>> import matplotlib.pyplot as plt
+        >>> E = np.linspace(-3,3,num=200) * _c.g0
+        >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
+        >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
+        >>> plt.plot(E/_c.g0,DOS_full/np.max(DOS_full),label='FullTightBinding')
+        [<...
+        >>> plt.plot(E/_c.g0,DOS_low/np.max(DOS_full),label='LowEnergy')
+        [<...
+        >>> plt.xlabel('$E/\\gamma_0$')
+        Text...
+        >>> plt.ylabel('DOS (a.u.)')
+        Text...
+        >>> plt.legend()
+        <...
+        >>> plt.show()
+
     References
     ----------
 
@@ -404,27 +431,6 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
     The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162.
     https://link.aps.org/doi/10.1103/RevModPhys.81.109.
 
-
-    Examples
-    --------
-    Plot the density of states for ``model=LowEnergy`` approximation and ``model=FullTightBinding`` model.
-
-    >>> from graphenemodeling.graphene import monolayer as mlg
-    >>> import matplotlib.pyplot as plt
-    >>> E = np.linspace(-3,3,num=200) * mlg.g0
-    >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
-    >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
-    >>> plt.plot(E/mlg.g0,DOS_full/np.max(DOS_full),label='FullTightBinding')
-    [<...
-    >>> plt.plot(E/mlg.g0,DOS_low/np.max(DOS_full),label='LowEnergy')
-    [<...
-    >>> plt.xlabel('$E/g_0$')
-    Text...
-    >>> plt.ylabel('DOS (a.u.)')
-    Text...
-    >>> plt.legend()
-    <...
-    >>> plt.show()
     '''
 
     if model=='LowEnergy':
