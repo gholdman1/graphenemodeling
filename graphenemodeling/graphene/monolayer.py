@@ -3,6 +3,31 @@
 Monolayer (:mod:`graphenemodeling.graphene.monolayer`)
 ======================================================
 
+Functions
+=========
+
+Band structure
+--------------
+
+.. toctree::
+    :maxdepth: 1
+
+    graphene.monolayer.Hamiltonian
+    graphene.monolayer.CarrierDispersion
+    graphene.monolayer.DensityOfStates
+    graphene.monolayer.FermiWavenumber
+    graphene.monolayer.CarrierDensity
+    graphene.monolayer.ChemicalPotential
+
+Optical Properties
+------------------
+
+
+
+Plasmonics
+----------
+
+
 Models
 ======
 
@@ -25,31 +50,8 @@ where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 
 Low Energy (:mod:`model='LowEnergy'`)
 -------------------------------------
-An approximation to the Tight Binding model is what we are calling the Low Energy model.
+An low-energy approximation to the Tight Binding model is what we are calling the Low Energy model.
 This is valid for small momenta, i.e. :math:`\\hbar v_F k\\ll \\gamma_0`.
-
-Functions
-=========
-
-Band structure
---------------
-
-.. toctree::
-    :maxdepth: 1
-
-    graphene.monolayer.Hamiltonian
-    graphene.monolayer.CarrierDispersion
-    graphene.monolayer.DensityOfStates
-    graphene.monolayer.FermiWavenumber
-    graphene.monolayer.CarrierDensity
-
-Optical Properties
-------------------
-
-
-
-Plasmonics
-----------
 
 
 References
@@ -91,11 +93,9 @@ def AtomicPosition(m,n):
 
     return pos
 
-
 ##################
 # Band Structure #
 ##################
-
 
 def Hamiltonian(k,model='LowEnergy'):
     '''Hamiltonian in momentum space.
@@ -505,16 +505,36 @@ def CarrierDensity(mu,T,model):
     return n
 
 def ChemicalPotential(n,T=0,model='LowEnergy'):
-    '''
-    Returns the chemical potential given the carrier density.
+    '''Returns the chemical potential given the carrier density.
+
+    Essentially the inverse of Carrier Density.
+
+    When ``T=0`` and ``model='LowEnergy'`` simultaneously, a closed form expression is used.
+
+    .. math::
+
+        E_F = \\hbar v_F\\sqrt{\\pi n}
+    
+    For ``T>0``, we use a numerical routine regargless of model.
 
     Parameters
     ----------
 
-    n:  array-like, carrier density in units m^-2.
+    n:  array-like
+        Carrier density in units m^-2.
+
+    T:  scalar
+        Temperature (K)
+
+    Returns
+    -------
+
+    array-like
+
+
     '''
 
-    if T==0:
+    if T==0 and model=='LowEnergy':
         return sc.hbar*_c.vF*np.sqrt(sc.pi*n)
 
     else:
@@ -530,8 +550,6 @@ def ChemicalPotential(n,T=0,model='LowEnergy'):
                                         rtol=1e-10).root
 
         return result
-
-
 
 ########################
 # Electrical Transport #
@@ -626,9 +644,9 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
         Equation 17 of Ref 2
         '''
 
-        prefactor = -self.DensityOfStates(eFermi,model='LowEnergy')
+        prefactor = -DensityOfStates(eFermi,model='LowEnergy')
 
-        kF = self.FermiWavenumber(eFermi, model='LowEnergy')
+        kF = FermiWavenumber(eFermi, model='LowEnergy')
 
         x = q / (2*kF)
         zbar = sc.hbar*omega / (2*eFermi)
@@ -644,8 +662,8 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
 
     elif gamma !=0:
         # Mermin-corrected Relaxation Time Approximation (Eqn 4.9 of Ref 1)
-        pol_complex_arg = self.Polarizibility(q,omega+1j*gamma,0,eFermi,T=0)
-        pol_0 = self.Polarizibility(q,0,0,eFermi,T=0)
+        pol_complex_arg = Polarizibility(q,omega+1j*gamma,0,eFermi,T=0)
+        pol_0 = Polarizibility(q,0,0,eFermi,T=0)
 
         numerator = (1 + 1j*gamma/omega) * pol_complex_arg
         denominator = 1 + ( 1j*gamma/omega * pol_complex_arg / pol_0 )
