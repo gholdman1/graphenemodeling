@@ -1,7 +1,7 @@
 """
-===============
-Electrodynamics
-===============
+==================================================
+Electrodynamics (:mod:`photonics.electrodynamics`)
+==================================================
 
 Text goes here.
 
