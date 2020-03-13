@@ -424,6 +424,8 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
         <...
         >>> plt.show()
 
+    Replicates Fig. 5 in Ref. [2].
+    
     References
     ----------
 
