@@ -827,7 +827,7 @@ def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
 ######################
 
 def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
-    '''The diagonal conductivity of graphene sigma_xx.
+    '''The diagonal conductivity of graphene :math:`\\sigma_{xx}`.
 
     Parameters
     ----------
@@ -858,8 +858,97 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
     array-like
     conductivity at every value of omega
 
+    Examples
+    --------
+    
+    Plot the optical conductivity normalized to intrinsic conductivity :math:`\\sigma_0`.
+    Replicates Fig. 4.4 in Ref. [1].
+
+    .. plot ::
+
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from scipy.constants import elementary_charge, hbar
+        >>> from graphenemodeling.graphene._constants import sigma_0
+        >>> import matplotlib.pyplot as plt
+        >>> eF = 0.4 * elementary_charge
+        >>> g = 0.012 * elementary_charge / hbar
+        >>> w = np.linspace(0.01,3,num=150) / (hbar/eF)
+        >>> s_0K_0g = mlg.OpticalConductivity(q=0,omega=w,gamma=0,eFermi=eF,T=0)
+        >>> s_0K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,eFermi=eF,T=0.01)
+        >>> s_300K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,eFermi=eF,T=300)
+        >>> fig, (re_ax, im_ax) = plt.subplots(1,2,figsize=(11,4))
+        >>> s_Re = np.real(s_0K_0g)
+        >>> s_Im = np.imag(s_0K_0g)
+        >>> re_ax.plot(w*hbar/eF,s_Re/sigma_0,'r',label='T=0, $\\hbar\\gamma$=0 meV')
+        <...
+        >>> im_ax.plot(w*hbar/eF,s_Im/sigma_0,'r',label='T=0, $\\hbar\\gamma$=0 meV')
+        <...
+        >>> s_Re = np.real(s_0K_12g)
+        >>> s_Im = np.imag(s_0K_12g)
+        >>> re_ax.plot(w*hbar/eF,s_Re/sigma_0,color='royalblue',label='T=0, $\\hbar\\gamma$=12 meV')
+        <...
+        >>> im_ax.plot(w*hbar/eF,s_Im/sigma_0,color='royalblue',label='T=0, $\\hbar\\gamma$=12 meV')
+        <...
+        >>> s_Re = np.real(s_300K_12g)
+        >>> s_Im = np.imag(s_300K_12g)
+        >>> re_ax.plot(w*hbar/eF,s_Re/sigma_0,color='green',label='T=300 K, $\\hbar\\gamma$=12 meV')
+        <...
+        >>> im_ax.plot(w*hbar/eF,s_Im/sigma_0,color='green',label='T=300 K, $\\hbar\\gamma$=12 meV')
+        <...
+        >>> re_ax.set_ylabel('Re[$\\sigma$]/$\\sigma_0$')
+        >>> re_ax.set_xlabel('$\\hbar\\omega/E_F$')
+        >>> re_ax.plot(w*hbar/eF,np.ones_like(w),'--',color='gray')
+        >>> re_ax.set_ylim(0,2)
+        >>> im_ax.set_ylabel('Im[$\\sigma$]/$\\sigma_0$')
+        >>> im_ax.set_xlabel('$\\hbar\\omega/E_F$')
+        >>> im_ax.plot(w*hbar/eF,np.zeros_like(w),'--',color='gray')
+        >>> im_ax.set_ylim(-2,3)
+        >>> plt.legend()
+        >>> plt.show()
+
+
+    Notes
+    -----
+    The optical conductivity :math:`\\overleftrightarrow{\\sigma}(q,\\omega)` 
+    relates the surface current :math:`\\mathbf K(\\omega)` 
+    to an applied electric field :math:`\\mathbf E(\\omega)`
+
+    .. math::
+
+        \\mathbf K(\\omega)=\\int \\overleftrightarrow\\sigma(q,\\omega)\\mathbf E(\\omega) dq
+    
+
+    Here, :math:`\\omega` refers to the frequency and :math:`q` refers to the scattering wavevector. 
+    In many cases, :math:`\\overleftrightarrow{\\sigma}` is isotropic, 
+    so the above equation can be reduced to a scalar equation
+
+    .. math::
+
+        K(\\omega)=\\int \\sigma(q,\\omega)E(\\omega)dq
+
+
+    The most general expression for the conductivity is given by the Kubo formula
+    
+    .. math::
+        \\sigma(q,\\omega)=\\frac{ie^2\\omega}{q^2}\\chi^0(q,\\omega).
+    
+    If ``q`` is nonzero, this form is used.
+    However, it is common to use simpler limiting cases of this expression.
+    The local conductivity (``q=0``) is the one which is most familiar 
+    and it relates the surface current to the electric field linearly
+    
+    .. math::
+
+        \\mathbf K(\\omega)=\\sigma(\\omega)\\mathbf E
+
+    It can be found from the nonlocal conductivity by taking the limit $\\lim_{q\\to 0}\\sigma(q,\\omega)=\\sigma(\\omega)$.
+
     References
     ----------
+
+    [1] Christensen, T. (2017).
+    From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing).
+    http://link.springer.com/10.1007/978-3-319-48562-1
 
 
     '''
@@ -868,13 +957,13 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
     if np.all(q) == 0:
 
         if T!=0:
-            intra_pre = 4 * _c.sigma_0 * (2*1j*kB*T) / (sc.pi*sc.hbar)
+            intra_pre = 4 * _c.sigma_0 * (2*1j*sc.k*T) / (sc.pi*sc.hbar)
             inter_pre = _c.sigma_0
 
             ### Intraband Contribution ###
 
             # Using np.logaddexp() avoids the large cosh in ln( cosh(1/T) )
-            x = eFermi / (2*kB*T)
+            x = eFermi / (2*sc.k*T)
             intra = lambda w: intra_pre * ( 1 / (w + 1j*gamma) ) * np.logaddexp(x,-x)
 
             ### Interband Contribution ###
