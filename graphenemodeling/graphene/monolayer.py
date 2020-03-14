@@ -66,6 +66,10 @@ This is valid for small momenta, i.e. :math:`\\hbar v_F k\\ll \\gamma_0`.
 References
 ==========
 
+[1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162.
+https://link.aps.org/doi/10.1103/RevModPhys.81.109
+
 """
 
 import numpy as np
@@ -1389,21 +1393,6 @@ def PlasmonDispersionRoot(q,omega,gamma,eFermi, eps1,eps2 ,T):
     epsavg = (eps1+eps2)/2
 
     return 1 - np.imag(OpticalConductivity(q,omega,gamma,eFermi,T))*q / (2*sc.epsilon_0*epsavg*omega)
-
-def PlasmonDispersionRelation(q,omega,gamma,eFermi,eps1,eps2,T):
-    '''
-    Computes the Full Dispersion relation.
-
-    Parameters
-    ----------
-
-    q:      array-like (complex), 
-
-    omega:  array-like (complex),
-    '''
-
-    
-    pass
 
 def PlasmonDispersionLoss(omega,gamma,eFermi,eps1,eps2,T,model):
     '''
