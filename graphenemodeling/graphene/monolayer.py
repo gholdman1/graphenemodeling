@@ -432,9 +432,9 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
         >>> E = np.linspace(-3,3,num=200) * _c.g0
         >>> DOS_low = mlg.DensityOfStates(E,model='LowEnergy')
         >>> DOS_full = mlg.DensityOfStates(E,model='FullTightBinding')
-        >>> plt.plot(E/_c.g0,DOS_full/np.max(DOS_full),label='FullTightBinding')
+        >>> plt.plot(E/_c.g0,DOS_full/np.max(DOS_full),'k-',label='FullTightBinding')
         [<...
-        >>> plt.plot(E/_c.g0,DOS_low/np.max(DOS_full),label='LowEnergy')
+        >>> plt.plot(E/_c.g0,DOS_low/np.max(DOS_full),'k-.',label='LowEnergy')
         [<...
         >>> plt.xlabel('$E/\\gamma_0$')
         Text...
