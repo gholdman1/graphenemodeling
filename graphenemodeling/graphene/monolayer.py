@@ -32,6 +32,10 @@ Optical Properties
 Plasmonics
 ----------
 
+.. toctree::
+    :maxdepth: 1
+
+    graphene.monolayer.PlasmonDispersion
 
 Models
 ======
@@ -860,8 +864,8 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
     if np.all(q) == 0:
 
         if T!=0:
-            intra_pre = 4 * sigma_0 * (2*1j*kB*T) / (sc.pi*sc.hbar)
-            inter_pre = sigma_0
+            intra_pre = 4 * _c.sigma_0 * (2*1j*kB*T) / (sc.pi*sc.hbar)
+            inter_pre = _c.sigma_0
 
             ### Intraband Contribution ###
 
@@ -893,9 +897,9 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
             conductivity= intra(omega) + inter(omega)
 
         if T==0:
-            intra = lambda w: 1j*sigma_0 * 4*eFermi / (sc.pi*sc.hbar* (w + 1j*gamma))
+            intra = lambda w: 1j*_c.sigma_0 * 4*eFermi / (sc.pi*sc.hbar* (w + 1j*gamma))
 
-            inter = lambda w: sigma_0 * ( np.heaviside(sc.hbar*w - 2*eFermi,0.5) + 
+            inter = lambda w: _c.sigma_0 * ( np.heaviside(sc.hbar*w - 2*eFermi,0.5) + 
                                             (1j/sc.pi) * np.log(np.abs((2*eFermi-sc.hbar*w)/(2*eFermi+sc.hbar*w))))
 
             conductivity = intra(omega) + inter(omega)
@@ -1147,16 +1151,86 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
     Parameters
     ----------
 
-    q:          array-like, wavenumber of the plasmon
+    q:  array-like
+        Wavenumber of the plasmon
 
-    eps1,eps2:  scalar, the relative permittivity of each dielectric
+    eps1,eps2:  scalar
+        the relative permittivity of upper and lower half-space respectively.
 
-    model:      'intra' for intraband dispersion, 'local' uses the intraband + interband constributions to the conductivity. 'nonlocal' Uses fully nonlocal conductivity to get dispersion.
+    model:  string
+        'intra' for intraband dispersion,
+        'local' uses the intraband + interband constributions to the conductivity, and
+        'nonlocal' for fully nonlocal conductivity.
 
     Returns
+    -------
+
+    omega:  array-like
+        Frequency of the plasmon with wavenumber q
+
+    Notes
+    -----
+
+    ``model=='intra'`` uses
+
+    .. math::
+
+        \\omega = \\frac{1}{\\hbar}\\sqrt{\\frac{e^2\\epsilon_F}{2\\pi\\epsilon_0\\bar\\epsilon}q}
+
+    ``model=='local'`` uses
+
+    .. math::
+
+        1-\\frac{i\\text{Im}[\\sigma(q,\\omega)]}{2i\\epsilon_0\\bar\\epsilon\\omega}=0
+
+    and finally, ``model=='nonlocal'`` uses
+
+    .. math::
+
+        1 - \\frac{\\sigma(q,\\omega)q}{2i\\epsilon_0\\bar\\epsilon\\omega} = 0
+
+
+    Examples
+    --------
+
+    Plot the three expressions for the dispersion relation.
+
+    .. plot::
+
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from scipy.constants import elementary_charge, hbar
+        >>> eV = elementary_charge
+        >>> gamma=0.012 * eV / hbar
+        >>> eF = 0.4*eV
+        >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
+        >>> q = np.linspace(1e-3,3,num=200) * kF
+        >>> disp_intra = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=1,T=0,model='intra')
+        >>> disp_local = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=1,T=0,model='local')
+        >>> disp_nonlocal = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=1,T=0,model='nonlocal')
+        >>> fig, ax = plt.subplots(figsize=(6,6))
+        >>> ax.plot(q/kF,hbar*disp_intra/eF,'--',label='Intraband')
+        <...
+        >>> ax.plot(q/kF,hbar*disp_local/eF,'r-.',label='Local')
+        <...
+        >>> ax.plot(q[:190]/kF,hbar*disp_nonlocal[:190]/eF,'g',label='Nonlocal')
+        <...
+        >>> ax.plot(q/kF,q/kF,color='gray',linestyle='--')
+        <...
+        >>> ax.set_xlabel('$q/k_F$')
+        >>> ax.set_ylabel('$\\hbar\\omega/E_F$')
+        >>> ax.set_xlim(0,3)
+        >>> ax.set_ylim(0,3)
+        >>> plt.legend()
+        >>> plt.show()
+
+    This replicates Fig. 5.2 in Ref. [1].
+
+    References
     ----------
 
-    omega:      array-like, the frequency of the plasmon with wavenumber q
+    [1] Christensen, T. (2017).
+    From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing).
+    http://link.springer.com/10.1007/978-3-319-48562-1.
 
     '''
 

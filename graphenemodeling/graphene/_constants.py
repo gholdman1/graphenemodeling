@@ -64,6 +64,7 @@ W = 4.6 * eVtoJ                        # Work function of graphene. See 10.1038/
 
 K = (2*sc.pi/(3*a)) + 1j*(2*sc.pi/(3*(3**(1/2))*a)) # The magnitude of the K point vector
 
+sigma_0	= sc.elementary_charge**2 / (4*hbar)
 # Tunneling parameters
 kappa_elastic = 3.9*10**-10            # m^-1, inverse decay length
 
