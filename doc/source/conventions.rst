@@ -20,4 +20,9 @@ Every piece of code must demonstrate that it replicates a published work. This i
 Code Structure
 --------------
 
+Just as ``numpy`` is typically imported with the name ``np``, we have a few conventions in GrapheneModeling. The submodules ``graphene.monolayer`` and ``graphene.bilayer`` are imported as ``mlg`` and ``blg``.
+
+>>> from graphenemodeling.graphene import monolayer as mlg
+>>> from graphenemodeling.graphene import bilayer as blg
+
 One logical use case of this code is to analyze a piece of graphene at a temperature :math:`T` with mobility :math:`\\mu`. In this case, the submodule ``graphene.monolayer`` sould have been a class, perhaps called ``Monolayer`` with attributes ``Monolayer.T`` and ``Monolayer.mobility``. However, since most experiments involve fitting to the properties of a piece of graphene with unknown mobility and temperature, this approach would have been slow, as the user would be required to reinstantiate the ``Monolayer`` class for every mobility and temperature of interest.
