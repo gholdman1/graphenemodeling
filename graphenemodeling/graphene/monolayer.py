@@ -77,8 +77,8 @@ import graphenemodeling.statistical_distributions as sd
 # Geometry #
 ############
 
-def AtomicPosition(m,n):
-    '''Position of carbon atoms
+def UnitCell(m,n):
+    '''Positions of unit cell
 
     Parameters
     ----------
@@ -95,6 +95,13 @@ def AtomicPosition(m,n):
     a2 = np.array(_c.a2)
 
     pos = m*a1 + n*a2
+
+    return pos
+
+def AtomicPosition(m,n,i):
+
+    delta = _c.a/2*np.array([1,3**(1/2)])
+    pos = UnitCell(m,n)+i*delta
 
     return pos
 
