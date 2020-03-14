@@ -538,7 +538,7 @@ def CarrierDensity(mu,T,model):
 
     .. math::
 
-        n = \\frac{\\mu}{\\pi\\hbar^2 v_F^2}
+        n = \\frac{\\mu^2}{\\pi\\hbar^2 v_F^2}
 
     '''
 
