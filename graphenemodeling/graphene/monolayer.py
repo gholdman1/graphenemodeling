@@ -25,6 +25,7 @@ Optical Properties
 .. toctree::
     :maxdepth: 1
 
+    graphene.monolayer.Polarizibility
     graphene.monolayer.OpticalConductivity
 
 
@@ -645,14 +646,7 @@ def ScatteringRate(mobility,eFermi):
 
 def Polarizibility(q,omega,gamma,eFermi,T=0):
     '''
-    The Polarizibiliy function in graphene. Can be derived from a
-    self-consistent field method or the Kubo formula.
-
-    For gamma == 0, this returns equation 17 of Ref 2, which is the
-    polarizibility for general complex frequencies.
-
-    For gamma != 0, we return the Mermin-corrected Relaxation time approximation
-    (Eqn 4.9 of Ref 1), which calls the gamma==0 case.
+    The Polarizibility :math:`\\chi^0`` of graphene.
 
     Parameters
     ----------
@@ -666,16 +660,85 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
 
     eFermi: scalar, Fermi level of graphene.
 
+    Notes
+    -----
+    The Polarizibiliy function in graphene. Can be derived from a
+    self-consistent field method or the Kubo formula.
+
+    .. math::
+
+        \\chi^0(\\mathbf q, \\omega) = \\frac{g}{A}\\sum_{nn'\\mathbf k}\\frac{f_{n\\mathbf k} - f_{n'\\mathbf{k+q}}}{\\epsilon_{n\\mathbf k}-\\epsilon_{n'\\mathbf{k+q}}+\\hbar(\\omega+i\\eta)}|\\left<n\\mathbf k|e^{-i\\mathbf{q\\cdot r}}|n'\\mathbf{k+q}\\right>|^2
+
+    For ``gamma == 0``, this returns equation 17 of Ref 2, which is the
+    polarizibility for general complex frequencies.
+
+    For ``gamma > 0``, we return the Mermin-corrected Relaxation time approximation
+    (Eqn 4.9 of Ref 1), which calls the gamma==0 case.
+
+
+    Examples
+    --------
+
+    Plot the real and imaginary part of :math:`\\chi^0`, normalized to density of states.
+
+    .. plot::
+
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> import matplotlib.pyplot as plt
+        >>> from matplotlib import cm
+        >>> from scipy.constants import elementary_charge as eV
+        >>> from scipy.constants import hbar
+        >>> eF = 0.4*eV
+        >>> gamma = 0
+        >>> DOS = mlg.DensityOfStates(eF,model='LowEnergy')
+        >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
+        >>> omega = np.linspace(0.01,2.5,num=250) / (hbar/eF)
+        >>> q = np.linspace(0.01,2.5,num=250) * kF
+        >>> pol = mlg.Polarizibility(q, omega[:,np.newaxis],gamma,eF)
+        >>> fig, (re_ax, im_ax)  = plt.subplots(1,2,figsize=(11,4))
+        >>> re_img = re_ax.imshow(  np.real(pol)/DOS,
+        ...                         extent=(q[0]/kF,q[-1]/kF,hbar*omega[0]/eF,hbar*omega[-1]/eF),
+        ...                         vmin=-2,vmax=1, cmap=cm.gray,
+        ...                         origin = 'lower', aspect='auto'
+        ...                       )
+        <...
+        >>> re_cb = fig.colorbar(re_img, ax = re_ax)
+        >>> im_img = im_ax.imshow(  np.imag(pol)/DOS,
+        ...                         extent=(q[0]/kF,q[-1]/kF,hbar*omega[0]/eF,hbar*omega[-1]/eF),
+        ...                         vmin=-1,vmax=0, cmap=cm.gray,
+        ...                         origin = 'lower', aspect='auto'
+        ...                       )
+        <...
+        >>> im_cb = fig.colorbar(im_img, ax = im_ax)
+        >>> re_ax.set_ylabel('$\\hbar\\omega$/$\\epsilon_F$',fontsize=14)
+        Text...
+        >>> re_ax.set_xlabel('$q/k_F$',fontsize=14)
+        Text...
+        >>> im_ax.set_ylabel('$\\hbar\\omega$/$\\epsilon_F$',fontsize=14)
+        Text...
+        >>> im_ax.set_xlabel('$q/k_F$',fontsize=14)
+        Text...
+        >>> plt.show()
+
+    This example replicates Fig. 1 of Ref. [3].
+
     References
     ----------
 
     [1] Christensen Thesis 2017
 
-    [2] Sernelius 2012
+    [2] Sernelius, B. Retarded interactions in graphene systems.
 
-    [2] Wunsch 2006
+    [3] Wunsch, B., Stauber, T., Sols, F., and Guinea, F. (2006).
+    Dynamical polarization of graphene at finite doping. New J. Phys. 8, 318–318.
+    https://doi.org/10.1088%2F1367-2630%2F8%2F12%2F318.
 
-    [3] Hwang and Das Sarma 2007
+
+    [4] Hwang, E.H., and Das Sarma, S. (2007).
+    Dielectric function, screening, and plasmons in two-dimensional graphene.
+    Phys. Rev. B 75, 205418.
+    https://link.aps.org/doi/10.1103/PhysRevB.75.205418.
+
 
     '''
 
