@@ -1225,12 +1225,52 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
 
     This replicates Fig. 5.2 in Ref. [1].
 
+    Plot dispersion relation with a lower half-space permittivity of :math:`\\epsilon=4`` (an approximation for hexagonal boron nitride).
+
+    .. plot::
+
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from scipy.constants import elementary_charge, hbar
+        >>> eV = elementary_charge
+        >>> gamma=0.012 * eV / hbar
+        >>> eF = 0.4*eV
+        >>> kF = mlg.FermiWavenumber(eF,model='LowEnergy')
+        >>> q = np.linspace(1e-3,2,num=200) * kF
+        >>> vac_intra = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=1,T=0,model='intra')
+        >>> hbn_intra = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=4,T=0,model='intra')
+        >>> vac_nonlocal = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=1,T=0,model='nonlocal')
+        >>> hbn_nonlocal = mlg.PlasmonDispersion(q,gamma,eF,eps1=1,eps2=4,T=0,model='nonlocal')
+        >>> fig, ax = plt.subplots(figsize=(6,6))
+        >>> ax.plot(q/kF,hbar*vac_intra/eF,'k-.',label='Vacuum Intraband')
+        <...
+        >>> ax.plot(q/kF,hbar*hbn_intra/eF,linestyle='dotted',color='purple',label='hBN Intraband')
+        <...
+        >>> ax.plot(q/kF,hbar*vac_nonlocal/eF,'k-',label='Vacuum Nonlocal')
+        <...
+        >>> ax.plot(q/kF,hbar*hbn_nonlocal/eF,'--',color='purple',label='hBN Nonlocal')
+        <...
+        >>> ax.plot(q/kF,q/kF,color='gray',linestyle='--')
+        <...
+        >>> ax.set_xlabel('$q/k_F$')
+        >>> ax.set_ylabel('$\\hbar\\omega/E_F$')
+        >>> ax.set_xlim(0,2)
+        >>> ax.set_ylim(0,2)
+        >>> plt.legend()
+        >>> plt.show()
+
+    This replicates Fig. 1d in Ref. [2].
+
     References
     ----------
 
     [1] Christensen, T. (2017).
     From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing).
     http://link.springer.com/10.1007/978-3-319-48562-1.
+
+    [2] Jablan, M., Buljan, H., and Soljačić, M. (2009).
+    Plasmonics in graphene at infrared frequencies. Phys. Rev. B 80, 245435.
+    https://link.aps.org/doi/10.1103/PhysRevB.80.245435.
+
 
     '''
 
