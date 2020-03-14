@@ -1,4 +1,5 @@
-.. automodule:: graphenemodeling.statistical_distributions.Lorentz
-   :no-members:
-   :no-inherited-members:
-   :no-special-members:
+=======
+Lorentz
+=======
+
+.. autofunction:: graphenemodeling.statistical_distributions.Lorentz

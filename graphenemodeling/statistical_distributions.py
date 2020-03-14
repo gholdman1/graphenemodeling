@@ -5,13 +5,14 @@ Statistical Distributions (:mod:`graphenemodeling.statistical_distributions`)
 
 These statistical distributions are not found in ``scipy.stats`` and are therefore offered here.
 
-.. autosummary::
+.. toctree::
+    :maxdepth: 1
 
-    FermiDirac
-    BoseEinstein
-    Boltzmann
-    Lorentz
-    Planck
+    statistical_distributions.FermiDirac
+    statistical_distributions.BoseEinstein
+    statistical_distributions.Boltzmann
+    statistical_distributions.Lorentz
+    statistical_distributions.Planck
 
 """
 

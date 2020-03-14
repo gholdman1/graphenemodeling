@@ -1,4 +1,5 @@
-.. automodule:: graphenemodeling.statistical_distributions.Boltzmann
-   :no-members:
-   :no-inherited-members:
-   :no-special-members:
+=========
+Boltzmann
+=========
+
+.. autofunction:: graphenemodeling.statistical_distributions.Boltzmann
