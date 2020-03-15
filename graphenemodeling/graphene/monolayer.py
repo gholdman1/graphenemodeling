@@ -118,32 +118,31 @@ def AtomicPosition(m,n,i):
 ##################
 
 def Hamiltonian(k,model='LowEnergy'):
-    '''Hamiltonian in momentum space.
+    '''Tight-binding Hamiltonian in momentum space.
 
     Parameters
     ----------
 
-    k:      array-like, wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
+    k:  array-like
+        Wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
 
+    model:  string
+            ``'LowEnergy'``, ``'FullTightBinding'``
     Returns
     ----------
 
-    H:      2x2 array, Tight-binding Hamiltonian evaluated at k.
+    H: 2x2 complex ndarray
+        Tight-binding Hamiltonian evaluated at k.
+
+    Raises
+    ------
+    ValueError
+        if `model` is not 'LowEnergy' or 'FullTightBinding'
 
     Notes
     -----
 
-    Let :math:`k=k_x+ik_y`. Then the common ``model=LowEnergy`` approximation is
-
-    .. math::
-
-        H = \\hbar v_F\\left(\\array{
-                                    0 & k \n
-                                    k^* & 0
-
-                                    } \\right)
-
-    while the ``model=FullTightBinding`` expression is given by 
+    Let :math:`k=k_x+ik_y`. Then the ``model=FullTightBinding`` expression is given by 
 
     .. math::
 
@@ -154,18 +153,31 @@ def Hamiltonian(k,model='LowEnergy'):
 
     where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 
+    The more common ``model=LowEnergy`` approximation is
+
+    .. math::
+
+        H = \\hbar v_F\\left(\\array{
+                                    0 & k \n
+                                    k^* & 0
+
+                                    } \\right)
+
     References
     ----------
 
-    [1] Slonczewski, J.C., and Weiss, P.R. (1958). Band Structure of Graphite. Phys. Rev. 109, 272–279. https://link.aps.org/doi/10.1103/PhysRev.109.272.
+    [1] Wallace, P.R. (1947). The Band Theory of Graphite. Phys. Rev. 71, 622–634.
+    https://link.aps.org/doi/10.1103/PhysRev.71.622
+
+    [1] Slonczewski, J.C., and Weiss, P.R. (1958). Band Structure of Graphite.
+    Phys. Rev. 109, 272–279. https://link.aps.org/doi/10.1103/PhysRev.109.272.
 
     [2] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284. https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
 
-    [3] Christensen, T. (2017). From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing). http://link.springer.com/10.1007/978-3-319-48562-1.
-
-
-
     '''
+
+    if model!='LowEnergy' and model!='FullTightBinding':
+        raise ValueError("Argument model must be 'LowEnergy' or 'FullTightBinding'")
 
     if model == 'LowEnergy':
         H11 = 0
@@ -408,12 +420,12 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
 
     .. math::
 
-        Z_0 = \\left\{\\array{    
+        Z_0 = \\left\\{\\array{    
                     (1 + |E/\\gamma_0|)^2 - \\frac{[(E/\\gamma_0)^2-1]^2}{4}, & |E|\\leq \\gamma_0 \n
                     4|E/\\gamma_0|, & -3\\gamma_0\\leq E \\leq -\\gamma_0,\\gamma_0\\leq E\\leq 3\\gamma_0
                 }\\right.
 
-        Z_1 = \\left\{\\array{
+        Z_1 = \\left\\{\\array{
                     4|E/\\gamma_0|, & |E|\\leq \\gamma_0 \n    
                     (1 + |E/\\gamma_0|)^2 - \\frac{[(E/\\gamma_0)^2-1]^2}{4}, & -3\\gamma_0\\leq E \\leq -\\gamma_0,\\gamma_0\\leq E\\leq 3\\gamma_0
                 }\\right.

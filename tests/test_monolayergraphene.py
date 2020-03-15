@@ -23,6 +23,10 @@ class TestHamiltonian:
 
 		assert np.isclose(energy,mlg.CarrierDispersion(kF,'LowEnergy'),rtol=1e-05)
 
+	def test_model_error(self):
+		with pytest.raises(ValueError):
+			mlg.Hamiltonian(0,model='Wrong')
+
 class TestCarrierDispersion:
 
 	def test_eh_error(self):
