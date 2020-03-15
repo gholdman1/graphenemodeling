@@ -974,7 +974,7 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
 
         \\mathbf K(\\omega)=\\sigma(\\omega)\\mathbf E
 
-    It can be found from the nonlocal conductivity by taking the limit $\\lim_{q\\to 0}\\sigma(q,\\omega)=\\sigma(\\omega)$.
+    It can be found from the nonlocal conductivity by taking the limit :math:`\\lim_{q\\to 0}\\sigma(q,\\omega)=\\sigma(\\omega)`.
 
     References
     ----------
