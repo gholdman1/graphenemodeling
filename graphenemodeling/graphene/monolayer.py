@@ -117,17 +117,21 @@ def AtomicPosition(m,n,i):
 # Band Structure #
 ##################
 
-def Hamiltonian(k,model='LowEnergy'):
+def Hamiltonian(k,model='LowEnergy',g0prime=0):
     '''Tight-binding Hamiltonian in momentum space.
 
     Parameters
     ----------
 
     k:  array-like
-        Wavevector of carrier. Use complex k=kx + iky for 2D wavevectors.
+        Wavevector of carrier. Use complex ``k=kx + 1j*ky`` for 2D wavevectors.
 
     model:  string
             ``'LowEnergy'``, ``'FullTightBinding'``
+
+    g0prime:    scalar
+        The particle-hole asymmetry parameter :math:`\\gamma_0'`. Typically :math:`0.02\\gamma_0\\leq\\gamma_0'\\leq 0.2\\gamma_0`.
+
     Returns
     ----------
 
@@ -146,10 +150,10 @@ def Hamiltonian(k,model='LowEnergy'):
 
     .. math::
 
-        H = \\gamma_0 \\left(\\array{
-                                0 & f(k) \n
-                                f(k)^* & 0
-                                        } \\right)
+        H = \\left(\\array{
+                        -\\gamma_0' & \\gamma_0f(k) \n
+                        \\gamma_0f(k)^*      & -\\gamma_0'
+            } \\right)
 
     where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
 
@@ -189,11 +193,11 @@ def Hamiltonian(k,model='LowEnergy'):
         kx = np.real(k)
         ky = np.imag(k)
 
-        H11 = 0
+        H11 = -g0prime
         H12 = _c.g0 * (   np.exp(1j*kx*_c.a/2)
                             + 2*np.exp(-1j*kx*_c.a/2)*np.cos(ky*_c.a*np.sqrt(3)/2) )
         H21 = np.conj(H12)
-        H22 = 0
+        H22 = -g0prime
 
     H = np.array( [[H11, H12],
                     [H12, H22] ])
