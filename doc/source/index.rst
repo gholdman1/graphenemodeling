@@ -23,7 +23,7 @@ GrapheneModeling.
 
 Installation
 ------------
-GrapheneModeling is available through ``pip``.
+GrapheneModeling is available on `PyPI <https://pypi.org/project/graphenemodeling/>`_. This means you can install it through ``pip``.
 
 ``> pip install graphenemodeling``
 
