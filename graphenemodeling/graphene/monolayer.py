@@ -176,7 +176,8 @@ def Hamiltonian(k,model='LowEnergy',g0prime=0):
     [1] Slonczewski, J.C., and Weiss, P.R. (1958). Band Structure of Graphite.
     Phys. Rev. 109, 272–279. https://link.aps.org/doi/10.1103/PhysRev.109.272.
 
-    [2] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284. https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
+    [2] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284.
+    https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
 
     '''
 
@@ -324,10 +325,18 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     References
     ----------
 
-    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+    [1] Wallace, P.R. (1947). The Band Theory of Graphite. Phys. Rev. 71, 622–634.
+    https://link.aps.org/doi/10.1103/PhysRev.71.622
+
+    [1] Slonczewski, J.C., and Weiss, P.R. (1958). Band Structure of Graphite.
+    Phys. Rev. 109, 272–279. https://link.aps.org/doi/10.1103/PhysRev.109.272.
+
+    [2] Falkovsky, L.A., and Varlamov, A.A. (2007). Space-time dispersion of graphene conductivity. Eur. Phys. J. B 56, 281–284.
+    https://link.springer.com/article/10.1140/epjb/e2007-00142-3.
+
+    [4] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
     The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162. 
     https://link.aps.org/doi/10.1103/RevModPhys.81.109.
-
 
     '''
 
