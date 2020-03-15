@@ -1,6 +1,10 @@
 *.pyc
 *.ipynb_checkpoints
 
+# Build-related
+dist
+build
+
 # Documentation generated files
 doc/source/generated
 doc/build
