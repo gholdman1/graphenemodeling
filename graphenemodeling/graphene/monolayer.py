@@ -263,7 +263,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         >>> ax.set_axis_off()
         >>> plt.show()
 
-    Plot the full multi-dimensional dispersion relation with a particle-hole asymmetry.
+    Plot the full multi-dimensional dispersion relation with a particle-hole asymmetry. Replicates Figure 3 in Ref. [1].
 
     .. plot::
 
@@ -295,8 +295,6 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
         >>> fullax.set_title('Brillouin Zone of Graphene')
         Text...
         >>> plt.show()
-
-    Replicates Figure 3 in Ref. [1].
 
     References
     ----------
@@ -422,7 +420,7 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
 
     Examples
     --------
-    Plot the density of states for ``model=LowEnergy`` approximation and ``model=FullTightBinding`` model.
+    Plot the density of states for ``model=LowEnergy`` approximation and ``model=FullTightBinding`` model. Replicates Fig. 5 in Ref. [2].
 
     .. plot::
 
@@ -443,8 +441,6 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
         >>> plt.legend()
         <...
         >>> plt.show()
-
-    Replicates Fig. 5 in Ref. [2].
     
     References
     ----------
@@ -694,7 +690,7 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
     Examples
     --------
 
-    Plot the real and imaginary part of :math:`\\chi^0`, normalized to density of states.
+    Plot the real and imaginary part of :math:`\\chi^0`, normalized to density of states. Replicates Fig. 1 of Ref. [3].
 
     .. plot::
 
@@ -734,8 +730,6 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
         >>> im_ax.set_xlabel('$q/k_F$',fontsize=14)
         Text...
         >>> plt.show()
-
-    This example replicates Fig. 1 of Ref. [3].
 
     References
     ----------
@@ -1286,7 +1280,7 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
     Examples
     --------
 
-    Plot the three expressions for the dispersion relation.
+    Plot the three expressions for the dispersion relation. Replicates Fig. 5.2 in Ref. [1].
 
     .. plot::
 
@@ -1316,9 +1310,8 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
         >>> plt.legend()
         >>> plt.show()
 
-    This replicates Fig. 5.2 in Ref. [1].
-
     Plot dispersion relation with a lower half-space permittivity of :math:`\\epsilon=4`` (an approximation for hexagonal boron nitride).
+    Replicates Fig. 1d in Ref. [2].
 
     .. plot::
 
@@ -1350,8 +1343,6 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
         >>> ax.set_ylim(0,2)
         >>> plt.legend()
         >>> plt.show()
-
-    This replicates Fig. 1d in Ref. [2].
 
     References
     ----------
