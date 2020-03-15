@@ -231,7 +231,16 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     Returns
     ----------
 
-    array-like
+    dispersion: complex ndarray
+        Dispersion relation evaluated at k.
+
+    Raises
+    ------
+    ValueError
+        if `model` is not 'LowEnergy' or 'FullTightBinding'.
+
+    ValueError
+        if `eh` not 1 or -1.
 
     Notes
     -----
@@ -322,12 +331,15 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
     '''
 
+    if model!='LowEnergy' and model!='FullTightBinding':
+        raise ValueError("Argument model must be 'LowEnergy' or 'FullTightBinding'")
+
     if eh!=1 and eh!=-1:
         raise ValueError('eh must be either 1 or -1')
 
     if model == 'LowEnergy':
 
-        return eh*sc.hbar*_c.vF*np.abs(k)
+        dispersion = eh*sc.hbar*_c.vF*np.abs(k)
 
     if model == 'FullTightBinding':
 
@@ -336,7 +348,9 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
                         + 4*np.cos((np.sqrt(3)*np.imag(k)/2)*_c.a)*np.cos((3/2)*np.real(k)*_c.a) )
 
         # [sic] eh only applies to first term
-        return eh*_c.g0*np.sqrt(3+ f(k)) - g0prime*f(k)
+        dispersion = eh*_c.g0*np.sqrt(3+ f(k)) - g0prime*f(k)
+
+    return dispersion
 
 def FermiWavenumber(eFermi,model,g0prime=_c.g0prime):
     '''
