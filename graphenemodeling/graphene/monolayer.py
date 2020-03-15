@@ -117,7 +117,7 @@ def AtomicPosition(m,n,i):
 # Band Structure #
 ##################
 
-def Hamiltonian(k,model='LowEnergy',g0prime=0):
+def Hamiltonian(k,model,g0prime=0):
     '''Tight-binding Hamiltonian in momentum space.
 
     Parameters
