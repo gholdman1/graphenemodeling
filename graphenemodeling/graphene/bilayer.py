@@ -18,35 +18,25 @@ Band Structure
 
 import numpy as np
 import scipy.constants as sc
+import graphenemodeling.graphene._constants as _c
 
 from graphenemodeling.graphene.base import BaseGraphene
 eVtoJ = sc.elementary_charge
 e0 = sc.epsilon_0
 
-class Bilayer(BaseGraphene):
-    """
-    Bilayer graphene class which inherits the parameters of the
-    BaseGraphene class.
-    """
-
-    def __init__(self):
-        BaseGraphene.__init__(self)
-        g1  = 0.358 * eVtoJ # (J), A1-B1 hopping potential
-        g3  = 0.3   * eVtoJ # (J), A1-B2 hopping potential
-        g4  = 0.12  * eVtoJ # (J), A1-A2 hopping potential (McCann Koshino 2013)
-        d   = 3*(10**-10)   # (m), interlayer spacing
-        approx_choices = ['None', 'Common', 'LowEnergy']
-        C = e0 / d
+g1  = 0.358 * eVtoJ # (J), A1-B1 hopping potential
+g3  = 0.3   * eVtoJ # (J), A1-B2 hopping potential
+g4  = 0.12  * eVtoJ # (J), A1-A2 hopping potential (McCann Koshino 2013)
+d   = 3*(10**-10)   # (m), interlayer spacing
+approx_choices = ['None', 'Common', 'LowEnergy']
+C = e0 / d
 
 ######################
 ### Band Structure ###
 ######################
 
-def Hamiltonian(self,k,u):
-    '''
-    Returns the full tight-binding Hamiltonian of BLG.
-    For array-like inputs of k, the Hamiltonian of the
-    ith value of k is Hamiltonian[:,:,i]
+def Hamiltonian(k,u):
+    '''Returns the full tight-binding Hamiltonian of bilayer graphene.
 
     Parameters
     ----------
@@ -60,6 +50,40 @@ def Hamiltonian(self,k,u):
     ----------
     H:  array-like
         Tight-binding Hamiltonian of bilayer graphene.
+
+    Notes
+    -----
+    
+    The ``FullTightBinding`` Hamiltonian is (Eqn. 16 Ref. [1])
+
+    .. math::
+
+        H=\\left(\\begin{matrix}
+                            -u/2                & -\\gamma_0f(k)    & \\gamma_4f(k)     & -\\gamma_3f^*(k) \n
+                            -\\gamma_0 f^*(k)   & -u/2              & \\gamma_1         & \\gamma_4f(k)   \n
+                            \\gamma_4f^*(k)     & \\gamma_1         & u/2               & -\\gamma_0f(k)  \n
+                            -\\gamma_3f(k)      & \\gamma_4f(k)     & -\\gamma_0f^*(k)  & u/2
+                \\end{matrix}\\right)
+
+    The ``LowEnergy`` tight-binding Hamiltonian is given by (Eqn. 30 Ref. [1])
+
+    .. math::
+
+        H=\\left(\\begin{matrix}
+                            -u/2                      & \\hbar v_F k              & -\\sqrt{3/4}k a\\gamma_4 & -\\sqrt{3/4}k^* a\\gamma_3 \n
+                            \\hbar v_Fk^*             & -u/2                      & \\gamma_1                & -\\sqrt{3/4}ka\\gamma_4    \n
+                            -\\sqrt{3/4}k^*a\\gamma_4 & \\gamma_1                 & u/2                      & \\hbar v_F k               \n
+                            -\\sqrt{3/4}k a\\gamma_3  & -\\sqrt{3/4}k^*a\\gamma_4 & \\hbar v_F k^*           & u/2
+                \\end{matrix}\\right)
+
+    References
+    ----------
+
+    [1] McCann, E., and Koshino, M. (2013).
+    The electronic properties of bilayer graphene.
+    Reports on Progress in Physics 76, 056503.
+    https://arxiv.org/abs/1205.6953.
+
     '''
 
     k = np.atleast_1d(k)
@@ -71,16 +95,16 @@ def Hamiltonian(self,k,u):
     H33 = H44 =  u/2 * ones
 
     # Intralayer
-    H12 = H21 = H34 = H43 = sc.hbar * self.vF * k
+    H12 = H21 = H34 = H43 = sc.hbar * _c.vF * k
 
     # Interlayer A1-B2
-    H23 = H32 = self.g1 * ones
+    H23 = H32 = g1 * ones
 
     # Trigonal Warping
-    H14 = H41 = np.sqrt(3/4) * self.g3 * self.a * k
+    H14 = H41 = np.sqrt(3/4) * g3 * _c.a * k
 
     # g4
-    H13 = H31 = H42 = H24 = - (3/4)**(1/2) * self.a * self.g4 * k
+    H13 = H31 = H42 = H24 = - (3/4)**(1/2) * _c.a * g4 * k
 
     H = np.array([  [H11, H12, H13, H14],
                     [H21, H22, H23, H24],
