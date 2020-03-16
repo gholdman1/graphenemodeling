@@ -123,13 +123,13 @@ def Hamiltonian(k,model,g0prime=0):
     Parameters
     ----------
 
-    k:  array-like
+    k:  array-like, complex, rad/m
         Wavevector of carrier. Use complex ``k=kx + 1j*ky`` for 2D wavevectors.
 
     model:  string
             ``'LowEnergy'``, ``'FullTightBinding'``
 
-    g0prime:    scalar
+    g0prime:    scalar, J
         The particle-hole asymmetry parameter :math:`\\gamma_0'`. Typically :math:`0.02\\gamma_0\\leq\\gamma_0'\\leq 0.2\\gamma_0`.
 
     Returns
@@ -215,7 +215,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
     Parameters
     ----------
 
-    k:          array-like, complex
+    k:          array-like, complex, rad/m
                 Wavevector of Dirac fermion relative to K vector.
                 For 2D wavevectors, use :math:`k= k_x + i k_y`.
 
@@ -369,9 +369,11 @@ def FermiWavenumber(FermiLevel,model,g0prime=_c.g0prime):
     Parameters
     ----------
 
-    FermiLevel:      array-like, Fermi level
+    FermiLevel: array-like, J
+                Fermi level
 
-    model:       'LowEnergy': Value gets derived from linear approximation of dispersion.
+    model:      string
+                'LowEnergy' or 'FullTightBinding'.
 
     Examples
     --------
@@ -412,13 +414,14 @@ def DensityOfStates(E,model,g0prime=_c.g0prime):
     Parameters
     ----------
 
-    E:  array-like
+    E:  array-like, J
         Energy :math:`E` at which to evaluate density of states.
 
     model:      string
-                ``'LowEnergy'``: Linear approximation of dispersion.
+                ``'LowEnergy'``or ``'FullTightBinding'``
 
-                ``'FullTightBinding'``: Eigenvalues of tight-binding approximation. We use a closed form rather than finding eigenvalues of Hamiltonian to save time and avoid broadcasting issues.
+    g0prime:    scalar, J
+                The particle-hole asymmetry parameter :math:`\\gamma_0'`. Typically :math:`0.02\\gamma_0\\leq\\gamma_0'\\leq 0.2\\gamma_0`.
 
     Returns
     -------
@@ -549,10 +552,10 @@ def CarrierDensity(mu,T,model):
     Parameters
     ----------
 
-    mu: array-like
+    mu: array-like, J
         Chemical potential :math:`\\mu`
 
-    T:  scalar
+    T:  scalar, K
         Temperature :math:`T`
 
     Returns
@@ -601,8 +604,8 @@ def ChemicalPotential(n,T=0,model='LowEnergy'):
     Parameters
     ----------
 
-    n:  array-like
-        Carrier density in units m^-2.
+    n:  array-like, m :sup:`-2`
+        Carrier density
 
     T:  scalar
         Temperature (K)
@@ -702,16 +705,21 @@ def Polarizibility(q,omega,gamma,FermiLevel,T=0):
     Parameters
     ----------
 
-    q:      array-like
+    q:      array-like, rad/m
             Difference between scattered wavevector and incident
 
-    omega:  array-like
+    omega:  array-like, rad/s
             Angular frequency
 
-    gamma:  scalar, scattering rate due to mechanisms such as impurities (i.e. not Landau Damping)
-                    We use the Mermin-corrected Relaxation time approximation (Eqn 4.9 of Ref 1)
+    gamma:  scalar, rad/s
+            scattering rate due to mechanisms such as impurities (i.e. not Landau Damping)
+            We use the Mermin-corrected Relaxation time approximation (Eqn 4.9 of Ref 1)
 
-    FermiLevel: scalar, Fermi level of graphene.
+    FermiLevel: scalar, J
+                Fermi level of graphene.
+
+    T:  scalar, K
+        Temperature
 
     Notes
     -----
@@ -831,23 +839,27 @@ def dPolarizibility(q,omega,gamma,FermiLevel,T,dvar,diff=1e-7):
     Parameters
     ----------
 
-    q:      array-like
+    q:      array-like, rad/m
             Difference between scattered wavevector and incident
 
-    omega:  array-like
+    omega:  array-like, rad/s
             Angular frequency
 
-    gamma:  scalar, the scattering rate in units (1/s)
+    gamma:  scalar, rad/s
+            The scattering rate
 
-    FermiLevel: scalar, the Fermi level (J)
+    FermiLevel: scalar, J
+                the Fermi level
 
-    T:      scalar, Temperature (K)
+    T:      scalar, K
+            Temperature
 
     dvar:   'omega': Take the partial wrt omega
             'q': Take the partial wrt q
 
     diff:   Size of finite different to use when computing the derivative.
             Method uses central difference.
+
     '''
 
     if dvar == 'omega':
@@ -870,19 +882,19 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     Parameters
     ----------
 
-    q:      array-like
+    q:      array-like, rad/m
             Wavenumber
 
-    omega:      array-like
+    omega:      array-like, rad/s
                 Angular frequency
 
-    FermiLevel:     scalar
-                the Fermi energy (J)
+    FermiLevel:     scalar, J
+                the Fermi energy
 
-    gamma:      scalar
+    gamma:      scalar, rad/s
                 scattering rate
 
-    T:          scalar
+    T:          scalar, K
                 Temperature
 
     model:      string
@@ -1051,12 +1063,20 @@ def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T,mu0,mu0T):
     Parameters
     ----------
 
-    q:      array-like
+    q:      array-like, rad/m
             Wavenumber
 
-    omega:  array-like
+    omega:  array-like, rad/s
             Angular frequency
 
+    FermiLevel:     scalar, J
+                the Fermi energy
+
+    gamma:      scalar, rad/s
+                scattering rate
+
+    T:          scalar, K
+                Temperature
     Returns
     ----------
 
@@ -1079,13 +1099,14 @@ def Permittivity(q, omega,FermiLevel,T, gamma=None,epsR=None,model=None):
     Parameters
     ----------
 
-    q:      array-like
+    q:      array-like, rad/m
             Wavenumber
 
-    omega:  array-like
+    omega:  array-like, rad/s
             Angular frequency
     
-    epsR:       scalar, background relative permittivity
+    epsR:   scalar, unitless
+            background relative permittivity
 
     References
     ----------
@@ -1133,20 +1154,21 @@ def FresnelReflection(q,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     Parameters
     ----------
 
-    q:      array-like
+    q:      array-like, rad/m
             Wavenumber at which to evaluate FresnelReflection.
             In-plane momentum of incident light.
 
-    omega:  array-like
+    omega:  array-like, rad/s
             Angular frequency of incident light.
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittivity in lower half-space
 
-    polarization:   's'/'TE' or 'p'/'TM' for s- or p-polarization.
+    polarization:   string
+        's'/'TE' or 'p'/'TM' for s- or p-polarization.
 
     Examples
     --------
@@ -1260,13 +1282,13 @@ def PlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model):
     Parameters
     ----------
 
-    q:  array-like
+    q:  array-like, rad/m
         Wavenumber of the plasmon
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:  scalar
+    eps2:  scalar, unitless
             Permittivity in lower half-space
 
     model:  string
@@ -1436,10 +1458,10 @@ def PlasmonDispersionRes(q,gamma,FermiLevel,eps1,eps2,T,exp_res=1):
     Parameters
     ----------
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittivity in lower half-space
 
     exp_res:    expected number of resonances
@@ -1478,10 +1500,10 @@ def InversePlasmonDispersion(omega,gamma,FermiLevel,eps1,eps2,T,model):
     Parameters
     ----------
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittivity in lower half-space
 
     '''
@@ -1512,10 +1534,10 @@ def PlasmonDispersionRoot(q,omega,gamma,FermiLevel, eps1,eps2 ,T):
     Parameters
     ----------
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in lower half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittivity in upper half-space
     '''
 
@@ -1531,10 +1553,10 @@ def PlasmonDispersionLoss(omega,gamma,FermiLevel,eps1,eps2,T,model):
     Parameters
     ----------
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittivity in lower half-space
 
     References
@@ -1566,21 +1588,24 @@ def dPlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model,dvar=None,diff=1e-7)
     Parameters
     ----------
 
-    q:      array-like,
+    q:      array-like, rad/m
 
-    omega:
+    omega:  array-like, rad/s
 
-    gamma:  scalar, the scattering rate in units (1/s)
+    gamma:  scalar, rad/s
+            the scattering rate in units (1/s)
 
-    FermiLevel: scalar, the Fermi level (J)
+    FermiLevel: scalar, J
+                the Fermi level
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittivity in lower half-space
 
-    T:      scalar, Temperature (K)
+    T:      scalar, K
+            Temperature
 
     dvar:   'omega': Take the partial wrt omega
             'q': Take the partial wrt q
@@ -1615,10 +1640,10 @@ def DipoleDecayRate(z,omega,gamma,FermiLevel,T,eps1,eps2):
     Parameters
     ----------
 
-    eps1:   scalar
+    eps1:   scalar, unitless
             Permittivity in upper half-space
 
-    eps2:   scalar
+    eps2:   scalar, unitless
             Permittiviy in lower half-space
 
     References
