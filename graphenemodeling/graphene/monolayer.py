@@ -705,7 +705,8 @@ def Polarizibility(q,omega,gamma,FermiLevel,T=0):
     q:      array-like
             Difference between scattered wavevector and incident
 
-    omega:  array-like, frequency
+    omega:  array-like
+            Angular frequency
 
     gamma:  scalar, scattering rate due to mechanisms such as impurities (i.e. not Landau Damping)
                     We use the Mermin-corrected Relaxation time approximation (Eqn 4.9 of Ref 1)
@@ -833,7 +834,8 @@ def dPolarizibility(q,omega,gamma,FermiLevel,T,dvar,diff=1e-7):
     q:      array-like
             Difference between scattered wavevector and incident
 
-    omega:
+    omega:  array-like
+            Angular frequency
 
     gamma:  scalar, the scattering rate in units (1/s)
 
@@ -869,10 +871,10 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     ----------
 
     q:      array-like
-            Wavenumber at which to evaluate OpticalConductivity
+            Wavenumber
 
     omega:      array-like
-                angular frequency
+                Angular frequency
 
     FermiLevel:     scalar
                 the Fermi energy (J)
@@ -1050,9 +1052,10 @@ def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T,mu0,mu0T):
     ----------
 
     q:      array-like
-            Wavenumber at which to evaluate OpticalConductivityMatrix
+            Wavenumber
 
-    omega:
+    omega:  array-like
+            Angular frequency
 
     Returns
     ----------
@@ -1067,7 +1070,7 @@ def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T,mu0,mu0T):
 
     return conductivity_matrix
 
-def Permittivity(omega,FermiLevel,T, gamma=None,epsR=None,model=None):
+def Permittivity(q, omega,FermiLevel,T, gamma=None,epsR=None,model=None):
     '''
     Returns the in-plae permittivity of graphene.
 
@@ -1076,6 +1079,12 @@ def Permittivity(omega,FermiLevel,T, gamma=None,epsR=None,model=None):
     Parameters
     ----------
 
+    q:      array-like
+            Wavenumber
+
+    omega:  array-like
+            Angular frequency
+    
     epsR:       scalar, background relative permittivity
 
     References
@@ -1111,7 +1120,7 @@ def Permittivity(omega,FermiLevel,T, gamma=None,epsR=None,model=None):
         return eps
 
     else:
-        eps = 1 + 1j*OpticalConductivity(0,omega,gamma,FermiLevel,T)/(omega*sc.epsilon_0)
+        eps = 1 + 1j*OpticalConductivity(q,omega,gamma,FermiLevel,T,model)/(omega*sc.epsilon_0)
 
     return eps
 
@@ -1125,9 +1134,11 @@ def FresnelReflection(q,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     ----------
 
     q:      array-like
-            Wavenumber at which to evaluate FresnelReflection
+            Wavenumber at which to evaluate FresnelReflection.
+            In-plane momentum of incident light.
 
-    omega:          Frequency of incident light.
+    omega:  array-like
+            Angular frequency of incident light.
 
     eps1, eps2:     Permittivities above and below graphene, respectively.
                     Could also be made callable such that eps1=eps1(q,omega)
