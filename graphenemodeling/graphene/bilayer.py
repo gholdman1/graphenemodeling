@@ -123,6 +123,20 @@ def CarrierDispersion(k,u,band,model='Common'):
     Parameters
     ----------
     
+    k:  array-like
+        Wavenumber
+
+    u:  scalar
+        Potential difference between layers
+
+    model:  string
+            ``'Common'``,``'LowEnergy'``, or ``'FullTightBinding'``
+
+    Returns
+    -------
+
+    disp:   array-like
+            Dispersion
 
     Examples
     --------
