@@ -12,6 +12,11 @@ This means, despite the utility of the electron-volts, units of energy of are in
 >>> E_eV = 0.4 # Energy in eV
 >>> E_J  = E_eV * eV # Energy in Joules
 
+Variables
+---------
+
+Chemical potentials use the variable ``mu``. If a function is only applicable at zero temperature, then we use the variable ``FermiLevel`` instead.
+
 Examples
 --------
 
