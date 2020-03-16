@@ -212,11 +212,11 @@ def CarrierDispersion(k,u,band,model='Common'):
         disp = np.empty(np.shape(k))
 
         for i, wn in enumerate(k):
-            disp[i] = linalg.eigvalsh(self.Hamiltonian(wn,u))[1+band]
+            disp[i] = linalg.eigvalsh(Hamiltonian(wn,u))[1+band]
 
         return np.array(disp).squeeze()
 
-def WavenumberOfMinimum(self,u, band=1):
+def WavenumberOfMinimum(u, band=1):
     '''
     Returns positive wavenumber at the minimum of the first band in 1/m.
 
@@ -227,17 +227,17 @@ def WavenumberOfMinimum(self,u, band=1):
 
     band:   First (second) conduction band 1 (2).
     '''
-    k2 = ( u**2 / (2*hbar*self.vF)**2 ) * ( (2*self.g1**2 + u**2) /( self.g1**2 + u**2 ) )
+    k2 = ( u**2 / (2*hbar*_c.vF)**2 ) * ( (2*g1**2 + u**2) /( g1**2 + u**2 ) )
     return np.sqrt(k2)
 
-def emin(self,u):
+def emin(u):
     '''
     Returns minimum of the first band in Joules.
     '''
-    emin2 = (u/2)**2 * (self.g1**2 / ( self.g1**2 + u**2 ) )
+    emin2 = (u/2)**2 * (g1**2 / ( g1**2 + u**2 ) )
     return np.sqrt(emin2)
 
-def DensityOfStates(self, e, u):
+def DensityOfStates(e, u):
     '''
     Returns the density of states per unit area (1/m^2) as 
     a function of energy given the gap u
@@ -246,33 +246,33 @@ def DensityOfStates(self, e, u):
     
     # Define the multiplicative factor out front
     # Set to 0 is energy is below the minimum
-    mult = (e>self.emin(u)) * ( e / (pi * hbar**2 * self.vF**2) )
+    mult = (e>emin(u)) * ( e / (pi * hbar**2 * _c.vF**2) )
     
     # Calculate the discriminant
     # Remember, we wil need to divide by it's sqrt
     # So set values disc<=0 to 1
     # We will multiply the result by zero for these energies anyway later on.
-    disc = e**2 * (self.g1**2 + u**2) - self.g1**2 * u**2 / 4
-    disc = (e>self.emin(u))*disc + (e<=self.emin(u))*1
+    disc = e**2 * (g1**2 + u**2) - g1**2 * u**2 / 4
+    disc = (e>emin(u))*disc + (e<=emin(u))*1
     
     # Calculate quantities proportional to derivatives of k^2
-    propdkp2 = 2 + (self.g1**2 + u**2)/np.sqrt(disc)
-    propdkm2 = 2 - (self.g1**2 + u**2)/np.sqrt(disc)
+    propdkp2 = 2 + (g1**2 + u**2)/np.sqrt(disc)
+    propdkm2 = 2 - (g1**2 + u**2)/np.sqrt(disc)
     
     # If energy is above sombrero region, add the positive solution
     # If within, also subtract the negative solution
-    propdos = (e>self.emin(u))*propdkp2 - (e<=abs(u/2))*propdkm2
+    propdos = (e>emin(u))*propdkp2 - (e<=abs(u/2))*propdkm2
     return (mult * propdos)
 
-def Pdiff(self,k,vminus,approx='Common'):
+def Pdiff(k,vminus,approx='Common'):
     '''Returns the probability difference between finding an ELECTRON on the TOP layer minus the BOTTOM layer.'''
     
     u = 2*q*(vminus+np.sign(vminus)*0.0000001)
     
     if approx=='Common':
-        e = self.Dispersion(k,u,1)
+        e = CarrierDispersion(k,u,1)
 
-        K = hbar*self.vF*(k+1)
+        K = hbar*_c.vF*(k+1)
         
         numerator = (e**2 - u**2/4)**2 + 4*K**2*e**2 - K**4
         denominator = (e**2 - u**2/4)**2 + K**2*u**2 - K**4
@@ -280,7 +280,7 @@ def Pdiff(self,k,vminus,approx='Common'):
         return - ( u / (2*e) ) * ( numerator / denominator )
 
     if approx=='LowEnergy':
-        meff = ( self.g1 / (2 * (self.vF)**2) )
+        meff = ( g1 / (2 * (_c.vF)**2) )
         denominator_squared = ( ( (hbar*k)**2/meff )**2 + u**2 )
         
         
@@ -292,7 +292,7 @@ def Pdiff(self,k,vminus,approx='Common'):
         deltapsi = []
         # Eigenvectors of 
         for i,wn in enumerate(k):
-            v = linalg.eigh( self.Hamiltonian(wn,u) )[1]
+            v = linalg.eigh( Hamiltonian(wn,u) )[1]
 
             psi = v[:,-2] # Second highest band (first conduction)
 
@@ -300,15 +300,15 @@ def Pdiff(self,k,vminus,approx='Common'):
 
         return np.array(deltapsi).squeeze()
 
-def FermiWavenumber(self,n,u,pm):
+def FermiWavenumber(n,u,pm):
     '''
     Returns Fermi vector kF+ for pm=1 and kF- for pm=2 in units rad/m
     '''
         
     # Define the more complicated factors and terms
-    numerator = (pi * hbar**2 *self.vF**2 * n)**2 + ( self.g1*u )**2
-    denominator = self.g1**2 + u**2
-    pmterm = 2*pi*hbar**2 * self.vF**2 * abs(n) # abs for fact that electrons and holes symmetric
+    numerator = (pi * hbar**2 *_c.vF**2 * n)**2 + ( g1*u )**2
+    denominator = g1**2 + u**2
+    pmterm = 2*pi*hbar**2 * _c.vF**2 * abs(n) # abs for fact that electrons and holes symmetric
     
     # Factor proportional to k**2
     propk2 = ( numerator / denominator ) + u**2 + (-1)**(pm-1) * pmterm
@@ -319,16 +319,16 @@ def FermiWavenumber(self,n,u,pm):
         propk2 = (propk2 >= 0) * propk2
         propk2 = (CarrierDispersion(FermiWavenumber(n,u,1),u,1)<u/2) * propk2
     
-    return np.sqrt( propk2 ) / (2*hbar*self.vF)
+    return np.sqrt( propk2 ) / (2*hbar*_c.vF)
 
-def ChemicalPotential(self,n,u,T):
+def ChemicalPotential(n,u,T=0):
     '''
     Returns the Fermi level (Joules) given density n and interlayer potential energy difference u
     Positive n returns a positive Fermi level, meaning positive carrier densities are electrons by convention.
     '''
     
-    numerator = (hbar**2 * self.vF**2 * n *pi)**2 + (self.g1 * u)**2
-    denominator = 4 * (self.g1**2 + u**2)
+    numerator = (hbar**2 * _c.vF**2 * n *pi)**2 + (g1 * u)**2
+    denominator = 4 * (g1**2 + u**2)
     
     return np.sign(n) * np.sqrt( numerator / denominator )
 
@@ -336,7 +336,7 @@ def ChemicalPotential(self,n,u,T):
 ### Carrier Densities ###
 #########################
 
-def nplusT0(self,vplus,vminus,approx='Fermi'):
+def nplusT0(vplus,vminus,approx='Fermi'):
     """
     Analytically computes the electron density at zero temperature.
     Faster than Bilayer.nplus() since this function allows
@@ -348,16 +348,16 @@ def nplusT0(self,vplus,vminus,approx='Fermi'):
     u  = 2*eVtoJ*vminus
 
     if approx == 'Fermi':
-        term1 = 4*(self.g1**2 + u**2)*(eF**2)
-        term2 = -(self.g1**2)*(u**2)
+        term1 = 4*(g1**2 + u**2)*(eF**2)
+        term2 = -(g1**2)*(u**2)
 
-        prop = (hbar**2 * self.vF**2 * pi)**(-1)
+        prop = (hbar**2 * _c.vF**2 * pi)**(-1)
 
         n = np.sign(eF)*prop*np.sqrt( term1 + term2 )
 
     if approx == 'Common':
         # Calculate the radical
-        radical = (self.g1**2+u**2) * eF**2 - self.g1**2 * u**2 / 4
+        radical = (g1**2+u**2) * eF**2 - g1**2 * u**2 / 4
 
         # For energies within the gap, radical is negative, so set it to 0 instead
         radical = (radical>=0)*radical
@@ -374,7 +374,7 @@ def nplusT0(self,vplus,vminus,approx='Fermi'):
         #     1/(hbar vF)**2 from formula for kF
         #     1/pi from n = (kFp2 - kFm2)/pi
         #     Sets to zero if Fermi in the gap
-        prop = (abs(eF)>self.emin(u))*np.sign(eF)*(1 / (hbar**2 * self.vF**2 * pi))
+        prop = (abs(eF)>emin(u))*np.sign(eF)*(1 / (hbar**2 * _c.vF**2 * pi))
 
         n = prop * (kFp2 - kFm2)
 
@@ -384,22 +384,22 @@ def nplusT0(self,vplus,vminus,approx='Fermi'):
         """
         See Young and Levitov 2011.
         """
-        meff = ( self.g1 / (2 * (self.vF)**2) )
+        meff = ( g1 / (2 * (_c.vF)**2) )
 
         nu0 = 2 * meff * q  / (pi * hbar**2)
 
         energy_diff = (np.abs(eF)>np.abs(u/2)) * (eF**2 - (u/2)**2)
         return (nu0/q) * np.sign(eF) * np.sqrt(energy_diff)
 
-def nminusT0(self,vplus,vminus):
+def nminusT0(vplus,vminus):
 
-    meff = ( self.g1 / (2 * (self.vF)**2) )
+    meff = ( g1 / (2 * (_c.vF)**2) )
     nu0 = 2 * meff * q  / (pi * hbar**2)
 
     prop = nu0 * vminus
     
     # Find cutoff energy. Approximate it as the vminus=0 case
-    Lambda = self.Dispersion( 1 / (np.sqrt(3) * self.a), -2*q*vminus, 1 ) / q
+    Lambda = CarrierDispersion( 1 / (np.sqrt(3) * _c.a), -2*q*vminus, 1 ) / q
     
     # Compute the denominator of the log
     metal = abs(vplus) >= abs(vminus)
@@ -412,7 +412,7 @@ def nminusT0(self,vplus,vminus):
 ### Screening ###
 #################
 
-def screened_vminus2(self,nplus,vminus):
+def screened_vminus2(nplus,vminus):
     """
     The screened value of vminus given the total charge nplus
     """
@@ -422,35 +422,35 @@ def screened_vminus2(self,nplus,vminus):
 
     for vm in vminus:
         vm0 = vm
-        vp0 = self.eFermi(nplus, -2*q*vm) / q
+        vp0 = ChemicalPotential(nplus, -2*q*vm) / q
 
         def f1(vm1):
-            return (vm1 - vm) + (q / (4*self.C))*self.nminus(vp0,vm1,0)
+            return (vm1 - vm) + (q / (4*C))*nminus(vp0,vm1,0)
 
         vm1 = optimize.brentq(f1,a,b)
-        vp1 = self.eFermi(nplus, -2*q*vm1) / q
+        vp1 = ChemicalPotential(nplus, -2*q*vm1) / q
 
         while (vm1-vm0)**2 + (vp1-vp0)**2 > 0.0001:
             vp0, vm0 = vp1, vm1
 
             def f1(vm1):
-                return (vm1 - vm) + (q / (4*self.C))*self.nminus(vp0,vm1,0)
+                return (vm1 - vm) + (q / (4*C))*nminus(vp0,vm1,0)
 
             vm1 = optimize.brentq(f1,a,b)
-            vp1 = self.eFermi(nplus, -2*q*vm1) / q
+            vp1 = ChemicalPotential(nplus, -2*q*vm1) / q
         
         vminus_screened.append(vm1)
 
     return np.array(vminus_screened)
 
-def screened_newton(self,vplus,vminus):
-    n = self.nplus(vplus,vminus,0)
+def screened_newton(vplus,vminus):
+    n = nplus(vplus,vminus,0)
 
     def f1(v):
-        return (v[1] - vminus) + (q / (4*self.C))*self.nminusT0(v[0],v[1])
+        return (v[1] - vminus) + (q / (4*C))*nminusT0(v[0],v[1])
 
     def f2(v):
-        return n - self.nplus(v[0],v[1],0)
+        return n - nplus(v[0],v[1],0)
 
     v = Newton.Newton2D(f1,f2,np.array([vplus,vminus]))
 
@@ -461,7 +461,7 @@ def screened_newton(self,vplus,vminus):
 ### Plotting Functions ###
 ##########################
 
-def plot_band_structure(self,n=None,vplus=None,vminus=None,schematic=False,savefile=None):
+def plot_band_structure(n=None,vplus=None,vminus=None,schematic=False,savefile=None):
     '''
 
     Parameters
@@ -486,16 +486,16 @@ def plot_band_structure(self,n=None,vplus=None,vminus=None,schematic=False,savef
     u = 2*q*vminus
 
     if n or n==0:
-        vplus = self.eFermi(n,u)/q
+        vplus = ChemicalPotential(n,u)/q
     if vplus or vplus==0:
-        n = self.nplusT0(vplus,vminus)
+        n = nplusT0(vplus,vminus)
 
 
     kmax = 5e8
     k = np.linspace(-kmax,kmax,num=100)
 
-    en_con = (self.Dispersion(k,u,band=1)/q)
-    en_val = (-self.Dispersion(k,u,band=1)/q)
+    en_con = (CarrierDispersion(k,u,band=1)/q)
+    en_val = (-CarrierDispersion(k,u,band=1)/q)
     fig, ax = plt.subplots()
 
     # Plots to ensure proper plotting
@@ -534,7 +534,7 @@ def plot_band_structure(self,n=None,vplus=None,vminus=None,schematic=False,savef
 ### OLD Screening METHOD ###
 ##################
 
-def nplus(self,vplus,vminus, T, approx='Common',points = 10000):
+def nplus(vplus,vminus, T, approx='Common',points = 10000):
     '''
     Returns the electron carrier density for various electrostatic potentials vplus, vminus.
     Convention is that electrons have positive carrier density while holes have negative.
@@ -548,10 +548,10 @@ def nplus(self,vplus,vminus, T, approx='Common',points = 10000):
     vminus = vminus.reshape(1,len(vminus),1)
 
     # Domain over first Brillouin zone
-    ks = np.linspace(0,1/(np.sqrt(3)*self.a), num=points).reshape((points,1,1))
+    ks = np.linspace(0,1/(np.sqrt(3)*_c.a), num=points).reshape((points,1,1))
 
     # Calculate the kinetic energy
-    KE = self.Dispersion(ks, -2*q*vminus,1,approx)
+    KE = CarrierDispersion(ks, -2*q*vminus,1,approx)
 
     # Evaluate Fermi-Dirac
     FD = (sd.FermiDirac(KE-q*vplus,T)-sd.FermiDirac(KE+q*vplus,T))
@@ -561,7 +561,7 @@ def nplus(self,vplus,vminus, T, approx='Common',points = 10000):
 
     return np.squeeze(integrate.trapz(integrand,ks,axis=0))
 
-def nminus(self,vplus,vminus, T, approx='Common', points=10000):
+def nminus(vplus,vminus, T, approx='Common', points=10000):
     '''
     Returns the electron carrier density for various electrostatic potentials vplus.
     Convention is that electrons have positive carrier density while holes have negative.
@@ -578,23 +578,23 @@ def nminus(self,vplus,vminus, T, approx='Common', points=10000):
     vminus = vminus.reshape(1,len(vminus),1)
 
     # Domain over first Brillouin zone
-    ks = np.linspace(0,1/(np.sqrt(3)*self.a), num=points).reshape((points,1,1))
+    ks = np.linspace(0,1/(np.sqrt(3)*_c.a), num=points).reshape((points,1,1))
 
     # Calculate the kinetic energy
-    KE = self.Dispersion(ks, -2*q*vminus,1, approx)
+    KE = CarrierDispersion(ks, -2*q*vminus,1, approx)
 
     # Evaluate Fermi-Dirac
     # Minus sign comes from...
     FD = (sd.FermiDirac(KE-q*abs(vplus),T))#-Temperature.FermiDirac(-KE-q*vplus,T)
 
     # Define integrand
-    integrand =  ( 2 /np.pi ) * ks * self.Pdiff(ks,vminus,approx='LowEnergy') * FD
+    integrand =  ( 2 /np.pi ) * ks * Pdiff(ks,vminus,approx='LowEnergy') * FD
 
     nm = np.squeeze(integrate.trapz(integrand,ks,axis=0))
 
     return nm
 
-def generate_nplus_nminus(self,vplus,vminus,T):
+def generate_nplus_nminus(vplus,vminus,T):
     """
     Generates and saves high-resolution surfaces of nplus(vplus,vminus)
     and nminus(vplus,vminus). Only generate for first quadrant (vplus,vminus > 0)
@@ -648,8 +648,8 @@ def generate_nplus_nminus(self,vplus,vminus,T):
             j_frac  = (j / int(len(vminus)/d)) * (1 / int(len(vplus)/d))
             percentage = round(100* (i_frac + j_frac),2)
             print('{} % Finished'.format(percentage))
-            nplus_surface[d*j:d*j+d,d*i:d*i+d]=self.nplus(vplus[d*i:d*i+d],vminus[d*j:d*j+d,:],T)
-            nminus_surface[d*j:d*j+d,d*i:d*i+d]=self.nminus(vplus[d*i:d*i+d],vminus[d*j:d*j+d,:],T)
+            nplus_surface[d*j:d*j+d,d*i:d*i+d]=nplus(vplus[d*i:d*i+d],vminus[d*j:d*j+d,:],T)
+            nminus_surface[d*j:d*j+d,d*i:d*i+d]=nminus(vplus[d*i:d*i+d],vminus[d*j:d*j+d,:],T)
 
     # Save the surfaces
     np.save(save_dir+'nplus_surface.npy',nplus_surface)
@@ -659,7 +659,7 @@ def generate_nplus_nminus(self,vplus,vminus,T):
     np.save(save_dir+'vplus.npy', vplus)
     np.save(save_dir+'vminus.npy', vminus)
 
-def get_vplus(self,T):
+def get_vplus(T):
     """
     Returns the vplus array saved in ...
     Doubles the range to negative values
@@ -670,14 +670,14 @@ def get_vplus(self,T):
     vplus = np.load(save_dir+'vplus.npy')
     return np.concatenate((-vplus[:0:-1],vplus))
 
-def get_vminus(self,T):
+def get_vminus(T):
     save_dir = os.path.join(self.this_dir,
                             'CarrierDensities',
                             'Temp_{:.2E}'.format(T))
     vminus = np.load(save_dir+'vminus.npy')
     return np.concatenate((-vminus[:0:-1],vminus))
 
-def get_nplus(self,T):
+def get_nplus(T):
     save_dir = os.path.join(self.this_dir,
                             'CarrierDensities',
                             'Temp_{:.2E}'.format(T))
@@ -686,7 +686,7 @@ def get_nplus(self,T):
     nplus_surface = np.concatenate((-nplus_surface[:,:0:-1],nplus_surface),axis = 1)
     return nplus_surface
 
-def get_nminus(self,T):
+def get_nminus(T):
     save_dir = os.path.join(self.this_dir,
                             'CarrierDensities',
                             'Temp_{:.2E}'.format(T))
