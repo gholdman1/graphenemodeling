@@ -27,7 +27,7 @@ Optical Properties
 
     graphene.monolayer.Polarizibility
     graphene.monolayer.OpticalConductivity
-
+    graphene.monolayer.FresnelReflection
 
 Plasmonics
 ----------
@@ -637,6 +637,7 @@ def ChemicalPotential(n,T=0,model='LowEnergy'):
         # Use T=0 value to estimate start
         mu0 = ChemicalPotential(n,T=0,model=model)
 
+        # Add 0.1 eV offset to x1 because in case mu0=0, x0 and x1 would be equal
         result = optimize.root_scalar(f,x0=mu0,x1=mu0*1.1+0.1*sc.elementary_charge,
                                         rtol=1e-10).root
 
@@ -1128,10 +1129,44 @@ def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
 
     polarization:   's'/'TE' or 'p'/'TM' for s- or p-polarization.
 
+    Examples
+    --------
+
+    Plot the TM polarized Fresnel Reflection coefficient. This will highlight the plasmon.
+    Replicates Fig. 5.2 in Ref [1]
+    .. plot::
+
+        >>> import matplotlib.pyplot as plt
+        >>> import matplotlib.cm as cm
+        >>> from graphenemodeling.graphene import monolayer as mlg
+        >>> from scipy.constants import elementary_charge, hbar
+        >>> eV = elementary_charge
+        >>> FermiLevel = 0.4 * eV
+        >>> gamma = 0.012 * eV / hbar
+        >>> kF = mlg.FermiWavenumber(FermiLevel,model='LowEnergy')
+        >>> q = np.linspace(1e-2,3,num=200) * kF
+        >>> w = np.linspace(1e-2,3,num=200) * FermiLevel / hbar
+        >>> fresnelTM = mlg.FresnelReflection(q,w[:,np.newaxis],gamma,FermiLevel,T=0,
+        ...                                     eps1=1,eps2=1,
+        ...                                     polarization='TM')
+        >>> fig, ax = plt.subplots(figsize=(6,6))
+        >>> ax.imshow(-np.imag(fresnelTM),
+        ...             extent=(q[0]/kF,q[-1]/kF,hbar*w[0]/FermiLevel,hbar*w[-1]/FermiLevel),
+        ...             origin='lower',aspect='auto',cmap=cm.hot,vmin=-16,vmax=0)
+        >>> ax.set_xlabel('$q/k_F$')
+        >>> ax.set_ylabel('$\\hbar\\omega/E_F$')
+        >>> ax.set_ylim(0,3)
+        >>> ax.set_xlim(0,3)
+        >>> fig.suptitle('Fresnel Reflection Coefficient (TM)')
+        >>> plt.show()
+
     References
     ----------
 
-    [1] Christensen Thesis 2017
+    [1] Christensen, T. (2017).
+    From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing).
+    http://link.springer.com/10.1007/978-3-319-48562-1.
+    
     '''
 
     kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j)
@@ -1187,7 +1222,7 @@ def LocalDensityOfStates(d,omega,gamma,FermiLevel,T):
 # Phonon Properties #
 #####################
 
-def PhononSelfEnergy(self):
+def PhononSelfEnergy():
     pass
 
 ##############
