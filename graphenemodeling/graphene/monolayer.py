@@ -1166,7 +1166,7 @@ def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     [1] Christensen, T. (2017).
     From Classical to Quantum Plasmonics in Three and Two Dimensions (Cham: Springer International Publishing).
     http://link.springer.com/10.1007/978-3-319-48562-1.
-    
+
     '''
 
     kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j)
@@ -1395,7 +1395,6 @@ def PlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model):
             a = optimize.minimize_scalar(root_eqn,bounds=((FermiLevel/sc.hbar)*q0/kF,b),method='bounded').x
             
             if root_eqn(a) > 0:
-                #warnings.warn("Monolayer.PlasmonDispersion(model='nonlocal'): No root exists for q=%.5f" % (q0))
                 omega[i]=0
             else:
                 root_eqn_abs= lambda w: np.abs(root_eqn(w))
