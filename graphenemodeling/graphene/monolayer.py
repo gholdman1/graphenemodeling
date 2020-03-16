@@ -607,8 +607,8 @@ def ChemicalPotential(n,T=0,model='LowEnergy'):
     n:  array-like, m :sup:`-2`
         Carrier density
 
-    T:  scalar
-        Temperature (K)
+    T:  scalar, K
+        Temperature
 
     Returns
     -------
