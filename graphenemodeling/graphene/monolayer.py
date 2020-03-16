@@ -361,7 +361,7 @@ def CarrierDispersion(k,model,eh=1,g0prime=_c.g0prime):
 
     return dispersion
 
-def FermiWavenumber(eFermi,model,g0prime=_c.g0prime):
+def FermiWavenumber(FermiLevel,model,g0prime=_c.g0prime):
     '''
     The Fermi wavenumber, i.e. the wavenumber of the state at
     the Fermi energy.
@@ -369,7 +369,7 @@ def FermiWavenumber(eFermi,model,g0prime=_c.g0prime):
     Parameters
     ----------
 
-    eFermi:      array-like, Fermi level
+    FermiLevel:      array-like, Fermi level
 
     model:       'LowEnergy': Value gets derived from linear approximation of dispersion.
 
@@ -380,26 +380,26 @@ def FermiWavenumber(eFermi,model,g0prime=_c.g0prime):
     >>> from graphenemodeling import graphene
     >>> from scipy.constants import elementary_charge as eV
     >>> mlg = graphene.Monolayer()
-    >>> eF = 0.4 * eV # Fermi level is 0.4 eV
-    >>> kF = mlg.FermiWavenumber(eF, model='LowEnergy')
+    >>> FermiLevel = 0.4 * eV
+    >>> kF = mlg.FermiWavenumber(FermiLevel, model='LowEnergy')
     >>> mlg.CarrierDispersion(kF,model='LowEnergy')/eV
     0.4
     '''
 
     if model == 'LowEnergy':
-        return np.abs(eFermi) / (sc.hbar*_c.vF)
+        return np.abs(FermiLevel) / (sc.hbar*_c.vF)
 
     if model == 'FullTightBinding':
         '''
         Need to finish off this code-finding procedure
         '''
-        eh = np.sign(eFermi)
+        eh = np.sign(FermiLevel)
 
         # f is zero when kf is correct value
-        f = lambda kf: eFermi - CarrierDispersion(kf, model='FullTightBinding',eh=eh,g0prime=g0prime)
+        f = lambda kf: FermiLevel - CarrierDispersion(kf, model='FullTightBinding',eh=eh,g0prime=g0prime)
 
         # Choose LowEnergy answer for initial starting point
-        kf0 = FermiWavenumber(eFermi,model='LowEnergy',g0prime=g0prime)
+        kf0 = FermiWavenumber(FermiLevel,model='LowEnergy',g0prime=g0prime)
 
         result = optimize.root_scalar(f,x0=kf0,x1=kf0*.9,rtol=1e-10).root
 
@@ -580,8 +580,8 @@ def CarrierDensity(mu,T,model):
     if T<0:
         raise ValueError('Temperature T must be nonnegative')
     if T==0 and model=='LowEnergy':
-        eFermi=mu # chemical potential at T=0 is called Fermi level
-        n = (eFermi / (sc.hbar*_c.vF))**2 / np.pi
+        FermiLevel=mu # chemical potential at T=0 is called Fermi level
+        n = (FermiLevel / (sc.hbar*_c.vF))**2 / np.pi
         return n
 
     if T>0:
@@ -671,7 +671,7 @@ def Mobility(Te,mu0,T0):
 
     return mu
 
-def ScatteringRate(mobility,eFermi):
+def ScatteringRate(mobility,FermiLevel):
     '''
     Estimated DC scattering rate from mobility.
 
@@ -680,7 +680,7 @@ def ScatteringRate(mobility,eFermi):
 
     mobility:   scalar, mobility (m^2/V-s)
 
-    eFermi:     scalar, Fermi level (J)
+    FermiLevel:     scalar, Fermi level (J)
 
     Returns
     ----------
@@ -689,12 +689,12 @@ def ScatteringRate(mobility,eFermi):
     '''
 
     # Scattering time
-    tau = mobility*eFermi / (sc.elementary_charge*_c.vF**2)
+    tau = mobility*FermiLevel / (sc.elementary_charge*_c.vF**2)
 
     rate = 1/tau
     return rate
 
-def Polarizibility(q,omega,gamma,eFermi,T=0):
+def Polarizibility(q,omega,gamma,FermiLevel,T=0):
     '''
     The Polarizibility :math:`\\chi^0`` of graphene.
 
@@ -708,7 +708,7 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
     gamma:  scalar, scattering rate due to mechanisms such as impurities (i.e. not Landau Damping)
                     We use the Mermin-corrected Relaxation time approximation (Eqn 4.9 of Ref 1)
 
-    eFermi: scalar, Fermi level of graphene.
+    FermiLevel: scalar, Fermi level of graphene.
 
     Notes
     -----
@@ -795,12 +795,12 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
         Equation 17 of Ref 2
         '''
 
-        prefactor = -DensityOfStates(eFermi,model='LowEnergy')
+        prefactor = -DensityOfStates(FermiLevel,model='LowEnergy')
 
-        kF = FermiWavenumber(eFermi, model='LowEnergy')
+        kF = FermiWavenumber(FermiLevel, model='LowEnergy')
 
         x = q / (2*kF)
-        zbar = sc.hbar*omega / (2*eFermi)
+        zbar = sc.hbar*omega / (2*FermiLevel)
 
         f = lambda x,zbar: (np.arcsin( (1-zbar)/x) + np.arcsin( (1+zbar)/x )
                         - ((zbar-1)/x)*np.sqrt(1 - ((zbar-1)/x)**2 )
@@ -813,14 +813,14 @@ def Polarizibility(q,omega,gamma,eFermi,T=0):
 
     elif gamma !=0:
         # Mermin-corrected Relaxation Time Approximation (Eqn 4.9 of Ref 1)
-        pol_complex_arg = Polarizibility(q,omega+1j*gamma,0,eFermi,T=0)
-        pol_0 = Polarizibility(q,0,0,eFermi,T=0)
+        pol_complex_arg = Polarizibility(q,omega+1j*gamma,0,FermiLevel,T=0)
+        pol_0 = Polarizibility(q,0,0,FermiLevel,T=0)
 
         numerator = (1 + 1j*gamma/omega) * pol_complex_arg
         denominator = 1 + ( 1j*gamma/omega * pol_complex_arg / pol_0 )
         return numerator / denominator
 
-def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
+def dPolarizibility(q,omega,gamma,FermiLevel,T,dvar,diff=1e-7):
     '''
     Returns the derivative of the real part of the polarizibility at q, omega
     with respect to the chosen variable, dvar.
@@ -834,7 +834,7 @@ def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
 
     gamma:  scalar, the scattering rate in units (1/s)
 
-    eFermi: scalar, the Fermi level (J)
+    FermiLevel: scalar, the Fermi level (J)
 
     T:      scalar, Temperature (K)
 
@@ -846,12 +846,12 @@ def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
     '''
 
     if dvar == 'omega':
-        P = lambda w: np.real(Polarizibility(q,w,gamma,eFermi,T))
+        P = lambda w: np.real(Polarizibility(q,w,gamma,FermiLevel,T))
         wa, wb = omega*(1-diff), omega*(1+diff)
         return (P(wb)-P(wa))/(2*omega*diff)
 
     elif dvar == 'q':
-        P = lambda qv: np.real(Polarizibility(qv,omega,gamma,eFermi,T))
+        P = lambda qv: np.real(Polarizibility(qv,omega,gamma,FermiLevel,T))
         qa,qb = q*(1-diff), q*(1+diff)
         return (P(qb)-P(qa))/(2*q*diff)
 
@@ -859,7 +859,7 @@ def dPolarizibility(q,omega,gamma,eFermi,T,dvar,diff=1e-7):
 # Optical Properties #
 ######################
 
-def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
+def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     '''The diagonal conductivity of graphene :math:`\\sigma_{xx}`.
 
     Parameters
@@ -872,7 +872,7 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
     omega:      array-like
                 angular frequency
 
-    eFermi:     scalar
+    FermiLevel:     scalar
                 the Fermi energy (J)
 
     gamma:      scalar
@@ -906,9 +906,9 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
         >>> eF = 0.4 * elementary_charge
         >>> g = 0.012 * elementary_charge / hbar
         >>> w = np.linspace(0.01,3,num=150) / (hbar/eF)
-        >>> s_0K_0g = mlg.OpticalConductivity(q=0,omega=w,gamma=0,eFermi=eF,T=0)
-        >>> s_0K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,eFermi=eF,T=0.01)
-        >>> s_300K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,eFermi=eF,T=300)
+        >>> s_0K_0g = mlg.OpticalConductivity(q=0,omega=w,gamma=0,FermiLevel=eF,T=0)
+        >>> s_0K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,FermiLevel=eF,T=0.01)
+        >>> s_300K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,FermiLevel=eF,T=300)
         >>> fig, (re_ax, im_ax) = plt.subplots(1,2,figsize=(11,4))
         >>> s_Re = np.real(s_0K_0g)
         >>> s_Im = np.imag(s_0K_0g)
@@ -996,12 +996,12 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
             ### Intraband Contribution ###
 
             # Using np.logaddexp() avoids the large cosh in ln( cosh(1/T) )
-            x = eFermi / (2*sc.k*T)
+            x = FermiLevel / (2*sc.k*T)
             intra = lambda w: intra_pre * ( 1 / (w + 1j*gamma) ) * np.logaddexp(x,-x)
 
             ### Interband Contribution ###
 
-            H = lambda energy: sd.FermiDirac(-energy-eFermi,T) - sd.FermiDirac(energy-eFermi,T)
+            H = lambda energy: sd.FermiDirac(-energy-FermiLevel,T) - sd.FermiDirac(energy-FermiLevel,T)
 
             integrand = lambda energy,w: ( H(energy) - H(sc.hbar*w/2) ) / (sc.hbar**2 * (w + 1j*gamma)**2 - 4 * energy**2)
 
@@ -1012,8 +1012,8 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
                     integrand_re = lambda e: np.real(integrand(e,frequency))
                     integrand_im = lambda e: np.imag(integrand(e,frequency))
 
-                    result[i] =(     integrate.quad(integrand_re,0,10*eFermi,points=(eFermi/sc.hbar,2*eFermi/sc.hbar))[0]
-                                + 1j*integrate.quad(integrand_im,0,10*eFermi,points=(eFermi/sc.hbar,2*eFermi/sc.hbar))[0] )
+                    result[i] =(     integrate.quad(integrand_re,0,10*FermiLevel,points=(FermiLevel/sc.hbar,2*FermiLevel/sc.hbar))[0]
+                                + 1j*integrate.quad(integrand_im,0,10*FermiLevel,points=(FermiLevel/sc.hbar,2*FermiLevel/sc.hbar))[0] )
 
                 return result
 
@@ -1023,24 +1023,24 @@ def OpticalConductivity(q,omega,gamma,eFermi,T,model=None):
             conductivity= intra(omega) + inter(omega)
 
         if T==0:
-            intra = lambda w: 1j*_c.sigma_0 * 4*eFermi / (sc.pi*sc.hbar* (w + 1j*gamma))
+            intra = lambda w: 1j*_c.sigma_0 * 4*FermiLevel / (sc.pi*sc.hbar* (w + 1j*gamma))
 
-            inter = lambda w: _c.sigma_0 * ( np.heaviside(sc.hbar*w - 2*eFermi,0.5) + 
-                                            (1j/sc.pi) * np.log(np.abs((2*eFermi-sc.hbar*w)/(2*eFermi+sc.hbar*w))))
+            inter = lambda w: _c.sigma_0 * ( np.heaviside(sc.hbar*w - 2*FermiLevel,0.5) + 
+                                            (1j/sc.pi) * np.log(np.abs((2*FermiLevel-sc.hbar*w)/(2*FermiLevel+sc.hbar*w))))
 
             conductivity = intra(omega) + inter(omega)
 
     # Nonlocal case
     else:
         if T==0:
-            conductivity = 1j*sc.elementary_charge**2 * (omega / q**2) * Polarizibility(q,omega,gamma,eFermi,T)
+            conductivity = 1j*sc.elementary_charge**2 * (omega / q**2) * Polarizibility(q,omega,gamma,FermiLevel,T)
 
         else:
             pass
 
     return conductivity
 
-def OpticalConductivityMatrix(q,omega,gamma, eFermi,T,mu0,mu0T):
+def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T,mu0,mu0T):
     '''
     Returns the conductivity matrix of monolayer graphene.
 
@@ -1057,12 +1057,12 @@ def OpticalConductivityMatrix(q,omega,gamma, eFermi,T,mu0,mu0T):
     '''
 
 
-    conductivity_matrix = np.array([[OpticalConductivity(q,omega,gamma,eFermi,T),0],
-                                    [0,OpticalConductivity(q,omega,gamma,eFermi,T)]])
+    conductivity_matrix = np.array([[OpticalConductivity(q,omega,gamma,FermiLevel,T),0],
+                                    [0,OpticalConductivity(q,omega,gamma,FermiLevel,T)]])
 
     return conductivity_matrix
 
-def Permittivity(omega,eFermi,T, gamma=None,epsR=None,model=None):
+def Permittivity(omega,FermiLevel,T, gamma=None,epsR=None,model=None):
     '''
     Returns the in-plae permittivity of graphene.
 
@@ -1087,7 +1087,7 @@ def Permittivity(omega,eFermi,T, gamma=None,epsR=None,model=None):
         '''
         x1 = sc.elementary_charge
         x2 = sc.hbar
-        x3 = eFermi
+        x3 = FermiLevel
         x4 = _c.vF
         x5 = Mobility(T,mu0,mu0T) # mobility at the new temperature
         x6 = epsR
@@ -1106,11 +1106,11 @@ def Permittivity(omega,eFermi,T, gamma=None,epsR=None,model=None):
         return eps
 
     else:
-        eps = 1 + 1j*OpticalConductivity(0,omega,gamma,eFermi,T)/(omega*sc.epsilon_0)
+        eps = 1 + 1j*OpticalConductivity(0,omega,gamma,FermiLevel,T)/(omega*sc.epsilon_0)
 
     return eps
 
-def FresnelReflection(kpar,omega,gamma,eFermi,T,eps1,eps2,polarization):
+def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     '''
     The Fresnel Reflection coefficients of light incident from above (medium 1, eps1).
 
@@ -1136,7 +1136,7 @@ def FresnelReflection(kpar,omega,gamma,eFermi,T,eps1,eps2,polarization):
 
     kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j)
 
-    sigma = OpticalConductivity(kpar,omega,gamma,eFermi,T)
+    sigma = OpticalConductivity(kpar,omega,gamma,FermiLevel,T)
 
     if polarization=='p' or polarization=='TM':
         numerator   = eps2*kperp1 - eps1*kperp2 + ( sigma*kperp1*kperp2 / (sc.epsilon_0*omega) )
@@ -1148,7 +1148,7 @@ def FresnelReflection(kpar,omega,gamma,eFermi,T,eps1,eps2,polarization):
 
     return numerator / denominator
 
-def LocalDensityOfStates(d,omega,gamma,eFermi,T):
+def LocalDensityOfStates(d,omega,gamma,FermiLevel,T):
     '''
     The LDOS a distance d above a plane of graphene.
 
@@ -1170,20 +1170,20 @@ def LocalDensityOfStates(d,omega,gamma,eFermi,T):
 
     for i, d0 in np.ndenumerate(d):
         k0w = (omega/sc.speed_of_light)
-        Im_rp      = lambda kpar: np.imag( FresnelReflection(kpar,omega,gamma,eFermi,T,1,1,'p') )
+        Im_rp      = lambda kpar: np.imag( FresnelReflection(kpar,omega,gamma,FermiLevel,T,1,1,'p') )
 
         integrand = lambda kpar: (kpar**2/k0w**3)*Im_rp(kpar)*np.exp(-2*kpar*d0)
 
         a,b = 1e-3, np.abs(_c.K) # Increasing this bound does not lead to more convergence
 
-        k_plasmon=InversePlasmonDispersion(omega,gamma,eFermi,1,1,T,model='nonlocal')
+        k_plasmon=InversePlasmonDispersion(omega,gamma,FermiLevel,1,1,T,model='nonlocal')
 
         integral[i] = integrate.quad(integrand,a,b,
                                     points=(k_plasmon),limit=100)[0]
 
     return ldos0 * integral      
 
-def OpticalResponseBound(omega,gamma,eFermi,T,d=None,method='svd',restype='material'):
+def OpticalResponseBound(omega,gamma,FermiLevel,T,d=None,method='svd',restype='material'):
     '''
     A general material optical response bound independent of geometrical parameters.
 
@@ -1201,7 +1201,7 @@ def OpticalResponseBound(omega,gamma,eFermi,T,d=None,method='svd',restype='mater
 
     gamma:      scalar, the scattering rate (rad/s)
 
-    eFermi:     scalar, Fermi level (J)
+    FermiLevel:     scalar, Fermi level (J)
 
     T:          scalar, Temperature (K)
 
@@ -1236,7 +1236,7 @@ def OpticalResponseBound(omega,gamma,eFermi,T,d=None,method='svd',restype='mater
                 'LDOStot':1*LDOSprop,'LDOSnrad':1*LDOSprop,'LDOSrad':LDOSprop/4})
 
     if method == 'scalar':
-        sigma = OpticalConductivity(0,omega,gamma,eFermi,T)
+        sigma = OpticalConductivity(0,omega,gamma,FermiLevel,T)
 
         bound = Z_0 * np.abs(sigma)**2 / np.real(sigma)
 
@@ -1244,7 +1244,7 @@ def OpticalResponseBound(omega,gamma,eFermi,T,d=None,method='svd',restype='mater
         bound = np.empty_like(omega)
 
         for i, w in np.ndenumerate(omega):
-            s = OpticalConductivityMatrix(0,w,gamma,eFermi,T)
+            s = OpticalConductivityMatrix(0,w,gamma,FermiLevel,T)
             s_dag = np.conj(np.transpose(s))
             s_re_inv = np.linalg.inv(np.real(s))
             prod = np.dot(s_dag,np.dot(s_re_inv,s))
@@ -1266,7 +1266,7 @@ def PhononSelfEnergy(self):
 # Plasmonics #
 ##############
 
-def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
+def PlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model):
     '''
     Returns the nonretarded plasmon dispersion relations E(q) for a surface
     plasmon in an infinite sheet of graphene sandwiched between two
@@ -1401,18 +1401,18 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
 
     # Analytical expression in intraband approximation
     if model=='intra':
-        radical = q * sc.elementary_charge**2 * eFermi / (2*sc.pi * sc.epsilon_0 * epsavg)
+        radical = q * sc.elementary_charge**2 * FermiLevel / (2*sc.pi * sc.epsilon_0 * epsavg)
         return (1/sc.hbar) * np.sqrt(radical)
 
     if model=='local':
         omega = np.empty_like(q)
 
-        sigma = lambda w: OpticalConductivity(0,w,gamma,eFermi,T=0)
+        sigma = lambda w: OpticalConductivity(0,w,gamma,FermiLevel,T=0)
 
         for i,q0 in np.ndenumerate(q):
             root_eqn = lambda w: 1 - np.imag(sigma(w))*q0 / (2*sc.epsilon_0*epsavg*w)
 
-            a, b = PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra'), 1e-8
+            a, b = PlasmonDispersion(q0,gamma,FermiLevel,eps1,eps2,T,model='intra'), 1e-8
             omega[i] = optimize.brentq(root_eqn,a,b)
 
         return omega
@@ -1420,16 +1420,16 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
     if model=='nonlocal':
         omega = np.empty_like(q)
 
-        kF = FermiWavenumber(eFermi,model='LowEnergy')
+        kF = FermiWavenumber(FermiLevel,model='LowEnergy')
 
         for i, q0 in np.ndenumerate(q):
-            root_eqn = lambda w: PlasmonDispersionRoot(q0,w,gamma,eFermi,eps1,eps2,T=0)
+            root_eqn = lambda w: PlasmonDispersionRoot(q0,w,gamma,FermiLevel,eps1,eps2,T=0)
             
             # Frequency is definitely below 1,1 intraband dispersion
-            b = PlasmonDispersion(q0,gamma,eFermi,1,1,T,model='intra')
+            b = PlasmonDispersion(q0,gamma,FermiLevel,1,1,T,model='intra')
 
             # Frequency is definitely above the minimum which should be <0
-            a = optimize.minimize_scalar(root_eqn,bounds=((eFermi/sc.hbar)*q0/kF,b),method='bounded').x
+            a = optimize.minimize_scalar(root_eqn,bounds=((FermiLevel/sc.hbar)*q0/kF,b),method='bounded').x
             
             if root_eqn(a) > 0:
                 #warnings.warn("Monolayer.PlasmonDispersion(model='nonlocal'): No root exists for q=%.5f" % (q0))
@@ -1443,7 +1443,7 @@ def PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model):
 
         return omega
 
-def PlasmonDispersionRes(q,gamma,eFermi,eps1,eps2,T,exp_res=1):
+def PlasmonDispersionRes(q,gamma,FermiLevel,eps1,eps2,T,exp_res=1):
     '''
     Uses the FresnelReflection coefficients to numerically search for the 
     plasmon dispersion
@@ -1460,12 +1460,12 @@ def PlasmonDispersionRes(q,gamma,eFermi,eps1,eps2,T,exp_res=1):
 
     for i,q0 in np.ndenumerate(q):
         w1 = q0*_c.vF
-        w2 = PlasmonDispersion(q0,gamma,eFermi,eps1,eps2,T,model='intra')
+        w2 = PlasmonDispersion(q0,gamma,FermiLevel,eps1,eps2,T,model='intra')
         w0 = (w2+w1)/2
         # omega=np.linspace(q0*_c.vF,2*q0*_c.vF,num=300)
         omega=np.linspace(w1,w2,num=300)
 
-        y = np.imag(FresnelReflection(q0,omega,gamma,eFermi,T,eps1,eps2,'TM'))
+        y = np.imag(FresnelReflection(q0,omega,gamma,FermiLevel,T,eps1,eps2,'TM'))
 
         p0=[w0,0.1*w0,10]
 
@@ -1478,20 +1478,20 @@ def PlasmonDispersionRes(q,gamma,eFermi,eps1,eps2,T,exp_res=1):
 
     return np.abs(pFit)
 
-def InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model):
+def InversePlasmonDispersion(omega,gamma,FermiLevel,eps1,eps2,T,model):
     '''
     Returns the wavenumber of a plasmon given the frequency.
 
     Useful when determining the wavelength of a plasmon excited by light.
     '''
 
-    kF = FermiWavenumber(eFermi,model='LowEnergy')
+    kF = FermiWavenumber(FermiLevel,model='LowEnergy')
 
     cutoff = 4*kF
     q = np.empty_like(omega)
 
     for i, omega in np.ndenumerate(omega):
-        root_eqn = lambda q: np.abs( omega - PlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model) )
+        root_eqn = lambda q: np.abs( omega - PlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model) )
 
         reps = 1
         while reps < 5:
@@ -1504,16 +1504,16 @@ def InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model):
 
     return q
 
-def PlasmonDispersionRoot(q,omega,gamma,eFermi, eps1,eps2 ,T):
+def PlasmonDispersionRoot(q,omega,gamma,FermiLevel, eps1,eps2 ,T):
     '''
     The equation used for numerically solving the plasmon dispersion in the nonretarded regime.
     '''
 
     epsavg = (eps1+eps2)/2
 
-    return 1 - np.imag(OpticalConductivity(q,omega,gamma,eFermi,T))*q / (2*sc.epsilon_0*epsavg*omega)
+    return 1 - np.imag(OpticalConductivity(q,omega,gamma,FermiLevel,T))*q / (2*sc.epsilon_0*epsavg*omega)
 
-def PlasmonDispersionLoss(omega,gamma,eFermi,eps1,eps2,T,model):
+def PlasmonDispersionLoss(omega,gamma,FermiLevel,eps1,eps2,T,model):
     '''
     The loss of the plasmon wavenumber q=q1+iq2. Returns q2. Equation 15 of Ref [1]
     with tau = infinity (or gamma = 0). Assumes q2<<q1
@@ -1525,13 +1525,13 @@ def PlasmonDispersionLoss(omega,gamma,eFermi,eps1,eps2,T,model):
     '''
     
     if model == 'nonlocal':
-        q1 = InversePlasmonDispersion(omega,gamma,eFermi,eps1,eps2,T,model)
+        q1 = InversePlasmonDispersion(omega,gamma,FermiLevel,eps1,eps2,T,model)
 
-        pol = Polarizibility(q1,omega,gamma,eFermi,T=0)
-        pol0= Polarizibility(q1,1e-9,gamma,eFermi,T=0)
+        pol = Polarizibility(q1,omega,gamma,FermiLevel,T=0)
+        pol0= Polarizibility(q1,1e-9,gamma,FermiLevel,T=0)
 
-        dpolq = dPolarizibility(q1,omega,gamma,eFermi,T,dvar='q')
-        dpolw = dPolarizibility(q1,omega,gamma,eFermi,T,dvar='omega')
+        dpolq = dPolarizibility(q1,omega,gamma,FermiLevel,T,dvar='q')
+        dpolw = dPolarizibility(q1,omega,gamma,FermiLevel,T,dvar='omega')
 
         numerator = np.imag(-pol) + gamma * (-1)*dpolw + (gamma/omega) * np.real(-pol * (1- (pol/pol0)))
         denominator = (1/q1) * np.real(-pol) - (-1)*dpolq
@@ -1540,7 +1540,7 @@ def PlasmonDispersionLoss(omega,gamma,eFermi,eps1,eps2,T,model):
 
     return q2
 
-def dPlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model,dvar=None,diff=1e-7):
+def dPlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model,dvar=None,diff=1e-7):
     '''
     Derivative of plasmon frequency with respect to dvar.
 
@@ -1553,7 +1553,7 @@ def dPlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model,dvar=None,diff=1e-7):
 
     gamma:  scalar, the scattering rate in units (1/s)
 
-    eFermi: scalar, the Fermi level (J)
+    FermiLevel: scalar, the Fermi level (J)
 
     T:      scalar, Temperature (K)
 
@@ -1564,12 +1564,12 @@ def dPlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model,dvar=None,diff=1e-7):
             Method uses central difference.
     '''
 
-    if dvar == 'eFermi':
+    if dvar == 'FermiLevel':
         result = np.empty_like(q)
         for i, q0 in np.ndenumerate(q):
             w = lambda eF: PlasmonDispersion(q0,gamma,eF,eps1,eps2,T,model)
-            e1, e2 = eFermi*(1-diff), eFermi*(1+diff)
-            result[i] = (w(e2)-w(e1))/(2*eFermi*diff)
+            e1, e2 = FermiLevel*(1-diff), FermiLevel*(1+diff)
+            result[i] = (w(e2)-w(e1))/(2*FermiLevel*diff)
 
         return result
 
@@ -1578,7 +1578,7 @@ def dPlasmonDispersion(q,gamma,eFermi,eps1,eps2,T,model,dvar=None,diff=1e-7):
 
     pass
 
-def DipoleDecayRate(z,omega,gamma,eFermi,T,eps1,eps2):
+def DipoleDecayRate(z,omega,gamma,FermiLevel,T,eps1,eps2):
     '''
     Decay rate of a dipole emitter placed near graphene.
     Right now, the dipole only points perpendicular.
@@ -1604,14 +1604,14 @@ def DipoleDecayRate(z,omega,gamma,eFermi,T,eps1,eps2):
     for i, w in np.ndenumerate(omega):
 
         kperp   = lambda kpar: np.sqrt(eps1*(w/sc.speed_of_light)**2 - kpar**2)
-        rp      = lambda kpar: FresnelReflection(kpar,w,gamma,eFermi,T,eps1,eps2,'p')
+        rp      = lambda kpar: FresnelReflection(kpar,w,gamma,FermiLevel,T,eps1,eps2,'p')
         perpterm = lambda kpar: 2*np.abs(d[2])**2 * kpar**2 * rp(kpar)
 
         integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
 
         b = np.abs(_c.K) # Increasing this bound does not lead to more convergence
         kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
-        k_plasmon=InversePlasmonDispersion(w,gamma,eFermi,eps1,eps2,T,model='nonlocal')
+        k_plasmon=InversePlasmonDispersion(w,gamma,FermiLevel,eps1,eps2,T,model='nonlocal')
 
         integral[i] = integrate.quad(integrand,1e-3,b,
                                     points=(kpar_pol,k_plasmon),limit=100)[0]
