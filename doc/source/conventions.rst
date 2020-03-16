@@ -17,6 +17,8 @@ Variables
 
 Chemical potentials use the variable ``mu``. If a function is only applicable at zero temperature, then we use the variable ``FermiLevel`` instead.
 
+The variable ``k`` is used for the wavenumber of carriers such as Dirac fermions. The variable ``q`` is used for scattering and plasmons.
+
 Examples
 --------
 

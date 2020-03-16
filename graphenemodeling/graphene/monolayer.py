@@ -702,7 +702,8 @@ def Polarizibility(q,omega,gamma,FermiLevel,T=0):
     Parameters
     ----------
 
-    q:      array-like, difference between scattered wavevector and incident
+    q:      array-like
+            Difference between scattered wavevector and incident
 
     omega:  array-like, frequency
 
@@ -829,7 +830,8 @@ def dPolarizibility(q,omega,gamma,FermiLevel,T,dvar,diff=1e-7):
     Parameters
     ----------
 
-    q:      array-like,
+    q:      array-like
+            Difference between scattered wavevector and incident
 
     omega:
 
@@ -866,9 +868,8 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     Parameters
     ----------
 
-    q:          array-like
-                wavenumbers at which to evaluate the nonlocal conductivity.
-                Choose q=0 for the LOCAL conductivity.
+    q:      array-like
+            Wavenumber at which to evaluate OpticalConductivity
 
     omega:      array-like
                 angular frequency
@@ -1048,6 +1049,9 @@ def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T,mu0,mu0T):
     Parameters
     ----------
 
+    q:      array-like
+            Wavenumber at which to evaluate OpticalConductivityMatrix
+
     omega:
 
     Returns
@@ -1111,7 +1115,7 @@ def Permittivity(omega,FermiLevel,T, gamma=None,epsR=None,model=None):
 
     return eps
 
-def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
+def FresnelReflection(q,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     '''
     The Fresnel Reflection coefficients of light incident from above (medium 1, eps1).
 
@@ -1120,12 +1124,13 @@ def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     Parameters
     ----------
 
-    kp:             Parallel (in-plane) momentum of indicent light.
+    q:      array-like
+            Wavenumber at which to evaluate FresnelReflection
 
     omega:          Frequency of incident light.
 
     eps1, eps2:     Permittivities above and below graphene, respectively.
-                    Could also be made callable such that eps1=eps1(kpar,omega)
+                    Could also be made callable such that eps1=eps1(q,omega)
 
     polarization:   's'/'TE' or 'p'/'TM' for s- or p-polarization.
 
@@ -1133,7 +1138,8 @@ def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     --------
 
     Plot the TM polarized Fresnel Reflection coefficient. This will highlight the plasmon.
-    Replicates Fig. 5.2 in Ref [1]
+    Replicates Fig. 5.2 in Ref [1].
+
     .. plot::
 
         >>> import matplotlib.pyplot as plt
@@ -1169,9 +1175,9 @@ def FresnelReflection(kpar,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
 
     '''
 
-    kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - kpar**2 + 1e-9*1j)
+    kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - q**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - q**2 + 1e-9*1j)
 
-    sigma = OpticalConductivity(kpar,omega,gamma,FermiLevel,T)
+    sigma = OpticalConductivity(q,omega,gamma,FermiLevel,T)
 
     if polarization=='p' or polarization=='TM':
         numerator   = eps2*kperp1 - eps1*kperp2 + ( sigma*kperp1*kperp2 / (sc.epsilon_0*omega) )
@@ -1205,16 +1211,16 @@ def LocalDensityOfStates(d,omega,gamma,FermiLevel,T):
 
     for i, d0 in np.ndenumerate(d):
         k0w = (omega/sc.speed_of_light)
-        Im_rp      = lambda kpar: np.imag( FresnelReflection(kpar,omega,gamma,FermiLevel,T,1,1,'p') )
+        Im_rp      = lambda q: np.imag( FresnelReflection(q,omega,gamma,FermiLevel,T,1,1,'p') )
 
-        integrand = lambda kpar: (kpar**2/k0w**3)*Im_rp(kpar)*np.exp(-2*kpar*d0)
+        integrand = lambda q: (q**2/k0w**3)*Im_rp(q)*np.exp(-2*q*d0)
 
         a,b = 1e-3, np.abs(_c.K) # Increasing this bound does not lead to more convergence
 
-        k_plasmon=InversePlasmonDispersion(omega,gamma,FermiLevel,1,1,T,model='nonlocal')
+        q_plasmon=InversePlasmonDispersion(omega,gamma,FermiLevel,1,1,T,model='nonlocal')
 
         integral[i] = integrate.quad(integrand,a,b,
-                                    points=(k_plasmon),limit=100)[0]
+                                    points=(q_plasmon),limit=100)[0]
 
     return ldos0 * integral      
 
@@ -1565,17 +1571,17 @@ def DipoleDecayRate(z,omega,gamma,FermiLevel,T,eps1,eps2):
 
     for i, w in np.ndenumerate(omega):
 
-        kperp   = lambda kpar: np.sqrt(eps1*(w/sc.speed_of_light)**2 - kpar**2)
-        rp      = lambda kpar: FresnelReflection(kpar,w,gamma,FermiLevel,T,eps1,eps2,'p')
-        perpterm = lambda kpar: 2*np.abs(d[2])**2 * kpar**2 * rp(kpar)
+        kperp   = lambda q: np.sqrt(eps1*(w/sc.speed_of_light)**2 - q**2)
+        rp      = lambda q: FresnelReflection(q,w,gamma,FermiLevel,T,eps1,eps2,'p')
+        perpterm = lambda q: 2*np.abs(d[2])**2 * q**2 * rp(q)
 
-        integrand = lambda kpar: np.real( (kpar - 1e-9*1j) * np.real( perpterm(kpar-1e-9*1j) * np.exp(2*1j*kperp(kpar-1e-9*1j)*z) / kperp(kpar-1e-9*1j) ) )
+        integrand = lambda q: np.real( (q - 1e-9*1j) * np.real( perpterm(q-1e-9*1j) * np.exp(2*1j*kperp(q-1e-9*1j)*z) / kperp(q-1e-9*1j) ) )
 
         b = np.abs(_c.K) # Increasing this bound does not lead to more convergence
-        kpar_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
-        k_plasmon=InversePlasmonDispersion(w,gamma,FermiLevel,eps1,eps2,T,model='nonlocal')
+        q_pol = np.sqrt(eps1) * (w/sc.speed_of_light)
+        q_plasmon=InversePlasmonDispersion(w,gamma,FermiLevel,eps1,eps2,T,model='nonlocal')
 
         integral[i] = integrate.quad(integrand,1e-3,b,
-                                    points=(kpar_pol,k_plasmon),limit=100)[0]
+                                    points=(q_pol,q_plasmon),limit=100)[0]
 
     return dipole.DecayRate(omega,d) + (1/sc.hbar) * integral
