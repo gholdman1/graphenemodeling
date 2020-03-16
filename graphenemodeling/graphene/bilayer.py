@@ -15,6 +15,7 @@ Band Structure
     :maxdepth: 1
 
     graphene.bilayer.Hamiltonian
+    graphene.bilayer.CarrierDispersion
 
 """
 
@@ -23,13 +24,14 @@ import scipy.constants as sc
 import graphenemodeling.graphene._constants as _c
 
 from graphenemodeling.graphene.base import BaseGraphene
-eVtoJ = sc.elementary_charge
+eV = sc.elementary_charge
+eVtoJ = eV
 e0 = sc.epsilon_0
 
-g1  = 0.358 * eVtoJ # (J), A1-B1 hopping potential
-g3  = 0.3   * eVtoJ # (J), A1-B2 hopping potential
-g4  = 0.12  * eVtoJ # (J), A1-A2 hopping potential (McCann Koshino 2013)
-d   = 3*(10**-10)   # (m), interlayer spacing
+g1  = 0.358 * eV # (J), A1-B1 hopping potential
+g3  = 0.3   * eV # (J), A1-B2 hopping potential
+g4  = 0.12  * eV # (J), A1-A2 hopping potential (McCann Koshino 2013)
+d   = 3e-10  # (m), interlayer spacing
 approx_choices = ['None', 'Common', 'LowEnergy']
 C = e0 / d
 
@@ -67,7 +69,7 @@ def Hamiltonian(k,u):
                             -\\gamma_3f(k)      & \\gamma_4f(k)     & -\\gamma_0f^*(k)  & u/2
                 \\end{matrix}\\right)
 
-    The ``LowEnergy`` tight-binding Hamiltonian is given by (Eqn. 30 Ref. [1])
+    The ``Common`` tight-binding Hamiltonian is given by (Eqn. 30 Ref. [1])
 
     .. math::
 
@@ -78,6 +80,15 @@ def Hamiltonian(k,u):
                             -\\sqrt{3/4}k a\\gamma_3  & -\\sqrt{3/4}k^*a\\gamma_4 & \\hbar v_F k^*           & u/2
                 \\end{matrix}\\right)
 
+    The ``LowEnergy`` Hamiltonian is
+
+    .. math::
+
+        H=\\left(\\begin{matrix}
+                    u/2     & p^2 / 2m \n
+                    p^2/2m  & -u/2
+                \\end{matrix}\\right)
+    
     References
     ----------
 
@@ -196,7 +207,6 @@ def CarrierDispersion(k,u,band,model='Common'):
         '''
         Low Energy effective. Eigenvalues of 
 
-        H = ( ( u/2, p^2 / 2m ) , ( p^2/2m, -u/2 ) )
 
         '''
 
