@@ -120,8 +120,6 @@ def CarrierDispersion(k,u,band,model='Common'):
     Returns the energy (J) of an electron with wavevector k (rad/m)
     in first (band=1) or second (band=2) conduction band.
 
-    To get valence bands, simply result multiply by -1.
-
     Parameters
     ----------
     
@@ -129,7 +127,7 @@ def CarrierDispersion(k,u,band,model='Common'):
     Examples
     --------
 
-    Plot the four band of ``model=Common``. Replicates Fig. 11 in Ref. [1].
+    Plot the four band of ``model=Common``. Replicates Fig. 11 in Ref. [1]. 
 
     .. plot::
 
@@ -152,7 +150,6 @@ def CarrierDispersion(k,u,band,model='Common'):
         >>> plt.legend()
         >>> plt.show()
         
-
     Notes
     -----
 
@@ -205,7 +202,7 @@ def CarrierDispersion(k,u,band,model='Common'):
 
         return np.array(disp).squeeze()
 
-def kmin(self,u, band=1):
+def WavenumberOfMinimum(self,u, band=1):
     '''
     Returns positive wavenumber at the minimum of the first band in 1/m.
 
@@ -289,7 +286,7 @@ def Pdiff(self,k,vminus,approx='Common'):
 
         return np.array(deltapsi).squeeze()
 
-def kFermi(self,n,u,pm):
+def FermiWavenumber(self,n,u,pm):
     '''
     Returns Fermi vector kF+ for pm=1 and kF- for pm=2 in units rad/m
     '''
@@ -306,11 +303,11 @@ def kFermi(self,n,u,pm):
     # This says that the region of occupied states is now a disk
     if pm%2==0:
         propk2 = (propk2 >= 0) * propk2
-        propk2 = (self.Dispersion(self.kFermi(n,u,1),u,1)<u/2) * propk2
+        propk2 = (CarrierDispersion(FermiWavenumber(n,u,1),u,1)<u/2) * propk2
     
     return np.sqrt( propk2 ) / (2*hbar*self.vF)
 
-def FermiLevel(self,n,u):
+def ChemicalPotential(self,n,u,T):
     '''
     Returns the Fermi level (Joules) given density n and interlayer potential energy difference u
     Positive n returns a positive Fermi level, meaning positive carrier densities are electrons by convention.
