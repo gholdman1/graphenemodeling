@@ -1,6 +1,6 @@
 """
 =============================================
-Photonics (:mod:`graphenemodeling.photonics`)
+Photonics (:mod:`photonics`)
 =============================================
 
 .. currentmodule:: graphenemodeling.photonics

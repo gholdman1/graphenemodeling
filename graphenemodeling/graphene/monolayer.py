@@ -1,6 +1,6 @@
 """
 ======================================================
-Monolayer (:mod:`graphenemodeling.graphene.monolayer`)
+Monolayer (:mod:`graphene.monolayer`)
 ======================================================
 
 Functions

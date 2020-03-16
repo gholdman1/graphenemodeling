@@ -1,6 +1,6 @@
 """
 ===========================================
-Graphene (:mod:`graphenemodeling.graphene`)
+Graphene (:mod:`graphene`)
 ===========================================
 
 .. currentmodule:: graphenemodeling.graphene

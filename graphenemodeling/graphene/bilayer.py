@@ -1,6 +1,6 @@
 """
 ======================================================
-Bilayer (:mod:`graphenemodeling.graphene.bilayer`)
+Bilayer (:mod:`graphene.bilayer`)
 ======================================================
 
 Functions related to Bernal-stacked bilayer graphene.

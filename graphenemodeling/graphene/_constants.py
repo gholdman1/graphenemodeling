@@ -1,6 +1,6 @@
 """
 =======================================================
-Constants (:mod:`graphenemodeling.graphene._constants`)
+Constants (:mod:`graphene._constants`)
 =======================================================
 
 Physical constants common to all forms of graphene.

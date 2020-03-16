@@ -1,6 +1,6 @@
 """
 =============================================================================
-Statistical Distributions (:mod:`graphenemodeling.statistical_distributions`)
+Statistical Distributions (:mod:`statistical_distributions`)
 =============================================================================
 
 These statistical distributions are not found in ``scipy.stats`` and are therefore offered here.
