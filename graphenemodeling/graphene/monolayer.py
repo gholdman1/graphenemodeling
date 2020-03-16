@@ -1140,8 +1140,11 @@ def FresnelReflection(q,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
     omega:  array-like
             Angular frequency of incident light.
 
-    eps1, eps2:     Permittivities above and below graphene, respectively.
-                    Could also be made callable such that eps1=eps1(q,omega)
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:   scalar
+            Permittivity in lower half-space
 
     polarization:   's'/'TE' or 'p'/'TM' for s- or p-polarization.
 
@@ -1260,8 +1263,11 @@ def PlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model):
     q:  array-like
         Wavenumber of the plasmon
 
-    eps1,eps2:  scalar
-        the relative permittivity of upper and lower half-space respectively.
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:  scalar
+            Permittivity in lower half-space
 
     model:  string
         'intra' for intraband dispersion,
@@ -1430,6 +1436,12 @@ def PlasmonDispersionRes(q,gamma,FermiLevel,eps1,eps2,T,exp_res=1):
     Parameters
     ----------
 
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:   scalar
+            Permittivity in lower half-space
+
     exp_res:    expected number of resonances
     '''
     q = np.atleast_1d(q)
@@ -1462,6 +1474,16 @@ def InversePlasmonDispersion(omega,gamma,FermiLevel,eps1,eps2,T,model):
     Returns the wavenumber of a plasmon given the frequency.
 
     Useful when determining the wavelength of a plasmon excited by light.
+
+    Parameters
+    ----------
+
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:   scalar
+            Permittivity in lower half-space
+
     '''
 
     kF = FermiWavenumber(FermiLevel,model='LowEnergy')
@@ -1486,6 +1508,15 @@ def InversePlasmonDispersion(omega,gamma,FermiLevel,eps1,eps2,T,model):
 def PlasmonDispersionRoot(q,omega,gamma,FermiLevel, eps1,eps2 ,T):
     '''
     The equation used for numerically solving the plasmon dispersion in the nonretarded regime.
+
+    Parameters
+    ----------
+
+    eps1:   scalar
+            Permittivity in lower half-space
+
+    eps2:   scalar
+            Permittivity in upper half-space
     '''
 
     epsavg = (eps1+eps2)/2
@@ -1496,6 +1527,15 @@ def PlasmonDispersionLoss(omega,gamma,FermiLevel,eps1,eps2,T,model):
     '''
     The loss of the plasmon wavenumber q=q1+iq2. Returns q2. Equation 15 of Ref [1]
     with tau = infinity (or gamma = 0). Assumes q2<<q1
+
+    Parameters
+    ----------
+
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:   scalar
+            Permittivity in lower half-space
 
     References
     ----------
@@ -1534,6 +1574,12 @@ def dPlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model,dvar=None,diff=1e-7)
 
     FermiLevel: scalar, the Fermi level (J)
 
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:   scalar
+            Permittivity in lower half-space
+
     T:      scalar, Temperature (K)
 
     dvar:   'omega': Take the partial wrt omega
@@ -1565,6 +1611,15 @@ def DipoleDecayRate(z,omega,gamma,FermiLevel,T,eps1,eps2):
     This should be moved to the Emitter.Dipole object
 
     Eqn 5 in the SM of Ref 1.
+
+    Parameters
+    ----------
+
+    eps1:   scalar
+            Permittivity in upper half-space
+
+    eps2:   scalar
+            Permittiviy in lower half-space
 
     References
     ----------
