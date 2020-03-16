@@ -3,6 +3,8 @@
 Bilayer (:mod:`graphenemodeling.graphene.bilayer`)
 ======================================================
 
+Functions related to Bernal-stacked bilayer graphene.
+
 Functions
 =========
 
@@ -112,20 +114,74 @@ def Hamiltonian(k,u):
                     [H41, H42, H43,H44]]).squeeze()
     return H
 
-def CarrierDispersion(self,k,u,band,approx='Common'):
-    '''
+def CarrierDispersion(k,u,band,model='Common'):
+    '''Energy of charge carrier in bilayer graphene.
+
     Returns the energy (J) of an electron with wavevector k (rad/m)
     in first (band=1) or second (band=2) conduction band.
-    Only approximation is g3=0.
+
     To get valence bands, simply result multiply by -1.
+
+    Parameters
+    ----------
+    
+
+    Examples
+    --------
+
+    Plot the four band of ``model=Common``. Replicates Fig. 11 in Ref. [1].
+
+    .. plot::
+
+        >>> from graphenemodeling.graphene import bilayer as blg
+        >>> from scipy.constants import elementary_charge as eV
+        >>> import matplotlib.pyplot as plt
+        >>> k = np.linspace(-1e9,1e9,num=200)
+        >>> u = 0.3 * eV
+        >>> conduction1 = blg.CarrierDispersion(k,u,1,model='Common')
+        >>> conduction2 = blg.CarrierDispersion(k,u,2,model='Common')
+        >>> valence1 = blg.CarrierDispersion(k,u,-1,model='Common')
+        >>> valence2 = blg.CarrierDispersion(k,u,-2,model='Common')
+        >>> fig, ax = plt.subplots()
+        >>> ax.plot(k*1e-10,conduction1/eV,label='Band 1')
+        >>> ax.plot(k*1e-10,conduction2/eV,label='Band 2')
+        >>> ax.plot(k*1e-10,valence1/eV,label='Band -1')
+        >>> ax.plot(k*1e-10,valence2/eV,label='Band -2')
+        >>> ax.set_xlabel('k ($\\AA^{-1}$)')
+        >>> ax.set_ylabel('E (eV)')
+        >>> plt.legend()
+        >>> plt.show()
+        
+
+    Notes
+    -----
+
+    .. math::
+
+        E_{\\pm}^2 = \\frac{\\gamma_1^2}{2}+\\frac{u^2}{4}+\\hbar^2v_F^2k^2 \\pm \\sqrt{\\frac{\\gamma_1^4}{4}+\\hbar^2v_F^2k^2(\\gamma_1^2+u^2)}
+
+    References
+    ----------
+
+    [1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
+    The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162.
+    https://link.aps.org/doi/10.1103/RevModPhys.81.109.
+
     '''
-    p = sc.hbar * self.vF * k
 
-    if approx == 'Common':
-        radical=(self.g1**4)/4 + (u**2 + self.g1**2)*(p**2)
-        return np.sqrt( (self.g1**2)/2 + (u**2)/4 + p**2 + ((-1)**(band))*np.sqrt(radical) )
+    if band not in [2,1,-1,-2]:
+        raise ValueError('band must be 2, 1, -1, or -2')
 
-    if approx == 'LowEnergy':
+    # Convenient variable definition
+    p = sc.hbar * _c.vF * k
+
+    if model == 'Common':
+        radical=(g1**4)/4 + (u**2 + g1**2)*(p**2)
+        disp = np.sign(band)*np.sqrt( (g1**2)/2 + (u**2)/4 + p**2 + ((-1)**(abs(band)))*np.sqrt(radical) )
+
+        return disp
+
+    if model == 'LowEnergy':
         '''
         Low Energy effective. Eigenvalues of 
 
@@ -133,10 +189,10 @@ def CarrierDispersion(self,k,u,band,approx='Common'):
 
         '''
 
-        meff = ( self.g1 / (2 * (self.vF)**2) )
+        meff = ( g1 / (2 * (vF)**2) )
         return np.sqrt( (u/2)**2 + ( (hbar * k)**2 / (2*meff) )**2 )
 
-    if approx == 'None':
+    if model == 'FullTightBinding':
         '''
         No approximation. Compute eigenvalues of Hamiltonian
         '''
