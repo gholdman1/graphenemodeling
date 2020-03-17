@@ -9,27 +9,32 @@ These constants are not found in ``scipy.constants``.
 Carbon
 ======
 
-=======	=================== ====================== === ===
-``m_C``	Mass of Carbon atom 1.9926468799199998e-26  kg [1]
-=======	=================== ====================== === ===
+======== =================== ====================== ==== ====
+Variable Constant            Value                  Unit Ref
+======== =================== ====================== ==== ====
+``m_C``	 Mass of Carbon atom 1.9926468799199998e-26  kg  [1]
+======== =================== ====================== ==== ====
 
 Geometry
 ========
-
-=============   ======================================= ======== ==========
-``thickness``   Thickness of a single layer of graphene 3.4e-10	 m
-``a``           Interatom spacing on a graphene lattice 1.46e-10 m
-``A``           Area of a unit cell of graphene lattice 5.24e-20 m :sup:`2`
-=============   ======================================= ======== ==========
+=============   ================================================================= ========= ============ ====
+Variable        Constant                                                          Value     Unit         Ref
+=============   ================================================================= ========= ============ ====
+``thickness``   Thickness of a single layer of graphene                            3.4e-10    m          
+``a``           Interatom spacing on a graphene lattice                            1.46e-10   m
+``A``           Area of a unit cell of graphene lattice :math:`A=3\\sqrt{3}a^2/2`  5.24e-20   m :sup:`2`  [2]
+=============   ================================================================= ========= ============ ====
 
 Tight-Binding Parameters
 ========================
 
-===========	============================================= ========= ====
-``g0``		Interatom hopping potential :math:`\\gamma_0`  4.49e-19  J
-``g0prime``	Particle hole asymmetry :math:`\\gamma_0'`     0         J
-``vF``		Fermi velocity :math:`v_F=3\\gamma_0a/2`       9.07e5    m/s
-===========	============================================= ========= ====
+=========== ================================================ =========== =====
+Variable    Constant                                          Value       Unit
+=========== ================================================ =========== =====
+``g0``		Interatom hopping potential :math:`\\gamma_0`    4.49e-19    J
+``g0prime``	Particle hole asymmetry :math:`\\gamma_0'`       0           J
+``vF``		Fermi velocity :math:`v_F=3\\gamma_0a/2`         9.07e5      m/s
+=========== ================================================ =========== =====
 
 
 Electromagnetic / Optical
@@ -40,7 +45,7 @@ Variable    Constant                                             Value          
 =========== ==================================================== ======================= ======= ====
 ``W``       Work Function                                          7.37e-19                 J
 ``sigma_0`` Intrinsic Conductivity :math:`\\sigma_0=e^2/4\\hbar`   6.085337014469867e-05   S-m
-``abs0``	Intrinsic absorption :math:`\\pi\\alpha`             0.022925309222367483    none     [2]
+``abs0``	Intrinsic absorption :math:`\\pi\\alpha`             0.022925309222367483    none     [3]
 =========== ==================================================== ======================= ======= ====
 
 
@@ -49,7 +54,11 @@ References
 
 [1] J. Emsley, The Elements, Oxford Chemistry Guides (Oxford Univ. Press, New York, NY, 1995).
 
-[2] Nair, R.R., Blake, P., Grigorenko, A.N., Novoselov, K.S., Booth, T.J., Stauber, T., Peres, N.M.R., and Geim, A.K. (2008).
+[2] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009). The electronic properties of graphene. 
+Rev. Mod. Phys. 81, 109–162.
+https://link.aps.org/doi/10.1103/RevModPhys.81.109.	
+
+[3] Nair, R.R., Blake, P., Grigorenko, A.N., Novoselov, K.S., Booth, T.J., Stauber, T., Peres, N.M.R., and Geim, A.K. (2008).
 Fine Structure Constant Defines Visual Transparency of Graphene. Science 320, 1308–1308.
 http://www.sciencemag.org/cgi/doi/10.1126/science.1156965
 
