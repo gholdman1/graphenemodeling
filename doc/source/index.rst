@@ -20,6 +20,7 @@ GrapheneModeling.
    statistical_distributions
    photonics
    conventions
+   development
 
 Installation
 ------------
