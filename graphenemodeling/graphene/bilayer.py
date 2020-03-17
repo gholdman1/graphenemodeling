@@ -16,6 +16,7 @@ Band Structure
 
     graphene.bilayer.Hamiltonian
     graphene.bilayer.CarrierDispersion
+    graphene.bilayer.DensityOfStates
 
 """
 
@@ -44,11 +45,11 @@ def Hamiltonian(k,u):
 
     Parameters
     ----------
-    k:  array-like
-        Wavenumber (1/m).
+    k:  array-like, rad/m
+        Wavenumber
 
-    u:  scalar
-        Interlayer potential energy difference (J).
+    u:  scalar, J
+        Interlayer potential energy difference
 
     Returns
     ----------
@@ -247,23 +248,52 @@ def emin(u):
     emin2 = (u/2)**2 * (g1**2 / ( g1**2 + u**2 ) )
     return np.sqrt(emin2)
 
-def DensityOfStates(e, u):
+def DensityOfStates(E, u):
+    '''Density of states per unit area (m :sup:`-2`) as 
+    a function of energy.
+
+    Parameters
+    ----------
+
+    E: array-like, J
+        Energy of states
+
+    u:  scalar, J
+        Interlayer potential energy difference
+
+    Returns
+    -------
+
+    Examples
+    --------
+
+    .. plot::
+
+        >>> from graphenemodeling.graphene import bilayer as blg
+        >>> import matplotlib.pyplot as plt
+        >>> from scipy.constants
+
+    Notes
+    -----
+
+    References
+    ----------
+
+    [1] 
+
     '''
-    Returns the density of states per unit area (1/m^2) as 
-    a function of energy given the gap u
-    '''
-    e = np.atleast_1d(abs(e))
+    E = np.atleast_1d(abs(E))
     
     # Define the multiplicative factor out front
-    # Set to 0 is energy is below the minimum
-    mult = (e>emin(u)) * ( e / (pi * hbar**2 * _c.vF**2) )
+    # Set to 0 if energy is below the minimum
+    mult = (E>emin(u)) * ( E / (pi * hbar**2 * _c.vF**2) )
     
     # Calculate the discriminant
     # Remember, we wil need to divide by it's sqrt
     # So set values disc<=0 to 1
     # We will multiply the result by zero for these energies anyway later on.
-    disc = e**2 * (g1**2 + u**2) - g1**2 * u**2 / 4
-    disc = (e>emin(u))*disc + (e<=emin(u))*1
+    disc = E**2 * (g1**2 + u**2) - g1**2 * u**2 / 4
+    disc = (E>emin(u))*disc + (E<=emin(u))*1
     
     # Calculate quantities proportional to derivatives of k^2
     propdkp2 = 2 + (g1**2 + u**2)/np.sqrt(disc)
@@ -271,7 +301,7 @@ def DensityOfStates(e, u):
     
     # If energy is above sombrero region, add the positive solution
     # If within, also subtract the negative solution
-    propdos = (e>emin(u))*propdkp2 - (e<=abs(u/2))*propdkm2
+    propdos = (E>emin(u))*propdkp2 - (E<=abs(u/2))*propdkm2
     return (mult * propdos)
 
 def Pdiff(k,vminus,approx='Common'):
