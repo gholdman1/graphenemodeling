@@ -1076,7 +1076,7 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
 
     return conductivity
 
-def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T,mu0,mu0T):
+def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T):
     '''
     Returns the conductivity matrix of monolayer graphene.
 
