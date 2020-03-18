@@ -271,7 +271,7 @@ def DensityOfStates(E, u):
 
         >>> from graphenemodeling.graphene import bilayer as blg
         >>> import matplotlib.pyplot as plt
-        >>> from scipy.constants
+        >>> from scipy.constants import elementary_charge
 
     Notes
     -----
