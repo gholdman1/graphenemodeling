@@ -9,8 +9,6 @@ These statistical distributions are not found in ``scipy.stats`` and are therefo
     :maxdepth: 1
 
     statistical_distributions.FermiDirac
-    statistical_distributions.BoseEinstein
-    statistical_distributions.Boltzmann
     statistical_distributions.Lorentz
     statistical_distributions.Planck
 
