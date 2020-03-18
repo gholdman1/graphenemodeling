@@ -13,5 +13,7 @@ performed on graphene.
 	:maxdepth: 1
 
 	experiments.photonics
+	experiments.tunneling
+	experiments.transport
 
 """
