@@ -18,7 +18,7 @@ GrapheneModeling.
 
    graphene
    statistical_distributions
-   photonics
+   experiments
    conventions
    development
 
