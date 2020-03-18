@@ -3,7 +3,7 @@ Development
 
 Development takes place on `Github <https://github.com/gholdman1/graphenemodeling/>`_.
 
-If you are new to development, you may find the page :doc:`development_from_zero` to be useful.
+If you are new to development, you may find the page :doc:`development.from_zero` to be useful.
 
 
 Getting Started
