@@ -960,15 +960,17 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     -----
     The optical conductivity :math:`\\overleftrightarrow{\\sigma}(q,\\omega)` 
     relates the surface current :math:`\\mathbf K(\\omega)` 
-    to an applied electric field :math:`\\mathbf E(\\omega)`
+    to an applied electric field :math:`\\mathbf E(\\omega)`.
+    The fully general, anisotropic, nonlocal expression is given by
 
     .. math::
 
         \\mathbf K(\\omega)=\\int \\overleftrightarrow\\sigma(q,\\omega)\\mathbf E(\\omega) dq
     
 
-    Here, :math:`\\omega` refers to the frequency and :math:`q` refers to the scattering wavevector. 
-    In many cases, :math:`\\overleftrightarrow{\\sigma}` is isotropic, 
+    Here, :math:`\\omega` refers to the frequency and :math:`q` refers to the scattering wavevector.
+    The above expression is rarely needed.
+    In most cases, :math:`\\overleftrightarrow{\\sigma}` is isotropic, 
     so the above equation can be reduced to a scalar equation
 
     .. math::
@@ -981,16 +983,34 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     .. math::
         \\sigma(q,\\omega)=\\frac{ie^2\\omega}{q^2}\\chi^0(q,\\omega).
     
-    If ``q`` is nonzero, this form is used.
-    However, it is common to use simpler limiting cases of this expression.
-    The local conductivity (``q=0``) is the one which is most familiar 
+    where :math:`\\chi^0` is the Polarizibility. If ``q`` is nonzero, this form is used.
+    However, it is common to use a simpler limiting cases of this expression.
+    The local conductivity (called when ``q==0``) is the one which is most familiar 
     and it relates the surface current to the electric field linearly
     
     .. math::
 
         \\mathbf K(\\omega)=\\sigma(\\omega)\\mathbf E
 
-    It can be found from the nonlocal conductivity by taking the limit :math:`\\lim_{q\\to 0}\\sigma(q,\\omega)=\\sigma(\\omega)`.
+    It can be found from the nonlocal conductivity by taking the limit :math:`\\lim_{q\\to 0}\\sigma(q,\\omega)=\\sigma(\\omega)`
+    and takes the form :math:`\\sigma(\\omega)=\\sigma_{intra}(\\omega)+\\sigma_{inter}(\\omega)`, 
+    where the intraband and interband components are given by
+
+    .. math::
+
+        \\sigma_{intra}(\\omega) = \\frac{2ie^2k_BT}{\\pi\\hbar^2(\\omega+i\\gamma)}\\ln\\left [ 2 \\cosh \\frac{E_F}{2k_BT} \\right ]
+
+    and 
+
+    .. math::
+
+        \\sigma_{inter}(\\omega) = \\frac{e^2}{4\\hbar}\\left [ H(\\hbar\\omega/2) + \\frac{4i}{\\pi}\\hbar ( \\omega +i \\gamma )\\int_0^\\infty \\frac{H( \\epsilon )-H(\\hbar\\omega /2)}{\\hbar^2(\\omega +i\\gamma )^2-4\\epsilon^2} d\\epsilon\\right ]
+    
+    where
+
+    .. math::
+
+        H(\\epsilon) = f(-\\epsilon)-f(\\epsilon) = \\frac{\\sinh(\\epsilon/k_BT)}{\\cosh(E_F/k_BT) + \\cosh(\\epsilon/k_BT)}
 
     References
     ----------
