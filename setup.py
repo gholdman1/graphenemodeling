@@ -12,7 +12,7 @@ with open(os.path.join(HERE,"README.md")) as file:
 
 setup(
         name="graphenemodeling",
-        version="1.1.1",
+        version="1.1.2",
         description="Code for modeling graphene",
         long_description=README,
         long_description_content_type="text/markdown",

@@ -22,7 +22,7 @@ copyright = '2020, Gregory Holdman'
 author = 'Gregory Holdman'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.1'
+release = '1.1.2'
 master_doc='index'
 
 # -- General configuration ---------------------------------------------------
