@@ -7,8 +7,8 @@ As an open source package, GrapheneModeling attempts to solve this issue. The si
 
 Install GrapheneModeling today!
 
-Documentation
--------------
+Table of Contents
+-----------------
 
 Follow the links below to see the documentation on 
 GrapheneModeling.
@@ -17,9 +17,7 @@ GrapheneModeling.
    :maxdepth: 2
 
    introduction
-   graphene
-   statistical_distributions
-   experiments
+   documentation
    development
 
 Installation
