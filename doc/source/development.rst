@@ -46,24 +46,27 @@ Checklist
 
 Before submitting ensure
 
-1. All tests pass
+1. If you added a new function:
+	
+	a. Your parameters are documented with units. They should be SI.
+
+	b. The return value and units are documented.
+
+	c. An example is included replicating a piece of literature.
+
+	d. References are included.
+
+	e. Possible errors in usage are caught by raising exceptions
+
+2. Tests are included and pass
+	
+	Tests are housed in the ``tests/`` directory. Add class for testing your function
+	and test that values are returned correctly and, if applicable, exceptions are caught.
 
 	Change to the root directory ``graphenemodeling//`` and run ``pytest``.
 
 2. The documentation builds
 
-	Change to the ``doc/`` directory and run ``make``.
+	Change to the ``doc/`` directory and run ``make html`` (Linux/MacOS) or ``make.bat html`` (Windows)
 
-Linux/MacOS
-
-.. code:: bash
-
-	> make html
-
-Windows
-
-.. code:: bash
-
-	> make.bat html
-
-Look at the html files under the ``build`` directory.
+	Look at the html files under the ``build`` directory. Ensure especially that your example is plotted.

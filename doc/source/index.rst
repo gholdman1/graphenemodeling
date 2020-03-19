@@ -16,10 +16,10 @@ GrapheneModeling.
 .. toctree::
    :maxdepth: 2
 
+   introduction
    graphene
    statistical_distributions
    experiments
-   conventions
    development
 
 Installation
