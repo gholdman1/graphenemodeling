@@ -1,6 +1,8 @@
 Development
 ===========
 
+If you have expertise or code that fits the Purpose Statement, then you are encourage to help develop GrapheneModeling.
+
 Development takes place on `Github <https://github.com/gholdman1/graphenemodeling/>`_.
 
 If you are new to development, you may find the page :doc:`development.from_zero` to be useful.
