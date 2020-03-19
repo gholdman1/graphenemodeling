@@ -4,9 +4,11 @@ Introduction
 Purpose
 -------
 
-The GrapheneModeling package is a collection of 1) Python code intended to model measurements of graphene and 2) articles and references to literature on graphene.
+The GrapheneModeling package is a collection of Python code modeling propeties and measurements of graphene built on references to graphene literature. By putting cited descriptions of graphene's properties into the docstrings of Python functions, we hope to
 
-By putting descriptions of graphene's properties into the docstrings of Python functions, we hope to 1) provide a quick reference for inviduals discussing graphene's properties (i.e. a wiki), 2) clarify models used to calculate graphene properties and measurements, and 3) reduce ramp-up time for researchers requiring code to model graphene.
+1. Create a graphene wiki: a quick reference for inviduals discussing graphene's properties.
+2. Clarify models used to calculate graphene properties and measurements.
+3. Reduce ramp-up time for researchers requiring code to model graphene.
 
 Getting Started
 ---------------
