@@ -1086,11 +1086,9 @@ def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T):
 
     return conductivity_matrix
 
-def Permittivity(q, omega,FermiLevel,T, gamma=None,epsR=None,model=None):
+def Permittivity(q, omega,FermiLevel,T, gamma,epsR,model=None):
     '''
-    Returns the in-plae permittivity of graphene.
-
-    Assumes local conductivity
+    Returns the in-plane permittivity of graphene.
 
     Parameters
     ----------
@@ -1104,11 +1102,30 @@ def Permittivity(q, omega,FermiLevel,T, gamma=None,epsR=None,model=None):
     epsR:   scalar, unitless
             background relative permittivity
 
+    Notes
+    -----
+
+    Permittivity relates to the scalar optical conductivity through the expression
+
+    .. math::
+
+        \\epsilon(q, \\omega) = \\epsilon_0 +  \\frac{i\\sigma(q,\\omega)}{\\omega}
+
+    At :math:`\\omega=0`, we can use the expression found in Ref. 2,
+
+    .. math::
+
+        \\epsilon(q) = \\kappa^* + \\frac{2\\pi e^2}{\\kappa q}\\Pi^+(q)
+
     References
     ----------
 
     [1] “Lumerical: Modeling Methodology.” n.d. Accessed April 1, 2019.
         https://apps.lumerical.com/other_application_graphene_simulation_tips.html.
+
+    [2] Hwang, E.H., and Das Sarma, S. (2007). 
+    Dielectric function, screening, and plasmons in two-dimensional graphene. 
+    Phys. Rev. B 75, 205418. https://link.aps.org/doi/10.1103/PhysRevB.75.205418.
 
     '''
 
@@ -1134,10 +1151,15 @@ def Permittivity(q, omega,FermiLevel,T, gamma=None,epsR=None,model=None):
 
         eps = x6 + term1 + term2
 
-        return eps
+        return sc.epsilon_0*eps
+
+    elif np.all(omega==0):
+
+        pass
 
     else:
         eps = 1 + 1j*ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T,model)/(omega*sc.epsilon_0)
+
 
     return eps
 
