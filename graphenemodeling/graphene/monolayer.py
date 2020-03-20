@@ -979,6 +979,16 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
 
         H(\\epsilon) = f(-\\epsilon)-f(\\epsilon) = \\frac{\\sinh(\\epsilon/k_BT)}{\\cosh(E_F/k_BT) + \\cosh(\\epsilon/k_BT)}
 
+    For ``T=0`` these expressions reduce to
+
+    .. math::
+
+        \\sigma_{intra}(\\omega) = \\frac{ie^2E_F}{\\pi\\hbar^2(\\omega+i\\gamma)}
+
+    .. math::
+
+        \\sigma_{inter}(\\omega) = \\frac{e^2}{4\\hbar}\\left [ \\Theta(\\hbar\\omega - 2E_F) + \\frac{i}{\\pi} \\ln\\left [\\frac{2E_F-\\hbar\\omega}{2E_F+\\hbar\\omega} \\right ] \\right ]
+    
     References
     ----------
 
