@@ -26,7 +26,7 @@ Optical Properties
     :maxdepth: 1
 
     graphene.monolayer.Polarizibility
-    graphene.monolayer.OpticalConductivity
+    graphene.monolayer.ScalarOpticalConductivity
     graphene.monolayer.FresnelReflection
 
 Plasmonics
@@ -843,7 +843,7 @@ def dPolarizibility(q,omega,gamma,FermiLevel,T,dvar,diff=1e-7):
 # Optical Properties #
 ######################
 
-def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
+def ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     '''The diagonal conductivity of graphene :math:`\\sigma_{xx}`.
 
     Parameters
@@ -889,9 +889,9 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
         >>> eF = 0.4 * elementary_charge
         >>> g = 0.012 * elementary_charge / hbar
         >>> w = np.linspace(0.01,3,num=150) / (hbar/eF)
-        >>> s_0K_0g = mlg.OpticalConductivity(q=0,omega=w,gamma=0,FermiLevel=eF,T=0)
-        >>> s_0K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,FermiLevel=eF,T=0.01)
-        >>> s_300K_12g = mlg.OpticalConductivity(q=0,omega=w,gamma=g,FermiLevel=eF,T=300)
+        >>> s_0K_0g = mlg.ScalarOpticalConductivity(q=0,omega=w,gamma=0,FermiLevel=eF,T=0)
+        >>> s_0K_12g = mlg.ScalarOpticalConductivity(q=0,omega=w,gamma=g,FermiLevel=eF,T=0.01)
+        >>> s_300K_12g = mlg.ScalarOpticalConductivity(q=0,omega=w,gamma=g,FermiLevel=eF,T=300)
         >>> fig, (re_ax, im_ax) = plt.subplots(1,2,figsize=(11,4))
         >>> s_Re = np.real(s_0K_0g)
         >>> s_Im = np.imag(s_0K_0g)
@@ -925,7 +925,7 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
 
     Notes
     -----
-    The optical conductivity :math:`\\overleftrightarrow{\\sigma}(q,\\omega)` 
+    The *matrix* optical conductivity :math:`\\overleftrightarrow{\\sigma}(q,\\omega)` 
     relates the surface current :math:`\\mathbf K(\\omega)` 
     to an applied electric field :math:`\\mathbf E(\\omega)`.
     The fully general, anisotropic, nonlocal expression is given by
@@ -936,16 +936,16 @@ def OpticalConductivity(q,omega,gamma,FermiLevel,T,model=None):
     
 
     Here, :math:`\\omega` refers to the frequency and :math:`q` refers to the scattering wavevector.
-    The above expression is rarely needed.
+    The above expression fully general incorporating anisotropies and nonlocality and is rarely needed.
     In most cases, :math:`\\overleftrightarrow{\\sigma}` is isotropic, 
-    so the above equation can be reduced to a scalar equation
+    so the above equation can be reduced to a *scalar* equation
 
     .. math::
 
         K(\\omega)=\\int \\sigma(q,\\omega)E(\\omega)dq
 
 
-    The most general expression for the conductivity is given by the Kubo formula
+    This is the conductivity in this function. The most general expression for the conductivity is given by the Kubo formula
     
     .. math::
         \\sigma(q,\\omega)=\\frac{ie^2\\omega}{q^2}\\chi^0(q,\\omega).
@@ -1082,8 +1082,8 @@ def OpticalConductivityMatrix(q,omega,gamma, FermiLevel,T):
     '''
 
 
-    conductivity_matrix = np.array([[OpticalConductivity(q,omega,gamma,FermiLevel,T),0],
-                                    [0,OpticalConductivity(q,omega,gamma,FermiLevel,T)]])
+    conductivity_matrix = np.array([[ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T),0],
+                                    [0,ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T)]])
 
     return conductivity_matrix
 
@@ -1138,7 +1138,7 @@ def Permittivity(q, omega,FermiLevel,T, gamma=None,epsR=None,model=None):
         return eps
 
     else:
-        eps = 1 + 1j*OpticalConductivity(q,omega,gamma,FermiLevel,T,model)/(omega*sc.epsilon_0)
+        eps = 1 + 1j*ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T,model)/(omega*sc.epsilon_0)
 
     return eps
 
@@ -1210,7 +1210,7 @@ def FresnelReflection(q,omega,gamma,FermiLevel,T,eps1,eps2,polarization):
 
     kperp1, kperp2 = np.sqrt(eps1*(omega/sc.speed_of_light)**2 - q**2 + 1e-9*1j), np.sqrt(eps2*(omega/sc.speed_of_light)**2 - q**2 + 1e-9*1j)
 
-    sigma = OpticalConductivity(q,omega,gamma,FermiLevel,T)
+    sigma = ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T)
 
     if polarization=='p' or polarization=='TM':
         numerator   = eps2*kperp1 - eps1*kperp2 + ( sigma*kperp1*kperp2 / (sc.epsilon_0*omega) )
@@ -1412,7 +1412,7 @@ def PlasmonDispersion(q,gamma,FermiLevel,eps1,eps2,T,model):
     if model=='local':
         omega = np.empty_like(q)
 
-        sigma = lambda w: OpticalConductivity(0,w,gamma,FermiLevel,T=0)
+        sigma = lambda w: ScalarOpticalConductivity(0,w,gamma,FermiLevel,T=0)
 
         for i,q0 in np.ndenumerate(q):
             root_eqn = lambda w: 1 - np.imag(sigma(w))*q0 / (2*sc.epsilon_0*epsavg*w)
@@ -1540,7 +1540,7 @@ def PlasmonDispersionRoot(q,omega,gamma,FermiLevel, eps1,eps2 ,T):
 
     epsavg = (eps1+eps2)/2
 
-    return 1 - np.imag(OpticalConductivity(q,omega,gamma,FermiLevel,T))*q / (2*sc.epsilon_0*epsavg*omega)
+    return 1 - np.imag(ScalarOpticalConductivity(q,omega,gamma,FermiLevel,T))*q / (2*sc.epsilon_0*epsavg*omega)
 
 def PlasmonDispersionLoss(omega,gamma,FermiLevel,eps1,eps2,T,model):
     '''
