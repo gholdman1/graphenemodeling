@@ -37,39 +37,6 @@ Plasmonics
 
     graphene.monolayer.PlasmonDispersion
 
-Models
-======
-
-Different models for graphene are valid in different regimes.
-Many of the functions provided here have a ``model`` option allowing the use to choose which to use.
-
-Full Tight Binding (:mod:`model='FullTightBinding'`)
-----------------------------------------------------
-The tight binding model Hamiltonian is
-
-    .. math::
-
-        H = \\gamma_0 \\left(\\array{
-                                0 & f(k) \n
-                                f(k)^* & 0
-                                        } \\right)
-
-where :math:`f(k)= e^{ik_x a/2} + 2 e^{-i k_x a/ 2}\\cos(k_y a \\sqrt{3}/2)`
-
-
-Low Energy (:mod:`model='LowEnergy'`)
--------------------------------------
-An low-energy approximation to the Tight Binding model is what we are calling the Low Energy model.
-This is valid for small momenta, i.e. :math:`\\hbar v_F k\\ll \\gamma_0`.
-
-
-References
-==========
-
-[1] Castro Neto, A.H., Guinea, F., Peres, N.M.R., Novoselov, K.S., and Geim, A.K. (2009).
-The electronic properties of graphene. Rev. Mod. Phys. 81, 109–162.
-https://link.aps.org/doi/10.1103/RevModPhys.81.109
-
 """
 
 import numpy as np
