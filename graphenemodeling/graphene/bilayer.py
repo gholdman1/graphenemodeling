@@ -24,7 +24,6 @@ import numpy as np
 import scipy.constants as sc
 import graphenemodeling.graphene._constants as _c
 
-from graphenemodeling.graphene.base import BaseGraphene
 eV = sc.elementary_charge
 eVtoJ = eV
 e0 = sc.epsilon_0

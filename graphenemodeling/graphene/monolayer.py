@@ -43,7 +43,6 @@ import numpy as np
 import scipy.constants as sc
 from scipy import special, optimize, integrate
 
-from graphenemodeling.graphene.base import BaseGraphene
 import graphenemodeling.graphene._constants as _c
 
 import graphenemodeling.statistical_distributions as sd
