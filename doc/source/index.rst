@@ -1,11 +1,9 @@
 GrapheneModeling
 ================
 
-Graphene is one of the most heavily studied materials of the past two decades. A large amount of literature has been written on its properties and applications. Thousands of papers are published each year. As such, staying up-to-date on graphene literature is difficult, albeit necessary for the advancement of its study. Review articles are a popular way to maintain awareness. However, these are published sporadically and can become obsolete quickly after publication.
+Graphene is one of the most heavily studied materials of the past two decades. A large amount of literature has been written on its properties and applications. Thousands of papers are published each year. As such, staying up-to-date on graphene literature is difficult, albeit necessary for the advancement of its study.
 
-As an open source package, GrapheneModeling attempts to solve this issue. The singular goal of GrapheneModeling is to compile the most important literature on graphene's properties and maintain the results as executable Python code. By working as a community, we can reduce each other's ramp-up time and can push the boundaries of knowledge ever faster.
-
-Install GrapheneModeling today!
+GrapheneModeling attempts to alleviate this difficulty by providing a centralized resource on models of graphene. We compile the most important literature on graphene's properties and maintain the results as executable Python code. All code is provided with examples that replicate a result found in the literature. In this way, we hope to reduce ramp-up time and errors for groups looking to model their experiments.
 
 Table of Contents
 -----------------
