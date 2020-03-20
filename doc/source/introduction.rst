@@ -60,6 +60,8 @@ Chemical potentials use the variable ``mu``. If a function is only applicable at
 
 The variable ``k`` is used for the wavenumber of carriers such as Dirac fermions. The variable ``q`` is used for scattering wavevectors and the quantities derived from such scattering considerations such as ``Polarizibility``, ``OpticalConductivity`` and ``PlasmonDispersion``.
 
+Permittivities :math:`\\epsilon` are denoted by ``eps`` and will all have units of F/m. Dielectric constants (aka "relative permittivities") :math:`\\kappa` are denoted by ``kappa`` and are unitless.
+
 Examples
 --------
 
