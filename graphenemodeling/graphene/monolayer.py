@@ -27,6 +27,7 @@ Optical Properties
 
     graphene.monolayer.Polarizibility
     graphene.monolayer.ScalarOpticalConductivity
+    graphene.monolayer.Permittivity
     graphene.monolayer.FresnelReflection
 
 Plasmonics
